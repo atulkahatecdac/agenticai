@@ -1,0 +1,71 @@
+{
+  "name": "One Empire — Instagram OAuth Token Exchange",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "one-empire-instagram-oauth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Receive Instagram Callback",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"processing\" }",
+        "options": {}
+      },
+      "id": "node-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [480, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================\n// Node: Exchange Code for Short-Lived Token\n// Instagram Basic Display API / Graph API OAuth\n// =============================================================\n//\n// Incoming body fields:\n//   code          — authorisation code from Instagram\n//   state         — base64 JSON containing { email }\n//   member_email  — extracted email (may come from state)\n//   redirect_uri  — must match app settings exactly\n//\n// IMPORTANT: Use $env.INSTAGRAM_APP_SECRET (not getCredentials)\n// =============================================================\n\nconst body = $input.item.json.body || $input.item.json;\n\nconst code         = body.code;\nconst memberEmail  = body.member_email || '';\nconst redirectUri  = body.redirect_uri || 'https://brief.one-empire.com/instagram/callback';\n\nconst appId     = '1278647270579382';\nconst appSecret = $env.INSTAGRAM_APP_SECRET;\n\nif (!code) throw new Error('Missing authorisation code');\nif (!appSecret) throw new Error('INSTAGRAM_APP_SECRET not set in environment');\n\n// Step 1: Exchange code for short-lived token (valid 1 hour)\nconst shortTokenRes = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://api.instagram.com/oauth/access_token',\n  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n  body: new URLSearchParams({\n    client_id:     appId,\n    client_secret: appSecret,\n    grant_type:    'authorization_code',\n    redirect_uri:  redirectUri,\n    code:          code\n  }).toString()\n});\n\nif (!shortTokenRes.access_token) {\n  throw new Error('Short-lived token exchange failed: ' + JSON.stringify(shortTokenRes));\n}\n\nconst shortToken   = shortTokenRes.access_token;\nconst instagramId  = shortTokenRes.user_id;\n\n// Step 2: Exchange for long-lived token (valid 60 days)\nconst longTokenRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://graph.instagram.com/access_token',\n  qs: {\n    grant_type:        'ig_exchange_token',\n    client_secret:     appSecret,\n    access_token:      shortToken\n  }\n});\n\nif (!longTokenRes.access_token) {\n  throw new Error('Long-lived token exchange failed: ' + JSON.stringify(longTokenRes));\n}\n\nconst longToken = longTokenRes.access_token;\nconst expiresIn = longTokenRes.expires_in || 5184000; // default 60 days in seconds\n\n// Step 3: Fetch Instagram user profile\nconst profileRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: 'https://graph.instagram.com/me',\n  qs: {\n    fields:       'id,username,name',\n    access_token: longToken\n  }\n});\n\nconst now          = new Date();\nconst expiresAt    = new Date(now.getTime() + expiresIn * 1000);\n\nreturn [{\n  json: {\n    member_email:       memberEmail,\n    instagram_id:       profileRes.id || instagramId,\n    instagram_username: profileRes.username || '',\n    instagram_name:     profileRes.name || profileRes.username || '',\n    access_token:       longToken,\n    expires_in:         expiresIn,\n    token_stored_at:    now.toISOString(),\n    token_expires_at:   expiresAt.toISOString()\n  }\n}];\n"
+      },
+      "id": "node-exchange",
+      "name": "Exchange Code for Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================\n// Node: Store Instagram Token in Supabase\n// Upserts on member_email — updates token if already linked\n// =============================================================\n\nconst data = $input.item.json;\n\nconst supabaseUrl = 'https://gsqcsyepztcmrvzxevhw.supabase.co';\nconst serviceKey  = $env.SUPABASE_SERVICE_KEY;\n\nif (!serviceKey) throw new Error('SUPABASE_SERVICE_KEY not set');\n\nconst payload = {\n  member_email:       data.member_email,\n  instagram_id:       data.instagram_id,\n  instagram_username: data.instagram_username,\n  instagram_name:     data.instagram_name,\n  access_token:       data.access_token,\n  expires_in:         data.expires_in,\n  token_stored_at:    data.token_stored_at,\n  token_expires_at:   data.token_expires_at,\n  is_active:          true,\n  updated_at:         new Date().toISOString()\n};\n\nconst response = await this.helpers.httpRequest({\n  method: 'POST',\n  url: supabaseUrl + '/rest/v1/instagram_tokens',\n  headers: {\n    'apikey':        serviceKey,\n    'Authorization': 'Bearer ' + serviceKey,\n    'Content-Type':  'application/json',\n    'Prefer':        'resolution=merge-duplicates'\n  },\n  body: JSON.stringify(payload)\n});\n\nreturn [{\n  json: {\n    success: true,\n    instagram_name: data.instagram_name,\n    instagram_username: data.instagram_username,\n    member_email: data.member_email,\n    token_expires_at: data.token_expires_at\n  }\n}];\n"
+      },
+      "id": "node-store",
+      "name": "Store Token in Supabase",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 380]
+    }
+  ],
+  "connections": {
+    "Receive Instagram Callback": {
+      "main": [
+        [
+          { "node": "Respond to Webhook", "type": "main", "index": 0 },
+          { "node": "Exchange Code for Token", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Exchange Code for Token": {
+      "main": [
+        [{ "node": "Store Token in Supabase", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "one-empire"
+  }
+}

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connecting Instagram — One Empire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #050D1A;
+      --gold: #E8B84B;
+      --gold-dim: #C9993A;
+      --white: #F0F6FF;
+      --muted: #8A9BB5;
+      --success: #34D399;
+      --error: #F87171;
+      --border: rgba(232, 184, 75, 0.15);
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #0B1A30;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: block;
+    }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .icon.loading { background: rgba(232, 184, 75, 0.1); border: 2px solid var(--gold); animation: pulse 1.5s ease-in-out infinite; }
+    .icon.success { background: rgba(52, 211, 153, 0.1); border: 2px solid var(--success); }
+    .icon.error   { background: rgba(248, 113, 113, 0.1); border: 2px solid var(--error); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    h1.loading { color: var(--gold); }
+    h1.success  { color: var(--success); }
+    h1.error    { color: var(--error); }
+
+    p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    .details {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(5, 13, 26, 0.6);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: left;
+      word-break: break-all;
+    }
+    .details strong { color: var(--white); }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.65rem 1.5rem;
+      background: var(--gold);
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: var(--gold-dim); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="logo">One Empire</span>
+
+    <div class="icon loading" id="icon">📷</div>
+    <h1 class="loading" id="title">Connecting Instagram…</h1>
+    <p id="message">Exchanging authorisation code. Please wait.</p>
+    <div id="details" style="display:none" class="details"></div>
+    <div id="actions" style="display:none"></div>
+  </div>
+
+  <script>
+    const N8N_WEBHOOK = 'https://n8n.one-empire.com/webhook/one-empire-instagram-oauth';
+
+    function setIcon(type, emoji) {
+      const el = document.getElementById('icon');
+      el.className = 'icon ' + type;
+      el.textContent = emoji;
+    }
+    function setTitle(type, text) {
+      const el = document.getElementById('title');
+      el.className = type;
+      el.textContent = text;
+    }
+    function setMessage(text) {
+      document.getElementById('message').textContent = text;
+    }
+    function showDetails(html) {
+      const el = document.getElementById('details');
+      el.innerHTML = html;
+      el.style.display = 'block';
+    }
+    function showActions(html) {
+      const el = document.getElementById('actions');
+      el.innerHTML = html;
+      el.style.display = 'block';
+    }
+
+    async function handleCallback() {
+      const params = new URLSearchParams(window.location.search);
+      const code  = params.get('code');
+      const state = params.get('state');
+      const error = params.get('error');
+      const errorDescription = params.get('error_description');
+
+      // Handle OAuth denial
+      if (error) {
+        setIcon('error', '✕');
+        setTitle('error', 'Authorisation Denied');
+        setMessage(errorDescription || 'You denied access to your Instagram account. No changes were made.');
+        showActions('<a class="btn" href="https://brief.one-empire.com">← Back to Brief</a>');
+        return;
+      }
+
+      if (!code) {
+        setIcon('error', '✕');
+        setTitle('error', 'Missing Code');
+        setMessage('No authorisation code was received from Instagram. Please try connecting again.');
+        showActions('<a class="btn" href="https://brief.one-empire.com">← Back to Brief</a>');
+        return;
+      }
+
+      // Recover email from state param (encoded as base64 JSON)
+      let memberEmail = '';
+      try {
+        if (state) {
+          const decoded = JSON.parse(atob(state));
+          memberEmail = decoded.email || '';
+        }
+      } catch (_) {
+        // state may not carry email — n8n will handle lookup
+      }
+
+      try {
+        const payload = {
+          code,
+          state,
+          member_email: memberEmail,
+          redirect_uri: window.location.origin + '/instagram/callback'
+        };
+
+        const response = await fetch(N8N_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Webhook returned ' + response.status);
+        }
+
+        const data = await response.json().catch(() => ({}));
+
+        setIcon('success', '✓');
+        setTitle('success', 'Instagram Connected!');
+        setMessage('Your Instagram account has been linked to One Empire. Content will now be published automatically.');
+
+        if (data.instagram_name) {
+          showDetails('<strong>Account:</strong> @' + data.instagram_name);
+        }
+
+        showActions('<a class="btn" href="https://brief.one-empire.com">Back to Brief →</a>');
+
+      } catch (err) {
+        setIcon('error', '✕');
+        setTitle('error', 'Connection Failed');
+        setMessage('Something went wrong while linking your Instagram account. Please try again or contact support.');
+        showDetails('<strong>Error:</strong> ' + err.message);
+        showActions('<a class="btn" href="https://brief.one-empire.com">← Try Again</a>');
+      }
+    }
+
+    handleCallback();
+  </script>
+</body>
+</html>

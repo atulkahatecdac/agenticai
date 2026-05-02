@@ -1,0 +1,6 @@
+# One Empire — Netlify Redirects
+# Deploy to: brief.one-empire.com
+
+/linkedin/callback   /linkedin-callback.html   200
+/facebook/callback   /facebook-callback.html   200
+/instagram/callback  /instagram-callback.html  200

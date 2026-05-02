@@ -1,0 +1,94 @@
+{
+  "name": "One Empire — Token Refresh Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "Schedule (Daily)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================\n// Node: Check LinkedIn Token Expiry\n// Refreshes tokens expiring within the next 14 days\n// LinkedIn tokens cannot be silently refreshed — flag them only\n// (LinkedIn requires user re-auth to get a new token)\n// =============================================================\n\nconst supabaseUrl = 'https://gsqcsyepztcmrvzxevhw.supabase.co';\nconst serviceKey  = $env.SUPABASE_SERVICE_KEY;\n\nconst now       = new Date();\nconst threshold = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days ahead\n\n// Fetch all active LinkedIn tokens\nconst res = await this.helpers.httpRequest({\n  method: 'GET',\n  url: supabaseUrl + '/rest/v1/linkedin_tokens',\n  headers: {\n    'apikey':        serviceKey,\n    'Authorization': 'Bearer ' + serviceKey\n  },\n  qs: { is_active: 'eq.true', select: 'member_email,linkedin_name,token_expires_at' }\n});\n\nconst tokens = Array.isArray(res) ? res : [];\n\nconst expiringSoon = tokens.filter(t => {\n  if (!t.token_expires_at) return false;\n  const exp = new Date(t.token_expires_at);\n  return exp <= threshold;\n});\n\nconst alreadyExpired = expiringSoon.filter(t => new Date(t.token_expires_at) <= now);\nconst expiringSoonOnly = expiringSoon.filter(t => new Date(t.token_expires_at) > now);\n\nconsole.log(`LinkedIn token check: ${tokens.length} total, ${expiringSoon.length} expiring within 14 days`);\n\nreturn [{\n  json: {\n    platform: 'linkedin',\n    checked_at: now.toISOString(),\n    total_tokens: tokens.length,\n    expiring_soon: expiringSoonOnly.map(t => ({ email: t.member_email, name: t.linkedin_name, expires_at: t.token_expires_at })),\n    already_expired: alreadyExpired.map(t => ({ email: t.member_email, name: t.linkedin_name, expires_at: t.token_expires_at }))\n  }\n}];\n"
+      },
+      "id": "node-check-linkedin",
+      "name": "Check LinkedIn Token Expiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================\n// Node: Check & Refresh Facebook Token Expiry\n// Facebook long-lived tokens (60 days) can be refreshed by\n// calling the token endpoint with the existing valid token.\n// Refreshes tokens expiring within 14 days automatically.\n// =============================================================\n\nconst supabaseUrl = 'https://gsqcsyepztcmrvzxevhw.supabase.co';\nconst serviceKey  = $env.SUPABASE_SERVICE_KEY;\nconst appId       = $env.FACEBOOK_APP_ID;\nconst appSecret   = $env.FACEBOOK_APP_SECRET;\n\nconst now       = new Date();\nconst threshold = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);\n\n// Fetch active Facebook tokens expiring within 14 days\nconst res = await this.helpers.httpRequest({\n  method: 'GET',\n  url: supabaseUrl + '/rest/v1/facebook_tokens',\n  headers: {\n    'apikey':        serviceKey,\n    'Authorization': 'Bearer ' + serviceKey\n  },\n  qs: { is_active: 'eq.true', select: 'id,member_email,facebook_name,access_token,token_expires_at' }\n});\n\nconst tokens = Array.isArray(res) ? res : [];\n\nconst toRefresh = tokens.filter(t => {\n  if (!t.token_expires_at) return false;\n  const exp = new Date(t.token_expires_at);\n  return exp <= threshold;\n});\n\nconsole.log(`Facebook token check: ${tokens.length} total, ${toRefresh.length} need refresh`);\n\nconst results = [];\n\nfor (const token of toRefresh) {\n  try {\n    // Refresh long-lived token\n    const refreshRes = await this.helpers.httpRequest({\n      method: 'GET',\n      url: 'https://graph.facebook.com/oauth/access_token',\n      qs: {\n        grant_type:        'fb_exchange_token',\n        client_id:         appId,\n        client_secret:     appSecret,\n        fb_exchange_token: token.access_token\n      }\n    });\n\n    if (!refreshRes.access_token) {\n      throw new Error('Refresh response missing access_token');\n    }\n\n    const expiresIn  = refreshRes.expires_in || 5184000; // 60 days default\n    const storedAt   = now.toISOString();\n    const expiresAt  = new Date(now.getTime() + expiresIn * 1000).toISOString();\n\n    // Update Supabase record\n    await this.helpers.httpRequest({\n      method: 'PATCH',\n      url: supabaseUrl + '/rest/v1/facebook_tokens?member_email=eq.' + encodeURIComponent(token.member_email),\n      headers: {\n        'apikey':        serviceKey,\n        'Authorization': 'Bearer ' + serviceKey,\n        'Content-Type':  'application/json'\n      },\n      body: JSON.stringify({\n        access_token:     refreshRes.access_token,\n        expires_in:       expiresIn,\n        token_stored_at:  storedAt,\n        token_expires_at: expiresAt,\n        updated_at:       now.toISOString()\n      })\n    });\n\n    results.push({ email: token.member_email, name: token.facebook_name, status: 'refreshed', new_expires_at: expiresAt });\n    console.log('Facebook token refreshed for ' + token.member_email);\n\n  } catch (err) {\n    results.push({ email: token.member_email, name: token.facebook_name, status: 'error', error: err.message });\n    console.error('Facebook token refresh failed for ' + token.member_email + ': ' + err.message);\n  }\n}\n\nreturn [{\n  json: {\n    platform: 'facebook',\n    checked_at: now.toISOString(),\n    total_tokens: tokens.length,\n    refresh_results: results\n  }\n}];\n"
+      },
+      "id": "node-refresh-facebook",
+      "name": "Refresh Facebook Tokens",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================\n// Node: Check & Refresh Instagram Token Expiry\n// Instagram long-lived tokens (60 days) can be refreshed\n// using the refresh_access_token endpoint.\n// Refreshes tokens expiring within 14 days automatically.\n// =============================================================\n\nconst supabaseUrl = 'https://gsqcsyepztcmrvzxevhw.supabase.co';\nconst serviceKey  = $env.SUPABASE_SERVICE_KEY;\n\nconst now       = new Date();\nconst threshold = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);\n\n// Fetch active Instagram tokens\nconst res = await this.helpers.httpRequest({\n  method: 'GET',\n  url: supabaseUrl + '/rest/v1/instagram_tokens',\n  headers: {\n    'apikey':        serviceKey,\n    'Authorization': 'Bearer ' + serviceKey\n  },\n  qs: { is_active: 'eq.true', select: 'id,member_email,instagram_name,access_token,token_expires_at' }\n});\n\nconst tokens = Array.isArray(res) ? res : [];\n\nconst toRefresh = tokens.filter(t => {\n  if (!t.token_expires_at) return false;\n  const exp = new Date(t.token_expires_at);\n  return exp <= threshold;\n});\n\nconsole.log(`Instagram token check: ${tokens.length} total, ${toRefresh.length} need refresh`);\n\nconst results = [];\n\nfor (const token of toRefresh) {\n  try {\n    // Refresh long-lived Instagram token\n    const refreshRes = await this.helpers.httpRequest({\n      method: 'GET',\n      url: 'https://graph.instagram.com/refresh_access_token',\n      qs: {\n        grant_type:   'ig_refresh_token',\n        access_token: token.access_token\n      }\n    });\n\n    if (!refreshRes.access_token) {\n      throw new Error('Refresh response missing access_token');\n    }\n\n    const expiresIn  = refreshRes.expires_in || 5184000;\n    const storedAt   = now.toISOString();\n    const expiresAt  = new Date(now.getTime() + expiresIn * 1000).toISOString();\n\n    await this.helpers.httpRequest({\n      method: 'PATCH',\n      url: supabaseUrl + '/rest/v1/instagram_tokens?member_email=eq.' + encodeURIComponent(token.member_email),\n      headers: {\n        'apikey':        serviceKey,\n        'Authorization': 'Bearer ' + serviceKey,\n        'Content-Type':  'application/json'\n      },\n      body: JSON.stringify({\n        access_token:     refreshRes.access_token,\n        expires_in:       expiresIn,\n        token_stored_at:  storedAt,\n        token_expires_at: expiresAt,\n        updated_at:       now.toISOString()\n      })\n    });\n\n    results.push({ email: token.member_email, name: token.instagram_name, status: 'refreshed', new_expires_at: expiresAt });\n    console.log('Instagram token refreshed for ' + token.member_email);\n\n  } catch (err) {\n    results.push({ email: token.member_email, name: token.instagram_name, status: 'error', error: err.message });\n    console.error('Instagram token refresh failed for ' + token.member_email + ': ' + err.message);\n  }\n}\n\nreturn [{\n  json: {\n    platform: 'instagram',\n    checked_at: now.toISOString(),\n    total_tokens: tokens.length,\n    refresh_results: results\n  }\n}];\n"
+      },
+      "id": "node-refresh-instagram",
+      "name": "Refresh Instagram Tokens",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 560]
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================================================\n// Node: Compile Report & Alert on LinkedIn Expiry\n// Sends a summary email if any LinkedIn tokens need re-auth,\n// or if Facebook/Instagram refresh failures occurred.\n// Uses Gmail via n8n's HTTP Request to a send-email webhook\n// or log to console for now.\n// =============================================================\n\nconst allItems = $input.all();\nconst linkedinReport  = allItems.find(i => i.json.platform === 'linkedin')?.json  || {};\nconst facebookReport  = allItems.find(i => i.json.platform === 'facebook')?.json  || {};\nconst instagramReport = allItems.find(i => i.json.platform === 'instagram')?.json || {};\n\nconst issues = [];\n\n// LinkedIn — cannot auto-refresh, flag for manual re-auth\nif (linkedinReport.already_expired?.length) {\n  issues.push('EXPIRED LinkedIn tokens: ' + linkedinReport.already_expired.map(t => t.email).join(', '));\n}\nif (linkedinReport.expiring_soon?.length) {\n  issues.push('EXPIRING SOON LinkedIn tokens: ' + linkedinReport.expiring_soon.map(t => t.email + ' (expires ' + t.expires_at + ')').join(', '));\n}\n\n// Facebook refresh failures\nconst fbFailed = (facebookReport.refresh_results || []).filter(r => r.status === 'error');\nif (fbFailed.length) {\n  issues.push('Facebook refresh FAILED: ' + fbFailed.map(r => r.email + ' — ' + r.error).join('; '));\n}\n\n// Instagram refresh failures\nconst igFailed = (instagramReport.refresh_results || []).filter(r => r.status === 'error');\nif (igFailed.length) {\n  issues.push('Instagram refresh FAILED: ' + igFailed.map(r => r.email + ' — ' + r.error).join('; '));\n}\n\nconst summary = {\n  run_at: new Date().toISOString(),\n  linkedin: {\n    total: linkedinReport.total_tokens || 0,\n    expiring_soon_count: (linkedinReport.expiring_soon || []).length,\n    expired_count: (linkedinReport.already_expired || []).length\n  },\n  facebook: {\n    total: facebookReport.total_tokens || 0,\n    refreshed: (facebookReport.refresh_results || []).filter(r => r.status === 'refreshed').length,\n    failed: fbFailed.length\n  },\n  instagram: {\n    total: instagramReport.total_tokens || 0,\n    refreshed: (instagramReport.refresh_results || []).filter(r => r.status === 'refreshed').length,\n    failed: igFailed.length\n  },\n  issues_found: issues.length > 0,\n  issues\n};\n\nconsole.log('Token Refresh Report:', JSON.stringify(summary, null, 2));\n\nif (issues.length > 0) {\n  console.warn('ACTION REQUIRED — token issues detected:\\n' + issues.join('\\n'));\n  // TODO: wire up Gmail node or Slack notification here\n  // For now, the summary is logged and visible in n8n execution history\n}\n\nreturn [{ json: summary }];\n"
+      },
+      "id": "node-report",
+      "name": "Compile Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [760, 380]
+    }
+  ],
+  "connections": {
+    "Schedule (Daily)": {
+      "main": [
+        [
+          { "node": "Check LinkedIn Token Expiry", "type": "main", "index": 0 },
+          { "node": "Refresh Facebook Tokens",    "type": "main", "index": 0 },
+          { "node": "Refresh Instagram Tokens",   "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Check LinkedIn Token Expiry": {
+      "main": [
+        [{ "node": "Compile Report", "type": "main", "index": 0 }]
+      ]
+    },
+    "Refresh Facebook Tokens": {
+      "main": [
+        [{ "node": "Compile Report", "type": "main", "index": 0 }]
+      ]
+    },
+    "Refresh Instagram Tokens": {
+      "main": [
+        [{ "node": "Compile Report", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "one-empire"
+  }
+}
