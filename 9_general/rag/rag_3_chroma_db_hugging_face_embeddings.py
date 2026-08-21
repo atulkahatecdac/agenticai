@@ -1,3 +1,4 @@
+# pip install chromadb sentence-transformers
 import chromadb
 from chromadb.utils import embedding_functions
 

@@ -33,7 +33,8 @@ query = input("Enter your search query: ")
 
 results = collection.query(
     query_texts=[query],
-    n_results=3
+    n_results=3,
+    #where
 )
 
 print("\nTop 3 Semantic Search Results:\n")

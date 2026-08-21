@@ -22,7 +22,7 @@ collection.add(
 )
 
 # User query
-user_input = "I want to use cash"
+user_input = "I am not happy with the product"
 
 results = collection.query(
     query_texts=[user_input],      # Chroma embeds this automatically

@@ -30,7 +30,8 @@ agent = Agent(
 
 result = Runner.run_sync(
     agent,
-    "Which five products generated the highest revenue this year?"
+    # "Which five products generated the highest revenue this year?"
+    "Which products generated more than ₹200,000 in revenue?" 
 )
 
 print(result.final_output)

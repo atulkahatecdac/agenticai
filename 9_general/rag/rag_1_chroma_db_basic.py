@@ -44,8 +44,8 @@ for doc_id, doc, emb in zip(data["ids"], data["documents"], data["embeddings"]):
 
 # Query the collection
 results = collection.query(
-    # query_texts=["How many calories does an apple have?"], # Chroma will embed this for you
-    query_texts=["tell me about balance sheet"],
+    #query_texts=["How many calories does an apple have?"], # Chroma will embed this for you
+    query_texts=["balance sheet"],
     n_results=2, # how many results to return
     include=["documents","distances","embeddings"]
 )
