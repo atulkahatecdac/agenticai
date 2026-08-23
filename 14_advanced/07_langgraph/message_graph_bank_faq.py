@@ -8,9 +8,10 @@ import os
 import sys
 from typing import Annotated, TypedDict
 from dotenv import load_dotenv
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from langchain_chroma import Chroma
+from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
@@ -43,21 +44,20 @@ class ChatState(TypedDict):
 
 # ---------------------------------------------------------------------
 # Tiny FAQ "retriever" over 3_langgraph/Dataset_Banking_chatbot.csv -
-# TF-IDF cosine similarity between the user's latest message and the
-# dataset's Query column. No vector DB needed for ~40 rows; the point
-# of this file is the message-graph plumbing, not the retrieval method.
+# an in-memory Chroma vector store (local HuggingFace embeddings, no
+# API calls) holding the dataset's Query column, searched by
+# similarity against the user's latest message.
 # ---------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(BASE_DIR, "..", "..", "3_langgraph", "Dataset_Banking_chatbot.csv")
 
-faq_queries, faq_responses = [], []
+faq_docs = []
 with open(CSV_PATH, newline="", encoding="utf-8") as f:
     for row in csv.DictReader(f):
-        faq_queries.append(row["Query"])
-        faq_responses.append(row["Response"])
+        faq_docs.append(Document(page_content=row["Query"], metadata={"response": row["Response"]}))
 
-vectorizer = TfidfVectorizer(stop_words="english").fit(faq_queries)
-faq_matrix = vectorizer.transform(faq_queries)
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+vectordb = Chroma.from_documents(faq_docs, embedding=embeddings)
 SIMILARITY_THRESHOLD = 0.3
 
 
@@ -66,15 +66,14 @@ def retrieve_faq(state: ChatState) -> ChatState:
     # accumulated message list is still there for the generate node to
     # use as conversational context (see the follow-up turn below).
     last_question = state["messages"][-1].content
-    query_vec = vectorizer.transform([last_question])
-    scores = cosine_similarity(query_vec, faq_matrix)[0]
-    best_idx = scores.argmax()
-    best_score = scores[best_idx]
+    results = vectordb.similarity_search_with_relevance_scores(last_question, k=1)
 
-    if best_score >= SIMILARITY_THRESHOLD:
-        context = f"Relevant FAQ answer: {faq_responses[best_idx]}"
-        print(f'[retrieve_faq] matched "{faq_queries[best_idx]}" (score={best_score:.2f})')
+    if results and results[0][1] >= SIMILARITY_THRESHOLD:
+        doc, score = results[0]
+        context = f"Relevant FAQ answer: {doc.metadata['response']}"
+        print(f'[retrieve_faq] matched "{doc.page_content}" (score={score:.2f})')
     else:
+        best_score = results[0][1] if results else 0.0
         context = "No matching FAQ entry found - answer from general banking knowledge."
         print(f"[retrieve_faq] no match above threshold (best score={best_score:.2f})")
 
