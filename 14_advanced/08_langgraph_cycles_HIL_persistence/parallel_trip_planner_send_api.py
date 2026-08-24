@@ -156,6 +156,7 @@ def determine_cities(state: TripState) -> TripState:
 # single next-node name.
 # ---------------------------------------------------------------------
 def dispatch_research(state: TripState) -> list[Send]:
+    # For example: Search flights for NRT (Tokyo), then 4 city reports (Tokyo, Osaka, Kyoto, Hiroshima)
     sends = [Send("search_flights", {
         "arrival_airport_iata": state["arrival_airport_iata"],
         "start_date": state["start_date"],

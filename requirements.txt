@@ -37,8 +37,9 @@ langchain-tavily==0.2.17
 tavily-python==0.7.26
 google-search-results==2.4.2  # SerpApi client, used for real Google Flights data (14_advanced/08_langgraph_cycles_HIL_persistence/parallel_trip_planner_send_api.py)
 langgraph==0.6.11
-langgraph-checkpoint==2.1.2  # langgraph-checkpoint-sqlite 2.0.11 calls JsonPlusSerializer.dumps(), removed in langgraph-checkpoint 3.x - pin below that or SQLite-backed checkpointing breaks
-langgraph-checkpoint-sqlite==2.0.11
+langgraph-checkpoint==3.0.1  # must stay <4.0.0 for langgraph 0.6.11 compat, and >=3.0.1 for langgraph-cli[inmem]'s langgraph-api (Studio dev server) to run at all
+langgraph-checkpoint-sqlite==3.0.3  # matching 3.x line; langgraph-checkpoint-sqlite 2.0.11 called JsonPlusSerializer.dumps(), removed in langgraph-checkpoint 3.x
+langgraph-checkpoint-redis==0.3.0  # pinned below 0.4.x/0.5.x, which pull in langgraph-checkpoint 4.x and break the langgraph-checkpoint==3.0.1 pin above; needs a RediSearch-capable server (e.g. redis/redis-stack-server), not plain redis, for 14_advanced/08_langgraph_cycles_HIL_persistence/redis_checkpointing_production.py
 langserve==0.3.3
 langfuse==4.13.0
 langchain-google-genai==2.0.8  # pinned below latest (like langchain-core) since 2.1.x+ needs google-ai-generativelanguage>=0.7, which conflicts with google-generativeai==0.8.6's hard pin of 0.6.15; 3.0.0+ needs langchain-core>=1.0

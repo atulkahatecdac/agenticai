@@ -6,82 +6,103 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
-# =====================================================================
-# Minimal subgraph illustration - no LLM, no real data, just mock
-# one-line returns so the MECHANISM (not the content) is what stands
-# out: each subgraph is its own tiny, independently compiled
-# StateGraph with its OWN state schema, wired into a parent graph via
-# a thin adapter function. See medical_diagnosis_subgraphs.py in this
-# same directory for a full real-world version of this exact pattern.
-# =====================================================================
+# Three independent subgraphs (savings, credit card, loan), each its own
+# compiled StateGraph, invoked from adapter nodes in one parent graph.
 
 
-# --- Subgraph 1: weather check, one node, mock return ---
-class WeatherState(TypedDict):
-    weather_report: str
+class SavingsState(TypedDict):
+    savings_summary: str
 
 
-def check_weather(state: WeatherState) -> WeatherState:
-    return {"weather_report": "30 degrees celsius and sunny"}
+def check_savings(state: SavingsState) -> SavingsState:
+    return {"savings_summary": "Savings: $12,500 balance"}
 
 
-weather_builder = StateGraph(WeatherState)
-weather_builder.add_node("check_weather", check_weather)
-weather_builder.add_edge(START, "check_weather")
-weather_builder.add_edge("check_weather", END)
-weather_subgraph = weather_builder.compile()
+savings_builder = StateGraph(SavingsState)
+savings_builder.add_node("check_savings", check_savings)
+savings_builder.add_edge(START, "check_savings")
+savings_builder.add_edge("check_savings", END)
+savings_subgraph = savings_builder.compile()
 
 
-# --- Subgraph 2: traffic check, same shape, different mock node ---
-class TrafficState(TypedDict):
-    traffic_report: str
+class CreditCardState(TypedDict):
+    credit_card_summary: str
 
 
-def check_traffic(state: TrafficState) -> TrafficState:
-    return {"traffic_report": "15 minutes, light traffic"}
+def check_credit_card(state: CreditCardState) -> CreditCardState:
+    return {"credit_card_summary": "Credit card: $850 owed, $5,000 limit"}
 
 
-traffic_builder = StateGraph(TrafficState)
-traffic_builder.add_node("check_traffic", check_traffic)
-traffic_builder.add_edge(START, "check_traffic")
-traffic_builder.add_edge("check_traffic", END)
-traffic_subgraph = traffic_builder.compile()
+credit_card_builder = StateGraph(CreditCardState)
+credit_card_builder.add_node("check_credit_card", check_credit_card)
+credit_card_builder.add_edge(START, "check_credit_card")
+credit_card_builder.add_edge("check_credit_card", END)
+credit_card_subgraph = credit_card_builder.compile()
 
 
-# --- Parent graph: an adapter per subgraph, then combine ---
-class CommuteState(TypedDict):
-    weather_report: str
-    traffic_report: str
-    commute_advisory: str
+class LoanState(TypedDict):
+    loan_summary: str
 
 
-def run_weather_subgraph(state: CommuteState) -> CommuteState:
-    result = weather_subgraph.invoke({"weather_report": ""})
-    return {"weather_report": result["weather_report"]}
+def check_loan(state: LoanState) -> LoanState:
+    return {"loan_summary": "Loan: $18,000 remaining, next EMI due in 12 days"}
 
 
-def run_traffic_subgraph(state: CommuteState) -> CommuteState:
-    result = traffic_subgraph.invoke({"traffic_report": ""})
-    return {"traffic_report": result["traffic_report"]}
+loan_builder = StateGraph(LoanState)
+loan_builder.add_node("check_loan", check_loan)
+loan_builder.add_edge(START, "check_loan")
+loan_builder.add_edge("check_loan", END)
+loan_subgraph = loan_builder.compile()
 
 
-def combine(state: CommuteState) -> CommuteState:
-    return {"commute_advisory": f"Weather: {state['weather_report']} | Traffic: {state['traffic_report']}"}
+class CustomerState(TypedDict):
+    savings_summary: str
+    credit_card_summary: str
+    loan_summary: str
+    account_overview: str
 
 
-graph = StateGraph(CommuteState)
-graph.add_node("weather_subgraph", run_weather_subgraph)
-graph.add_node("traffic_subgraph", run_traffic_subgraph)
+def run_savings_subgraph(state: CustomerState) -> CustomerState:
+    result = savings_subgraph.invoke({"savings_summary": ""})
+    return {"savings_summary": result["savings_summary"]}
+
+
+def run_credit_card_subgraph(state: CustomerState) -> CustomerState:
+    result = credit_card_subgraph.invoke({"credit_card_summary": ""})
+    return {"credit_card_summary": result["credit_card_summary"]}
+
+
+def run_loan_subgraph(state: CustomerState) -> CustomerState:
+    result = loan_subgraph.invoke({"loan_summary": ""})
+    return {"loan_summary": result["loan_summary"]}
+
+
+def combine(state: CustomerState) -> CustomerState:
+    overview = f"{state['savings_summary']} | {state['credit_card_summary']} | {state['loan_summary']}"
+    return {"account_overview": overview}
+
+
+graph = StateGraph(CustomerState)
+graph.add_node("savings_subgraph", run_savings_subgraph)
+graph.add_node("credit_card_subgraph", run_credit_card_subgraph)
+graph.add_node("loan_subgraph", run_loan_subgraph)
 graph.add_node("combine", combine)
 
-graph.add_edge(START, "weather_subgraph")
-graph.add_edge(START, "traffic_subgraph")
-graph.add_edge("weather_subgraph", "combine")
-graph.add_edge("traffic_subgraph", "combine")
+graph.add_edge(START, "savings_subgraph")
+graph.add_edge(START, "credit_card_subgraph")
+graph.add_edge(START, "loan_subgraph")
+graph.add_edge("savings_subgraph", "combine")
+graph.add_edge("credit_card_subgraph", "combine")
+graph.add_edge("loan_subgraph", "combine")
 graph.add_edge("combine", END)
 
 app = graph.compile()
 
 if __name__ == "__main__":
-    result = app.invoke({"weather_report": "", "traffic_report": "", "commute_advisory": ""})
+    result = app.invoke({
+        "savings_summary": "",
+        "credit_card_summary": "",
+        "loan_summary": "",
+        "account_overview": "",
+    })
     print(result)

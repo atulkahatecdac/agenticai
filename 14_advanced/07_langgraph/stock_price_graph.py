@@ -38,7 +38,8 @@ def fetch_price(state: StockState) -> StockState:
     # undocumented exception types for an invalid/delisted symbol -
     # catch broadly so a bad symbol prints a message instead of a
     # crash-ending traceback.
-    candidate = f"{symbol}.NS"
+    #candidate = f"{symbol}.NS"
+    candidate = f"{symbol}"
     try:
         last_price = yf.Ticker(candidate).fast_info["lastPrice"]
         return {"stock_name": candidate, "price": f"{last_price:.2f}"}
