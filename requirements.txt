@@ -47,6 +47,7 @@ langchain-google-genai==2.0.8  # pinned below latest (like langchain-core) since
 # MCP
 mcp==1.28.1
 fastmcp==3.4.4
+langchain-mcp-adapters==0.1.9  # pinned below 0.2.0, which imports langchain_core.messages.content - added in a langchain-core line newer than the langchain-core==0.3.86 pin above; used by 6_mcp/6_21_langchain_agent_mcp_tools.py
 mcp-server-sqlite==2025.4.25  # official reference SQLite MCP server, used by 6_mcp/6_13
 
 # Vector stores / retrieval / embeddings
