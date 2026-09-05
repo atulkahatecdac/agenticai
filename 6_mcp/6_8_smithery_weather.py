@@ -1,5 +1,5 @@
 from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client.streamable_http import streamable_http_client
 
 # Construct server URL with authentication
 from urllib.parse import urlencode
@@ -9,13 +9,13 @@ import os
 load_dotenv(override=True)
 smithery_api_key = os.getenv("SMITHERY_API_KEY")
 
-base_url = "https://server.smithery.ai/@hydavinci/weather_mcp/mcp"
+base_url = "https://server.smithery.ai/isdaniel/mcp_weather_server/mcp"
 params = {"api_key": smithery_api_key}
 url = f"{base_url}?{urlencode(params)}"
 
 async def main():
     # Connect to the server using HTTP client
-    async with streamablehttp_client(url) as (read, write, _):
+    async with streamable_http_client(url) as (read, write, _):
         async with ClientSession(read, write) as session:
             # Initialize the connection
             await session.initialize()
@@ -25,12 +25,12 @@ async def main():
             tool_names = [t.name for t in tools_result.tools]
             print(f"Available tools: {', '.join(tool_names)}")
 
-            # ✅ Call the get_weather tool if available
-            if "get_weather" in tool_names:
-                region_name = "Rome, Italy"
-                print(f"\nCalling get_weather for region: {region_name}\n")
+            # ✅ Call the get_current_weather tool if available
+            if "get_current_weather" in tool_names:
+                city = "Rome"
+                print(f"\nCalling get_current_weather for city: {city}\n")
 
-                result = await session.call_tool("get_weather", {"region_name": region_name})
+                result = await session.call_tool("get_current_weather", {"city": city})
 
                 # Print results
                 print("Weather Result:\n")

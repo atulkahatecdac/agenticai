@@ -9,7 +9,7 @@ load_dotenv(override=True)
 llm = OpenAI()
 
 
-async def draft_with_llm(session: ClientSession, prompt_name: str, arguments: dict) -> str:
+async def render_and_draft(session: ClientSession, prompt_name: str, arguments: dict) -> str:
     # Ask the SERVER to render its prompt template with these arguments -
     # the client never sees or maintains the wording itself, just the
     # rendered result.
@@ -18,6 +18,27 @@ async def draft_with_llm(session: ClientSession, prompt_name: str, arguments: di
 
     response = llm.chat.completions.create(model="gpt-4o-mini", messages=messages)
     return response.choices[0].message.content
+
+
+async def answer_customer_question(session: ClientSession, product_name: str, customer_question: str):
+    print(f'\n=== Question about "{product_name}": {customer_question} ===')
+
+    # Ground the answer in real data before rendering any prompt template.
+    result = await session.call_tool("get_product_info", {"product_name": product_name})
+    product_details = result.content[0].text
+
+    if product_details == "NOT_FOUND":
+        reply = await render_and_draft(
+            session, "product_not_found_reply",
+            {"product_name": product_name, "customer_question": customer_question},
+        )
+    else:
+        reply = await render_and_draft(
+            session, "answer_product_question",
+            {"product_name": product_name, "product_details": product_details, "customer_question": customer_question},
+        )
+
+    print(reply)
 
 
 async def main():
@@ -39,21 +60,15 @@ async def main():
                 arg_names = [a.name for a in (p.arguments or [])]
                 print(f"  - {p.name}({', '.join(arg_names)}): {p.description}")
 
-            print("\n=== Refund confirmation ===")
-            refund_email = await draft_with_llm(
-                session,
-                "draft_refund_reply",
-                {"customer_name": "Priya Nair", "order_id": "ORD-48213", "reason": "item arrived damaged"},
+            await answer_customer_question(
+                session, "Wireless Mouse X200", "What's the price and does it come with a warranty?"
             )
-            print(refund_email)
-
-            print("\n=== Shipping delay apology ===")
-            delay_email = await draft_with_llm(
-                session,
-                "draft_delay_apology",
-                {"customer_name": "Rahul Mehta", "order_id": "ORD-59021", "days_late": "4"},
+            await answer_customer_question(
+                session, "Noise Cancelling Headphones Pro", "Is this in stock right now?"
             )
-            print(delay_email)
+            await answer_customer_question(
+                session, "Drone", "Do you sell drones?"
+            )
 
 
 if __name__ == "__main__":
