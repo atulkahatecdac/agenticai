@@ -1,0 +1,11 @@
+# Scoped to only this app's dependencies - see ../1_fastapi_langchain/requirements.txt
+# for why. Versions match the root requirements.txt pins where this repo already
+# pins them, for consistency with the rest of the course.
+fastapi==0.139.0
+uvicorn[standard]==0.50.0
+langchain-core==0.3.86
+langchain-openai==0.3.35
+pydantic==2.13.4
+python-dotenv==1.2.2
+aiomysql==0.3.2
+cryptography==48.0.1  # MySQL 8's default auth plugin (caching_sha2_password) needs this even over a plaintext connection

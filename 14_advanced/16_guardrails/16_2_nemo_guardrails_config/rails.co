@@ -1,0 +1,17 @@
+flow input rails $input_text
+  $is_injection = await CheckInputInjectionAction(text=$input_text)
+  if $is_injection
+    bot refuse input
+    abort
+
+flow output rails $output_text
+  $has_leak = await CheckOutputLeakAction(text=$output_text)
+  if $has_leak
+    bot refuse output
+    abort
+
+flow bot refuse input
+  bot say "I can't process that request - it looks like an attempt to override my instructions."
+
+flow bot refuse output
+  bot say "I'm sorry, I can't share that information."

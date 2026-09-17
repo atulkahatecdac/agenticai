@@ -1,0 +1,901 @@
+id,text,sentiment
+1,"For this course, The course exceeded my expectations. I noticed this during the course.",Positive
+2,"From a learner's perspective, The support team received my request yesterday. This relates to the current batch.",Neutral
+3,"As a student, The practical examples were insufficient.",Negative
+4,I found that The support team was not helpful. This was mentioned during the class.,Negative
+5,The live classes were boring and uninformative. This happened during the current course.,Negative
+6,The platform shows the current course progress.,Neutral
+7,"In my experience, The instructor used excellent real-world examples. This was mentioned during the class.",Positive
+8,"Overall, I learned very little from this course.",Negative
+9,"In my experience, The instructor did not provide useful examples. This relates to the current batch.",Negative
+10,I found that I learned very little from this course. I noticed this during the course.,Negative
+11,"For this course, The course exceeded my expectations. This relates to the current batch.",Positive
+12,"In my experience, I would recommend this course to other learners.",Positive
+13,"For this course, The examples made difficult concepts easy to understand.",Positive
+14,"Overall, The support team was not helpful. This relates to the current batch.",Negative
+15,The study material is unclear and incomplete. This happened during the current course.,Negative
+16,"For this course, The instructor's teaching style was difficult to understand.",Negative
+17,"From a learner's perspective, The study material is unclear and incomplete.",Negative
+18,The certificate is issued after course completion. This relates to the current batch.,Neutral
+19,"Overall, I learned very little from this course. I noticed this during the course.",Negative
+20,"As a student, I would recommend this course to other learners.",Positive
+21,I found that The quiz is available until Sunday. I noticed this during the course.,Neutral
+22,"Overall, The explanations were too complicated.",Negative
+23,"For this course, The instructor did not answer my questions. This was mentioned during the class.",Negative
+24,"For this course, The instructor explained the topic very poorly. I noticed this during the course.",Negative
+25,"In my experience, The course duration is eight weeks. I noticed this during the course.",Neutral
+26,The assignment contains ten questions.,Neutral
+27,The platform frequently stopped working. This was mentioned during the class.,Negative
+28,The instructor uploaded three new lectures.,Neutral
+29,"For this course, The examples did not help me understand the concepts. This relates to the current batch.",Negative
+30,"Overall, The instructor has scheduled an additional session. This relates to the current batch.",Neutral
+31,The support team received my request yesterday.,Neutral
+32,The course exceeded my expectations. I noticed this during the course.,Positive
+33,"For this course, The instructor has excellent teaching skills. I noticed this during the course.",Positive
+34,"Overall, The quiz is available until Sunday.",Neutral
+35,The examples did not help me understand the concepts.,Negative
+36,I found that The support team was very helpful. This was mentioned during the class.,Positive
+37,"From a learner's perspective, The live classes were boring and uninformative. This was mentioned during the class.",Negative
+38,"In my experience, The instructor did not provide useful examples.",Negative
+39,The course videos are difficult to follow.,Negative
+40,The course starts next Monday.,Neutral
+41,"As a student, The course has 25 recorded videos.",Neutral
+42,The instructor explained the topic very poorly.,Negative
+43,"For this course, The examples made difficult concepts easy to understand. I noticed this during the course.",Positive
+44,The instructor did not answer my questions. I noticed this during the course.,Negative
+45,"From a learner's perspective, The support team received my request yesterday. This happened during the current course.",Neutral
+46,The live classes were engaging and informative.,Positive
+47,"From a learner's perspective, The platform shows the current course progress. This happened during the current course.",Neutral
+48,"Overall, The support team was not helpful. This was mentioned during the class.",Negative
+49,"As a student, The instructor has uploaded a new assignment. I noticed this during the course.",Neutral
+50,"From a learner's perspective, The course videos are difficult to follow. This happened during the current course.",Negative
+51,The instructor's teaching style was difficult to understand. This happened during the current course.,Negative
+52,"As a student, I would not recommend this course.",Negative
+53,I found that The instructor has scheduled an additional session.,Neutral
+54,I found that The assignments were confusing and unhelpful.,Negative
+55,"From a learner's perspective, The course videos are excellent and easy to follow. This relates to the current batch.",Positive
+56,"As a student, The course material is well organized. This happened during the current course.",Positive
+57,"Overall, The assignment deadline is 20 September. This relates to the current batch.",Neutral
+58,The examples did not help me understand the concepts. I noticed this during the course.,Negative
+59,The exam will be conducted online. This relates to the current batch.,Neutral
+60,"From a learner's perspective, The live classes were boring and uninformative.",Negative
+61,"As a student, The instructor did not provide useful examples.",Negative
+62,"For this course, The next live class is scheduled for Friday. I noticed this during the course.",Neutral
+63,The next live class is scheduled for Friday.,Neutral
+64,The course videos are excellent and easy to follow.,Positive
+65,"For this course, The course starts next Monday.",Neutral
+66,"As a student, The assignments were irrelevant and frustrating. I noticed this during the course.",Negative
+67,"Overall, The instructor has scheduled an additional session.",Neutral
+68,The course exceeded my expectations.,Positive
+69,"As a student, The instructor has uploaded a new assignment. This relates to the current batch.",Neutral
+70,"From a learner's perspective, The live classes were boring and uninformative. This happened during the current course.",Negative
+71,The study material is unclear and incomplete.,Negative
+72,The instructor answered my questions quickly.,Positive
+73,I found that I learned a lot from this course.,Positive
+74,The course videos are difficult to follow.,Negative
+75,The platform worked smoothly throughout the course. This happened during the current course.,Positive
+76,"From a learner's perspective, The live classes were engaging and informative.",Positive
+77,"As a student, The course fee is listed on the website.",Neutral
+78,"As a student, I would not recommend this course.",Negative
+79,The study material is clear and comprehensive.,Positive
+80,"From a learner's perspective, The learning platform is simple and convenient to use.",Positive
+81,The course starts next Monday. This relates to the current batch.,Neutral
+82,"For this course, The certificate is issued after course completion.",Neutral
+83,"For this course, The course did not meet my expectations.",Negative
+84,"As a student, I would recommend this course to other learners. I noticed this during the course.",Positive
+85,I found that The assignments helped me understand the concepts.,Positive
+86,"Overall, I learned a lot from this course.",Positive
+87,"Overall, I learned very little from this course.",Negative
+88,"As a student, The course duration is eight weeks. This relates to the current batch.",Neutral
+89,"From a learner's perspective, The learning platform is simple and convenient to use. I noticed this during the course.",Positive
+90,"From a learner's perspective, The instructor uploaded three new lectures. I noticed this during the course.",Neutral
+91,The assignment contains ten questions.,Neutral
+92,"From a learner's perspective, The learning platform is difficult to use. This was mentioned during the class.",Negative
+93,"Overall, The next module will be released tomorrow. This relates to the current batch.",Neutral
+94,The next live class is scheduled for Friday.,Neutral
+95,"As a student, The course fee is listed on the website. This happened during the current course.",Neutral
+96,I found that The assignment deadline is 20 September.,Neutral
+97,"As a student, The instructor used excellent real-world examples.",Positive
+98,"From a learner's perspective, The platform shows the current course progress. This relates to the current batch.",Neutral
+99,I found that The assignments were confusing and unhelpful. This relates to the current batch.,Negative
+100,I found that The quiz is available until Sunday.,Neutral
+101,"For this course, The instructor has excellent teaching skills.",Positive
+102,I found that The quizzes were confusing and poorly designed.,Negative
+103,"For this course, The instructor did not answer my questions.",Negative
+104,"From a learner's perspective, The instructor has shared the reading material.",Neutral
+105,The course starts next Monday. This happened during the current course.,Neutral
+106,The study material is unclear and incomplete. This relates to the current batch.,Negative
+107,"For this course, The course includes both lectures and quizzes. This was mentioned during the class.",Neutral
+108,The instructor has excellent teaching skills. This relates to the current batch.,Positive
+109,"From a learner's perspective, The course videos are difficult to follow. This was mentioned during the class.",Negative
+110,"For this course, The instructor explained the topic very clearly.",Positive
+111,I found that The support team was not helpful.,Negative
+112,The exam will be conducted online.,Neutral
+113,"From a learner's perspective, The learning platform is difficult to use.",Negative
+114,The course videos are difficult to follow. This happened during the current course.,Negative
+115,"In my experience, The assignments were irrelevant and frustrating.",Negative
+116,"Overall, The next module will be released tomorrow.",Neutral
+117,"As a student, The course contains six modules. This was mentioned during the class.",Neutral
+118,I found that The quiz is available until Sunday.,Neutral
+119,"From a learner's perspective, The platform frequently stopped working.",Negative
+120,I found that The quizzes were confusing and poorly designed. This was mentioned during the class.,Negative
+121,I found that The next module will be released tomorrow.,Neutral
+122,"For this course, The instructor explained the topic very poorly. This relates to the current batch.",Negative
+123,"As a student, The instructor did not provide useful examples. This relates to the current batch.",Negative
+124,"For this course, The instructor's teaching style was difficult to understand. This happened during the current course.",Negative
+125,The learning platform is simple and convenient to use.,Positive
+126,"From a learner's perspective, The study material is clear and comprehensive. This relates to the current batch.",Positive
+127,"From a learner's perspective, The support team received my request yesterday.",Neutral
+128,"Overall, The assignment deadline is 20 September.",Neutral
+129,The assignment contains ten questions. This happened during the current course.,Neutral
+130,The live classes were engaging and informative.,Positive
+131,"As a student, The assignments were irrelevant and frustrating. This was mentioned during the class.",Negative
+132,I found that I learned a lot from this course.,Positive
+133,"From a learner's perspective, The instructor uploaded three new lectures.",Neutral
+134,The examples made difficult concepts easy to understand. This relates to the current batch.,Positive
+135,"For this course, The certificate is issued after course completion.",Neutral
+136,"Overall, The assignment deadline is 20 September. This happened during the current course.",Neutral
+137,"In my experience, The instructor did not provide useful examples.",Negative
+138,"Overall, The quizzes were useful for checking my understanding.",Positive
+139,The live classes were engaging and informative. This happened during the current course.,Positive
+140,"In my experience, The practical examples were insufficient.",Negative
+141,"Overall, I learned a lot from this course. I noticed this during the course.",Positive
+142,"For this course, The exam will be conducted online.",Neutral
+143,"Overall, The next module will be released tomorrow. This was mentioned during the class.",Neutral
+144,The course exceeded my expectations. This was mentioned during the class.,Positive
+145,The study material is clear and comprehensive. This relates to the current batch.,Positive
+146,"For this course, The course includes both lectures and quizzes.",Neutral
+147,The assignment contains ten questions. This happened during the current course.,Neutral
+148,"In my experience, The course material is badly organized. This was mentioned during the class.",Negative
+149,"Overall, The assignment deadline is 20 September. This was mentioned during the class.",Neutral
+150,"As a student, The course duration is eight weeks. This was mentioned during the class.",Neutral
+151,"From a learner's perspective, The platform shows the current course progress.",Neutral
+152,"Overall, The class is scheduled at 10 AM. I noticed this during the course.",Neutral
+153,"Overall, The assignments helped me understand the concepts. This was mentioned during the class.",Positive
+154,"From a learner's perspective, The study material is unclear and incomplete. This happened during the current course.",Negative
+155,"In my experience, The practical examples were insufficient. This relates to the current batch.",Negative
+156,"From a learner's perspective, The live classes were engaging and informative. I noticed this during the course.",Positive
+157,I found that The explanations were too complicated. This relates to the current batch.,Negative
+158,The course videos are excellent and easy to follow.,Positive
+159,"From a learner's perspective, The course videos are excellent and easy to follow.",Positive
+160,"As a student, I would not recommend this course. This was mentioned during the class.",Negative
+161,The instructor explained the topic very clearly. This relates to the current batch.,Positive
+162,"As a student, The course contains six modules.",Neutral
+163,"In my experience, The assignments were irrelevant and frustrating. This happened during the current course.",Negative
+164,"In my experience, The assignments were irrelevant and frustrating. This was mentioned during the class.",Negative
+165,"Overall, The quizzes were confusing and poorly designed. This was mentioned during the class.",Negative
+166,"Overall, I learned a lot from this course.",Positive
+167,The platform worked smoothly throughout the course.,Positive
+168,"From a learner's perspective, The platform shows the current course progress.",Neutral
+169,"As a student, The instructor did not provide useful examples. This happened during the current course.",Negative
+170,"From a learner's perspective, The learning platform is difficult to use.",Negative
+171,"From a learner's perspective, The study material is clear and comprehensive. This was mentioned during the class.",Positive
+172,"Overall, The support team was not helpful.",Negative
+173,The instructor uploaded three new lectures.,Neutral
+174,"In my experience, The course material is badly organized.",Negative
+175,The course did not meet my expectations. This was mentioned during the class.,Negative
+176,The instructor answered my questions quickly. I noticed this during the course.,Positive
+177,"For this course, The course includes both lectures and quizzes. This happened during the current course.",Neutral
+178,"In my experience, The course fee is listed on the website.",Neutral
+179,The instructor answered my questions quickly. This happened during the current course.,Positive
+180,The instructor's teaching style was difficult to understand.,Negative
+181,"As a student, The course material is badly organized. This was mentioned during the class.",Negative
+182,The examples did not help me understand the concepts.,Negative
+183,"For this course, The instructor explained the topic very poorly.",Negative
+184,I found that I learned very little from this course.,Negative
+185,The platform shows the current course progress. I noticed this during the course.,Neutral
+186,"Overall, The assignments were confusing and unhelpful. This was mentioned during the class.",Negative
+187,"From a learner's perspective, The study material is unclear and incomplete. This was mentioned during the class.",Negative
+188,"In my experience, The course contains six modules.",Neutral
+189,"In my experience, The course has 25 recorded videos. This was mentioned during the class.",Neutral
+190,"Overall, The support team was very helpful. This was mentioned during the class.",Positive
+191,"In my experience, The course duration is eight weeks. This relates to the current batch.",Neutral
+192,"For this course, The certificate is issued after course completion. This was mentioned during the class.",Neutral
+193,"As a student, The assignments were irrelevant and frustrating.",Negative
+194,I found that The explanations were concise and easy to understand. This happened during the current course.,Positive
+195,The learning platform is difficult to use. This happened during the current course.,Negative
+196,The instructor answered my questions quickly. This relates to the current batch.,Positive
+197,"In my experience, The course material is badly organized.",Negative
+198,"From a learner's perspective, The support team received my request yesterday.",Neutral
+199,"As a student, The course contains six modules. This relates to the current batch.",Neutral
+200,I found that The support team was not helpful. I noticed this during the course.,Negative
+201,"In my experience, The course duration is eight weeks. This relates to the current batch.",Neutral
+202,"In my experience, The course duration is eight weeks. This happened during the current course.",Neutral
+203,The live classes were engaging and informative. This relates to the current batch.,Positive
+204,"Overall, The assignments helped me understand the concepts.",Positive
+205,The learning platform is simple and convenient to use.,Positive
+206,"In my experience, The course has 25 recorded videos. This happened during the current course.",Neutral
+207,The support team received my request yesterday.,Neutral
+208,"From a learner's perspective, The study material is clear and comprehensive.",Positive
+209,The course includes both lectures and quizzes. I noticed this during the course.,Neutral
+210,The learning platform is difficult to use. This relates to the current batch.,Negative
+211,"In my experience, The course material is well organized.",Positive
+212,The support team received my request yesterday. I noticed this during the course.,Neutral
+213,The live classes were boring and uninformative. This was mentioned during the class.,Negative
+214,I found that The assignment deadline is 20 September. I noticed this during the course.,Neutral
+215,"In my experience, The instructor has uploaded a new assignment. This relates to the current batch.",Neutral
+216,The instructor's teaching style was difficult to understand.,Negative
+217,The course videos are difficult to follow. I noticed this during the course.,Negative
+218,The instructor has excellent teaching skills.,Positive
+219,The course starts next Monday. This was mentioned during the class.,Neutral
+220,"Overall, The assignments were confusing and unhelpful. This happened during the current course.",Negative
+221,The instructor answered my questions quickly.,Positive
+222,"For this course, The examples made difficult concepts easy to understand. This was mentioned during the class.",Positive
+223,"As a student, The instructor used excellent real-world examples. This happened during the current course.",Positive
+224,The learning platform is difficult to use. I noticed this during the course.,Negative
+225,The platform shows the current course progress. This happened during the current course.,Neutral
+226,The support team received my request yesterday. This was mentioned during the class.,Neutral
+227,"As a student, The instructor has uploaded a new assignment. I noticed this during the course.",Neutral
+228,"From a learner's perspective, The platform worked smoothly throughout the course. This relates to the current batch.",Positive
+229,The course exceeded my expectations.,Positive
+230,The learning platform is difficult to use.,Negative
+231,The exam will be conducted online. This happened during the current course.,Neutral
+232,The platform shows the current course progress. This was mentioned during the class.,Neutral
+233,"As a student, The assignments were irrelevant and frustrating.",Negative
+234,The course videos are difficult to follow. This relates to the current batch.,Negative
+235,"In my experience, The course material is well organized.",Positive
+236,I found that The instructor has scheduled an additional session. This relates to the current batch.,Neutral
+237,"For this course, The examples made difficult concepts easy to understand. This happened during the current course.",Positive
+238,"For this course, The next live class is scheduled for Friday. This happened during the current course.",Neutral
+239,"From a learner's perspective, The learning platform is simple and convenient to use.",Positive
+240,"Overall, The explanations were concise and easy to understand.",Positive
+241,"From a learner's perspective, The live classes were engaging and informative. This happened during the current course.",Positive
+242,"Overall, The support team was not helpful.",Negative
+243,"As a student, The instructor used excellent real-world examples.",Positive
+244,"For this course, The course did not meet my expectations. I noticed this during the course.",Negative
+245,"For this course, The instructor's teaching style was difficult to understand. I noticed this during the course.",Negative
+246,"From a learner's perspective, The study material is clear and comprehensive.",Positive
+247,"From a learner's perspective, The instructor has shared the reading material. I noticed this during the course.",Neutral
+248,"From a learner's perspective, The instructor has shared the reading material.",Neutral
+249,"Overall, The assignments were confusing and unhelpful. This happened during the current course.",Negative
+250,"As a student, I would recommend this course to other learners.",Positive
+251,"Overall, The explanations were concise and easy to understand.",Positive
+252,"For this course, The instructor answered my questions quickly.",Positive
+253,"In my experience, The course duration is eight weeks. This was mentioned during the class.",Neutral
+254,The certificate is issued after course completion. This was mentioned during the class.,Neutral
+255,The instructor has excellent teaching skills. This happened during the current course.,Positive
+256,"Overall, The quizzes were confusing and poorly designed. I noticed this during the course.",Negative
+257,I found that The explanations were concise and easy to understand. I noticed this during the course.,Positive
+258,"For this course, The instructor did not answer my questions. This relates to the current batch.",Negative
+259,"As a student, The practical examples were insufficient. This was mentioned during the class.",Negative
+260,"For this course, The course starts next Monday.",Neutral
+261,The platform frequently stopped working.,Negative
+262,The course videos are excellent and easy to follow. This was mentioned during the class.,Positive
+263,The instructor uploaded three new lectures.,Neutral
+264,"For this course, The instructor explained the topic very poorly. This was mentioned during the class.",Negative
+265,"In my experience, I would recommend this course to other learners. This was mentioned during the class.",Positive
+266,"Overall, The explanations were too complicated. This relates to the current batch.",Negative
+267,The instructor's teaching style was difficult to understand.,Negative
+268,"As a student, I would recommend this course to other learners. This relates to the current batch.",Positive
+269,"In my experience, The course duration is eight weeks.",Neutral
+270,"For this course, The instructor explained the topic very clearly.",Positive
+271,"For this course, The next live class is scheduled for Friday.",Neutral
+272,I found that The class is scheduled at 10 AM.,Neutral
+273,"In my experience, The assignments were irrelevant and frustrating.",Negative
+274,"As a student, The course material is badly organized. This relates to the current batch.",Negative
+275,I found that The quizzes were useful for checking my understanding.,Positive
+276,"For this course, The course exceeded my expectations. This was mentioned during the class.",Positive
+277,"Overall, The quiz is available until Sunday.",Neutral
+278,The study material is unclear and incomplete.,Negative
+279,"As a student, The course material is badly organized.",Negative
+280,"From a learner's perspective, The platform shows the current course progress. This was mentioned during the class.",Neutral
+281,The certificate is issued after course completion. This happened during the current course.,Neutral
+282,"Overall, The support team was not helpful.",Negative
+283,"Overall, The explanations were concise and easy to understand. This was mentioned during the class.",Positive
+284,"From a learner's perspective, The live classes were boring and uninformative. I noticed this during the course.",Negative
+285,"Overall, The assignments helped me understand the concepts. I noticed this during the course.",Positive
+286,I found that The explanations were too complicated.,Negative
+287,"From a learner's perspective, The study material is clear and comprehensive. This was mentioned during the class.",Positive
+288,"For this course, The examples made difficult concepts easy to understand.",Positive
+289,The examples did not help me understand the concepts. I noticed this during the course.,Negative
+290,I found that The explanations were too complicated.,Negative
+291,"As a student, The assignments were irrelevant and frustrating. This happened during the current course.",Negative
+292,The exam will be conducted online.,Neutral
+293,The support team received my request yesterday.,Neutral
+294,"From a learner's perspective, The platform worked smoothly throughout the course. This was mentioned during the class.",Positive
+295,The learning platform is simple and convenient to use. This was mentioned during the class.,Positive
+296,"From a learner's perspective, The platform frequently stopped working.",Negative
+297,I found that The instructor has scheduled an additional session.,Neutral
+298,"As a student, The instructor has uploaded a new assignment.",Neutral
+299,I found that The support team was very helpful.,Positive
+300,"For this course, The course did not meet my expectations.",Negative
+301,"For this course, The exam will be conducted online. This was mentioned during the class.",Neutral
+302,"For this course, The instructor answered my questions quickly.",Positive
+303,The instructor did not answer my questions. This was mentioned during the class.,Negative
+304,"In my experience, The course fee is listed on the website. This relates to the current batch.",Neutral
+305,"For this course, The course starts next Monday. This was mentioned during the class.",Neutral
+306,The exam will be conducted online. I noticed this during the course.,Neutral
+307,I found that The support team was very helpful.,Positive
+308,"For this course, The course exceeded my expectations. This happened during the current course.",Positive
+309,The next live class is scheduled for Friday.,Neutral
+310,"From a learner's perspective, The platform worked smoothly throughout the course. This happened during the current course.",Positive
+311,"As a student, The course fee is listed on the website.",Neutral
+312,"From a learner's perspective, The learning platform is simple and convenient to use. This was mentioned during the class.",Positive
+313,"As a student, I really enjoyed the practical examples in this course. This happened during the current course.",Positive
+314,The course starts next Monday.,Neutral
+315,"For this course, The certificate is issued after course completion.",Neutral
+316,"From a learner's perspective, The course videos are excellent and easy to follow.",Positive
+317,"In my experience, The assignments were interesting and relevant.",Positive
+318,"Overall, The explanations were too complicated. This happened during the current course.",Negative
+319,The instructor explained the topic very clearly. I noticed this during the course.,Positive
+320,"As a student, The course material is well organized.",Positive
+321,"In my experience, The instructor used excellent real-world examples.",Positive
+322,"In my experience, The assignments were irrelevant and frustrating. I noticed this during the course.",Negative
+323,"As a student, I really enjoyed the practical examples in this course. This relates to the current batch.",Positive
+324,The learning platform is simple and convenient to use.,Positive
+325,"In my experience, I really enjoyed the practical examples in this course. I noticed this during the course.",Positive
+326,I found that The quizzes were useful for checking my understanding. This happened during the current course.,Positive
+327,"In my experience, The course has 25 recorded videos.",Neutral
+328,"From a learner's perspective, The learning platform is difficult to use. I noticed this during the course.",Negative
+329,I found that The assignments were confusing and unhelpful.,Negative
+330,I found that I learned very little from this course. This happened during the current course.,Negative
+331,"In my experience, I would not recommend this course.",Negative
+332,"For this course, The course starts next Monday.",Neutral
+333,"For this course, The instructor answered my questions quickly.",Positive
+334,I found that The quizzes were confusing and poorly designed. This happened during the current course.,Negative
+335,I found that The assignment deadline is 20 September.,Neutral
+336,The course did not meet my expectations. This happened during the current course.,Negative
+337,I found that The quizzes were confusing and poorly designed.,Negative
+338,The assignment contains ten questions. I noticed this during the course.,Neutral
+339,"In my experience, The assignments were interesting and relevant. I noticed this during the course.",Positive
+340,The platform frequently stopped working. This relates to the current batch.,Negative
+341,The instructor explained the topic very clearly.,Positive
+342,"As a student, The course material is well organized. This relates to the current batch.",Positive
+343,"Overall, The support team was very helpful.",Positive
+344,The course did not meet my expectations. I noticed this during the course.,Negative
+345,"As a student, The assignments were irrelevant and frustrating. I noticed this during the course.",Negative
+346,I found that The quiz is available until Sunday. This was mentioned during the class.,Neutral
+347,The next live class is scheduled for Friday. I noticed this during the course.,Neutral
+348,"In my experience, The practical examples were insufficient.",Negative
+349,"Overall, The quizzes were confusing and poorly designed.",Negative
+350,"As a student, I would not recommend this course. I noticed this during the course.",Negative
+351,"Overall, The support team was not helpful. This happened during the current course.",Negative
+352,The instructor's teaching style was difficult to understand. I noticed this during the course.,Negative
+353,"In my experience, I really enjoyed the practical examples in this course.",Positive
+354,"As a student, The instructor used excellent real-world examples. This relates to the current batch.",Positive
+355,I found that The quizzes were useful for checking my understanding.,Positive
+356,"From a learner's perspective, The support team received my request yesterday. I noticed this during the course.",Neutral
+357,I found that The support team was not helpful. This happened during the current course.,Negative
+358,"In my experience, The practical examples were insufficient. This happened during the current course.",Negative
+359,The instructor uploaded three new lectures. This was mentioned during the class.,Neutral
+360,"In my experience, I would recommend this course to other learners.",Positive
+361,The study material is clear and comprehensive. This was mentioned during the class.,Positive
+362,"As a student, I really enjoyed the practical examples in this course.",Positive
+363,"As a student, I would not recommend this course. This relates to the current batch.",Negative
+364,"From a learner's perspective, The study material is unclear and incomplete. This was mentioned during the class.",Negative
+365,The assignment contains ten questions. This was mentioned during the class.,Neutral
+366,"From a learner's perspective, The course videos are difficult to follow.",Negative
+367,The instructor explained the topic very poorly.,Negative
+368,"In my experience, I would not recommend this course. This was mentioned during the class.",Negative
+369,The platform frequently stopped working. This happened during the current course.,Negative
+370,"For this course, The exam will be conducted online.",Neutral
+371,"As a student, The course fee is listed on the website.",Neutral
+372,"In my experience, The practical examples were insufficient. I noticed this during the course.",Negative
+373,"For this course, The examples did not help me understand the concepts.",Negative
+374,I found that The class is scheduled at 10 AM.,Neutral
+375,"In my experience, The assignments were interesting and relevant. This happened during the current course.",Positive
+376,"Overall, The quizzes were useful for checking my understanding.",Positive
+377,The instructor has shared the reading material.,Neutral
+378,"From a learner's perspective, The support team received my request yesterday. This was mentioned during the class.",Neutral
+379,"As a student, The course duration is eight weeks.",Neutral
+380,I found that The quizzes were confusing and poorly designed.,Negative
+381,"Overall, I learned a lot from this course. This relates to the current batch.",Positive
+382,The platform worked smoothly throughout the course. This was mentioned during the class.,Positive
+383,"As a student, The assignments were interesting and relevant. I noticed this during the course.",Positive
+384,"From a learner's perspective, The platform worked smoothly throughout the course. I noticed this during the course.",Positive
+385,"As a student, The course material is badly organized. This happened during the current course.",Negative
+386,"From a learner's perspective, The course videos are excellent and easy to follow. This happened during the current course.",Positive
+387,"Overall, I learned very little from this course.",Negative
+388,The course starts next Monday.,Neutral
+389,The instructor explained the topic very clearly. This was mentioned during the class.,Positive
+390,I found that The next module will be released tomorrow. This relates to the current batch.,Neutral
+391,The instructor has excellent teaching skills. I noticed this during the course.,Positive
+392,The course videos are difficult to follow. I noticed this during the course.,Negative
+393,"In my experience, The instructor has uploaded a new assignment.",Neutral
+394,"Overall, I learned very little from this course. This relates to the current batch.",Negative
+395,The examples did not help me understand the concepts. This happened during the current course.,Negative
+396,"From a learner's perspective, The platform frequently stopped working. This was mentioned during the class.",Negative
+397,The platform worked smoothly throughout the course.,Positive
+398,The instructor did not answer my questions. This relates to the current batch.,Negative
+399,"From a learner's perspective, The study material is clear and comprehensive.",Positive
+400,I found that The next module will be released tomorrow.,Neutral
+401,I found that The support team was very helpful.,Positive
+402,"In my experience, The course contains six modules. This was mentioned during the class.",Neutral
+403,"From a learner's perspective, The platform shows the current course progress. I noticed this during the course.",Neutral
+404,The exam will be conducted online.,Neutral
+405,The certificate is issued after course completion. I noticed this during the course.,Neutral
+406,"For this course, The instructor explained the topic very clearly. I noticed this during the course.",Positive
+407,"For this course, The examples did not help me understand the concepts.",Negative
+408,"Overall, The assignments were confusing and unhelpful.",Negative
+409,"As a student, The instructor did not provide useful examples. This was mentioned during the class.",Negative
+410,"As a student, The assignments were irrelevant and frustrating. This relates to the current batch.",Negative
+411,"In my experience, The assignments were interesting and relevant.",Positive
+412,"As a student, The course fee is listed on the website. This was mentioned during the class.",Neutral
+413,I found that The support team was not helpful.,Negative
+414,"For this course, The instructor answered my questions quickly. I noticed this during the course.",Positive
+415,"Overall, The explanations were concise and easy to understand.",Positive
+416,"From a learner's perspective, The platform frequently stopped working. This happened during the current course.",Negative
+417,"From a learner's perspective, The instructor has shared the reading material. This was mentioned during the class.",Neutral
+418,"For this course, The course starts next Monday. This happened during the current course.",Neutral
+419,"For this course, The instructor has excellent teaching skills. This relates to the current batch.",Positive
+420,"In my experience, The instructor did not provide useful examples.",Negative
+421,"From a learner's perspective, The assignment contains ten questions. I noticed this during the course.",Neutral
+422,I found that The instructor has scheduled an additional session.,Neutral
+423,"In my experience, I would recommend this course to other learners. This relates to the current batch.",Positive
+424,"For this course, The course starts next Monday. This relates to the current batch.",Neutral
+425,I found that The explanations were too complicated. This was mentioned during the class.,Negative
+426,"Overall, The assignments were confusing and unhelpful. This relates to the current batch.",Negative
+427,The study material is clear and comprehensive. I noticed this during the course.,Positive
+428,The instructor did not answer my questions.,Negative
+429,"From a learner's perspective, The assignment contains ten questions.",Neutral
+430,"In my experience, The assignments were interesting and relevant. This was mentioned during the class.",Positive
+431,"In my experience, The course fee is listed on the website. This was mentioned during the class.",Neutral
+432,"In my experience, I would not recommend this course.",Negative
+433,"As a student, The practical examples were insufficient.",Negative
+434,"From a learner's perspective, The instructor uploaded three new lectures. This relates to the current batch.",Neutral
+435,The instructor has excellent teaching skills.,Positive
+436,"In my experience, The course contains six modules. This relates to the current batch.",Neutral
+437,I found that I learned very little from this course. This was mentioned during the class.,Negative
+438,"For this course, The instructor's teaching style was difficult to understand. This was mentioned during the class.",Negative
+439,"Overall, The assignments were confusing and unhelpful.",Negative
+440,The instructor's teaching style was difficult to understand. This happened during the current course.,Negative
+441,"Overall, I learned a lot from this course.",Positive
+442,"For this course, The instructor explained the topic very poorly. This happened during the current course.",Negative
+443,"For this course, The instructor did not answer my questions. I noticed this during the course.",Negative
+444,"From a learner's perspective, The platform frequently stopped working.",Negative
+445,"In my experience, The instructor used excellent real-world examples.",Positive
+446,"For this course, The course exceeded my expectations.",Positive
+447,"In my experience, The instructor used excellent real-world examples. I noticed this during the course.",Positive
+448,"Overall, I learned a lot from this course. This was mentioned during the class.",Positive
+449,"In my experience, The assignments were irrelevant and frustrating.",Negative
+450,"From a learner's perspective, The live classes were boring and uninformative. This relates to the current batch.",Negative
+451,"In my experience, I would not recommend this course.",Negative
+452,I found that The assignments were confusing and unhelpful. This happened during the current course.,Negative
+453,The course videos are excellent and easy to follow. This happened during the current course.,Positive
+454,"As a student, I would recommend this course to other learners. This happened during the current course.",Positive
+455,"In my experience, The practical examples were insufficient. This was mentioned during the class.",Negative
+456,The platform frequently stopped working.,Negative
+457,The instructor's teaching style was difficult to understand. This was mentioned during the class.,Negative
+458,"In my experience, The course material is badly organized.",Negative
+459,"For this course, The next live class is scheduled for Friday.",Neutral
+460,I found that The quizzes were useful for checking my understanding. This was mentioned during the class.,Positive
+461,I found that The instructor has scheduled an additional session. This was mentioned during the class.,Neutral
+462,"From a learner's perspective, The course videos are excellent and easy to follow. This was mentioned during the class.",Positive
+463,The course starts next Monday. I noticed this during the course.,Neutral
+464,The course videos are difficult to follow. This was mentioned during the class.,Negative
+465,I found that The class is scheduled at 10 AM.,Neutral
+466,The live classes were boring and uninformative.,Negative
+467,"In my experience, The course material is well organized. This happened during the current course.",Positive
+468,"As a student, I really enjoyed the practical examples in this course. I noticed this during the course.",Positive
+469,"For this course, The course did not meet my expectations. This relates to the current batch.",Negative
+470,"For this course, The instructor explained the topic very clearly. This was mentioned during the class.",Positive
+471,"For this course, The instructor explained the topic very poorly.",Negative
+472,"In my experience, The course material is badly organized. This happened during the current course.",Negative
+473,The instructor explained the topic very poorly. This was mentioned during the class.,Negative
+474,"Overall, The quizzes were useful for checking my understanding. This relates to the current batch.",Positive
+475,"From a learner's perspective, The platform worked smoothly throughout the course.",Positive
+476,"From a learner's perspective, The instructor has shared the reading material. This happened during the current course.",Neutral
+477,The platform shows the current course progress.,Neutral
+478,I found that The next module will be released tomorrow. This happened during the current course.,Neutral
+479,"Overall, The class is scheduled at 10 AM.",Neutral
+480,"For this course, The instructor's teaching style was difficult to understand.",Negative
+481,"Overall, The explanations were concise and easy to understand. This relates to the current batch.",Positive
+482,"From a learner's perspective, The live classes were engaging and informative.",Positive
+483,"As a student, The course material is badly organized. I noticed this during the course.",Negative
+484,"Overall, The explanations were concise and easy to understand. This relates to the current batch.",Positive
+485,"As a student, I would recommend this course to other learners. This was mentioned during the class.",Positive
+486,"For this course, The instructor has excellent teaching skills. This was mentioned during the class.",Positive
+487,"From a learner's perspective, The assignment contains ten questions. This was mentioned during the class.",Neutral
+488,"From a learner's perspective, The study material is unclear and incomplete. This relates to the current batch.",Negative
+489,The course did not meet my expectations.,Negative
+490,"As a student, The practical examples were insufficient. I noticed this during the course.",Negative
+491,I found that The explanations were concise and easy to understand.,Positive
+492,"In my experience, The course fee is listed on the website.",Neutral
+493,"For this course, The instructor answered my questions quickly. This relates to the current batch.",Positive
+494,"As a student, The course material is well organized.",Positive
+495,The instructor uploaded three new lectures. This relates to the current batch.,Neutral
+496,"From a learner's perspective, The course videos are difficult to follow.",Negative
+497,"Overall, The assignments helped me understand the concepts. This happened during the current course.",Positive
+498,"Overall, The quizzes were useful for checking my understanding. This happened during the current course.",Positive
+499,"For this course, The exam will be conducted online. This happened during the current course.",Neutral
+500,"For this course, The examples did not help me understand the concepts. This happened during the current course.",Negative
+501,"From a learner's perspective, The instructor has shared the reading material.",Neutral
+502,"Overall, The quizzes were confusing and poorly designed.",Negative
+503,"Overall, The quizzes were useful for checking my understanding.",Positive
+504,I found that The assignment deadline is 20 September. This happened during the current course.,Neutral
+505,The instructor uploaded three new lectures. I noticed this during the course.,Neutral
+506,The course videos are excellent and easy to follow. I noticed this during the course.,Positive
+507,I found that The assignments helped me understand the concepts. I noticed this during the course.,Positive
+508,"In my experience, The instructor has uploaded a new assignment. I noticed this during the course.",Neutral
+509,"For this course, The instructor did not answer my questions.",Negative
+510,I found that The class is scheduled at 10 AM. I noticed this during the course.,Neutral
+511,The instructor did not answer my questions.,Negative
+512,"Overall, The instructor has scheduled an additional session.",Neutral
+513,"For this course, The course exceeded my expectations.",Positive
+514,The support team received my request yesterday. This relates to the current batch.,Neutral
+515,I found that The assignment deadline is 20 September. This relates to the current batch.,Neutral
+516,The instructor did not answer my questions.,Negative
+517,The examples made difficult concepts easy to understand.,Positive
+518,"In my experience, The instructor did not provide useful examples. This happened during the current course.",Negative
+519,"As a student, The assignments were interesting and relevant.",Positive
+520,The examples made difficult concepts easy to understand. I noticed this during the course.,Positive
+521,I found that The explanations were concise and easy to understand.,Positive
+522,"As a student, The instructor has uploaded a new assignment.",Neutral
+523,"From a learner's perspective, The live classes were engaging and informative. This relates to the current batch.",Positive
+524,I found that The explanations were concise and easy to understand. This was mentioned during the class.,Positive
+525,"For this course, The next live class is scheduled for Friday. This was mentioned during the class.",Neutral
+526,The platform worked smoothly throughout the course. This relates to the current batch.,Positive
+527,"Overall, The quizzes were useful for checking my understanding. I noticed this during the course.",Positive
+528,I found that The quizzes were confusing and poorly designed. This was mentioned during the class.,Negative
+529,The examples made difficult concepts easy to understand. I noticed this during the course.,Positive
+530,The live classes were boring and uninformative. This happened during the current course.,Negative
+531,I found that The next module will be released tomorrow. This was mentioned during the class.,Neutral
+532,"As a student, The instructor did not provide useful examples.",Negative
+533,"In my experience, The instructor used excellent real-world examples. This relates to the current batch.",Positive
+534,I found that The explanations were too complicated. I noticed this during the course.,Negative
+535,I found that The class is scheduled at 10 AM. This happened during the current course.,Neutral
+536,The course includes both lectures and quizzes.,Neutral
+537,The platform frequently stopped working. I noticed this during the course.,Negative
+538,"For this course, The certificate is issued after course completion. I noticed this during the course.",Neutral
+539,"In my experience, The course contains six modules. This happened during the current course.",Neutral
+540,"Overall, The explanations were too complicated. I noticed this during the course.",Negative
+541,The course includes both lectures and quizzes. This happened during the current course.,Neutral
+542,"In my experience, The assignments were interesting and relevant.",Positive
+543,I found that The assignments helped me understand the concepts. This relates to the current batch.,Positive
+544,"Overall, The instructor has scheduled an additional session. This happened during the current course.",Neutral
+545,The live classes were engaging and informative. This happened during the current course.,Positive
+546,"Overall, The support team was very helpful. This relates to the current batch.",Positive
+547,The instructor's teaching style was difficult to understand. This relates to the current batch.,Negative
+548,The examples did not help me understand the concepts.,Negative
+549,"As a student, The course material is badly organized.",Negative
+550,I found that The support team was very helpful. I noticed this during the course.,Positive
+551,"For this course, The exam will be conducted online. This relates to the current batch.",Neutral
+552,"For this course, The course includes both lectures and quizzes. This relates to the current batch.",Neutral
+553,"For this course, The instructor answered my questions quickly. This was mentioned during the class.",Positive
+554,"From a learner's perspective, The platform frequently stopped working. This relates to the current batch.",Negative
+555,The live classes were engaging and informative. This was mentioned during the class.,Positive
+556,"In my experience, The course material is well organized. I noticed this during the course.",Positive
+557,"As a student, The course contains six modules. I noticed this during the course.",Neutral
+558,"In my experience, The assignments were irrelevant and frustrating. This relates to the current batch.",Negative
+559,"From a learner's perspective, The assignment contains ten questions.",Neutral
+560,"In my experience, I really enjoyed the practical examples in this course. This was mentioned during the class.",Positive
+561,The instructor explained the topic very clearly.,Positive
+562,I found that The quiz is available until Sunday.,Neutral
+563,"Overall, The assignments helped me understand the concepts.",Positive
+564,The study material is unclear and incomplete. I noticed this during the course.,Negative
+565,The instructor explained the topic very clearly. This happened during the current course.,Positive
+566,"For this course, The exam will be conducted online.",Neutral
+567,"Overall, The instructor has scheduled an additional session. This was mentioned during the class.",Neutral
+568,I found that I learned a lot from this course. I noticed this during the course.,Positive
+569,"Overall, The assignments helped me understand the concepts.",Positive
+570,"For this course, The instructor explained the topic very poorly.",Negative
+571,"For this course, The instructor's teaching style was difficult to understand.",Negative
+572,"For this course, The next live class is scheduled for Friday.",Neutral
+573,"Overall, The quiz is available until Sunday. I noticed this during the course.",Neutral
+574,I found that The support team was not helpful. This relates to the current batch.,Negative
+575,"For this course, The examples did not help me understand the concepts. This was mentioned during the class.",Negative
+576,I found that The quiz is available until Sunday. This was mentioned during the class.,Neutral
+577,"Overall, The explanations were concise and easy to understand. This happened during the current course.",Positive
+578,"From a learner's perspective, The course videos are difficult to follow.",Negative
+579,The instructor has shared the reading material. This relates to the current batch.,Neutral
+580,"As a student, The assignments were irrelevant and frustrating.",Negative
+581,I found that The next module will be released tomorrow. I noticed this during the course.,Neutral
+582,I found that The assignments helped me understand the concepts.,Positive
+583,"In my experience, The practical examples were insufficient.",Negative
+584,"In my experience, The course has 25 recorded videos.",Neutral
+585,I found that The explanations were concise and easy to understand. This relates to the current batch.,Positive
+586,I found that The explanations were too complicated. This happened during the current course.,Negative
+587,"From a learner's perspective, The live classes were boring and uninformative.",Negative
+588,I found that The instructor has scheduled an additional session. This happened during the current course.,Neutral
+589,"For this course, The course exceeded my expectations.",Positive
+590,"From a learner's perspective, The learning platform is difficult to use. This relates to the current batch.",Negative
+591,"Overall, The assignment deadline is 20 September.",Neutral
+592,"In my experience, I would not recommend this course. I noticed this during the course.",Negative
+593,"Overall, The assignments helped me understand the concepts. This happened during the current course.",Positive
+594,"In my experience, The instructor has uploaded a new assignment. This was mentioned during the class.",Neutral
+595,The examples made difficult concepts easy to understand.,Positive
+596,"In my experience, The course has 25 recorded videos.",Neutral
+597,I found that The assignment deadline is 20 September.,Neutral
+598,"Overall, The explanations were concise and easy to understand. I noticed this during the course.",Positive
+599,The course did not meet my expectations.,Negative
+600,"From a learner's perspective, The instructor has shared the reading material.",Neutral
+601,"For this course, The course includes both lectures and quizzes. I noticed this during the course.",Neutral
+602,"Overall, I learned a lot from this course. This happened during the current course.",Positive
+603,"Overall, The assignments helped me understand the concepts. This relates to the current batch.",Positive
+604,The instructor uploaded three new lectures. I noticed this during the course.,Neutral
+605,"As a student, The assignments were interesting and relevant. I noticed this during the course.",Positive
+606,"From a learner's perspective, The study material is unclear and incomplete. I noticed this during the course.",Negative
+607,"In my experience, The instructor used excellent real-world examples. This happened during the current course.",Positive
+608,"Overall, The quiz is available until Sunday.",Neutral
+609,"As a student, The practical examples were insufficient. This relates to the current batch.",Negative
+610,The study material is unclear and incomplete. This was mentioned during the class.,Negative
+611,"From a learner's perspective, The platform worked smoothly throughout the course.",Positive
+612,"As a student, The assignments were interesting and relevant.",Positive
+613,"For this course, The course includes both lectures and quizzes.",Neutral
+614,The platform shows the current course progress. This relates to the current batch.,Neutral
+615,"In my experience, The course material is well organized.",Positive
+616,The instructor has shared the reading material.,Neutral
+617,"As a student, I really enjoyed the practical examples in this course.",Positive
+618,"In my experience, The course fee is listed on the website. I noticed this during the course.",Neutral
+619,"In my experience, The course duration is eight weeks.",Neutral
+620,"In my experience, The instructor has uploaded a new assignment.",Neutral
+621,"From a learner's perspective, The assignment contains ten questions.",Neutral
+622,I found that The support team was very helpful. This happened during the current course.,Positive
+623,"As a student, The instructor used excellent real-world examples. This was mentioned during the class.",Positive
+624,"As a student, The course material is badly organized.",Negative
+625,The course did not meet my expectations.,Negative
+626,I found that The assignments helped me understand the concepts. This was mentioned during the class.,Positive
+627,"For this course, The instructor explained the topic very clearly. This happened during the current course.",Positive
+628,"As a student, The assignments were interesting and relevant. This was mentioned during the class.",Positive
+629,"Overall, The explanations were too complicated.",Negative
+630,The instructor explained the topic very poorly. I noticed this during the course.,Negative
+631,"As a student, The course has 25 recorded videos. This happened during the current course.",Neutral
+632,I found that The assignments were confusing and unhelpful. This was mentioned during the class.,Negative
+633,"From a learner's perspective, The course videos are difficult to follow. I noticed this during the course.",Negative
+634,The certificate is issued after course completion.,Neutral
+635,The instructor has excellent teaching skills.,Positive
+636,"Overall, The support team was very helpful.",Positive
+637,"For this course, The instructor's teaching style was difficult to understand. This relates to the current batch.",Negative
+638,"As a student, The course has 25 recorded videos. This relates to the current batch.",Neutral
+639,The examples made difficult concepts easy to understand.,Positive
+640,The instructor did not answer my questions. This happened during the current course.,Negative
+641,"Overall, I learned very little from this course.",Negative
+642,"For this course, The instructor did not answer my questions. This relates to the current batch.",Negative
+643,"As a student, The assignments were interesting and relevant. This happened during the current course.",Positive
+644,"From a learner's perspective, The instructor uploaded three new lectures. This happened during the current course.",Neutral
+645,"In my experience, I would recommend this course to other learners. This happened during the current course.",Positive
+646,"In my experience, The course duration is eight weeks.",Neutral
+647,"From a learner's perspective, The learning platform is simple and convenient to use.",Positive
+648,"In my experience, I really enjoyed the practical examples in this course.",Positive
+649,"Overall, The quizzes were confusing and poorly designed. This happened during the current course.",Negative
+650,The assignment contains ten questions.,Neutral
+651,I found that The explanations were too complicated.,Negative
+652,The next live class is scheduled for Friday. This happened during the current course.,Neutral
+653,"From a learner's perspective, The live classes were engaging and informative. This was mentioned during the class.",Positive
+654,The instructor has shared the reading material.,Neutral
+655,"For this course, The instructor explained the topic very clearly. This relates to the current batch.",Positive
+656,I found that The quiz is available until Sunday. This relates to the current batch.,Neutral
+657,The course exceeded my expectations. This happened during the current course.,Positive
+658,"As a student, The course material is well organized.",Positive
+659,"For this course, The certificate is issued after course completion. This happened during the current course.",Neutral
+660,I found that The assignment deadline is 20 September. This was mentioned during the class.,Neutral
+661,"In my experience, The assignments were interesting and relevant. This relates to the current batch.",Positive
+662,"In my experience, The course material is badly organized. I noticed this during the course.",Negative
+663,"Overall, The assignment deadline is 20 September. This happened during the current course.",Neutral
+664,"From a learner's perspective, The course videos are excellent and easy to follow.",Positive
+665,I found that The quizzes were confusing and poorly designed. This relates to the current batch.,Negative
+666,"As a student, The course contains six modules.",Neutral
+667,I found that I learned a lot from this course. This was mentioned during the class.,Positive
+668,"From a learner's perspective, The study material is clear and comprehensive. I noticed this during the course.",Positive
+669,"In my experience, I really enjoyed the practical examples in this course. This relates to the current batch.",Positive
+670,"Overall, The assignments were confusing and unhelpful. I noticed this during the course.",Negative
+671,"From a learner's perspective, The live classes were boring and uninformative.",Negative
+672,"For this course, The examples did not help me understand the concepts. I noticed this during the course.",Negative
+673,"From a learner's perspective, The assignment contains ten questions. This relates to the current batch.",Neutral
+674,The exam will be conducted online. This was mentioned during the class.,Neutral
+675,The certificate is issued after course completion. I noticed this during the course.,Neutral
+676,"In my experience, I would not recommend this course.",Negative
+677,"From a learner's perspective, The learning platform is simple and convenient to use. This happened during the current course.",Positive
+678,"In my experience, The course fee is listed on the website. This happened during the current course.",Neutral
+679,"In my experience, The course has 25 recorded videos. This relates to the current batch.",Neutral
+680,"From a learner's perspective, The study material is unclear and incomplete.",Negative
+681,"From a learner's perspective, The instructor uploaded three new lectures.",Neutral
+682,The instructor explained the topic very poorly. This happened during the current course.,Negative
+683,The certificate is issued after course completion.,Neutral
+684,The live classes were engaging and informative. I noticed this during the course.,Positive
+685,I found that The assignments were confusing and unhelpful.,Negative
+686,"Overall, The quizzes were confusing and poorly designed. This relates to the current batch.",Negative
+687,"In my experience, The instructor has uploaded a new assignment.",Neutral
+688,"In my experience, The instructor used excellent real-world examples.",Positive
+689,The examples made difficult concepts easy to understand. This happened during the current course.,Positive
+690,"From a learner's perspective, The learning platform is difficult to use.",Negative
+691,I found that I learned a lot from this course.,Positive
+692,"From a learner's perspective, The platform frequently stopped working. I noticed this during the course.",Negative
+693,"As a student, The course material is well organized.",Positive
+694,"For this course, The course includes both lectures and quizzes.",Neutral
+695,"Overall, The class is scheduled at 10 AM.",Neutral
+696,I found that The quizzes were useful for checking my understanding. I noticed this during the course.,Positive
+697,"In my experience, I would recommend this course to other learners.",Positive
+698,"From a learner's perspective, The learning platform is simple and convenient to use.",Positive
+699,I found that The support team was not helpful.,Negative
+700,"As a student, The instructor did not provide useful examples. I noticed this during the course.",Negative
+701,"As a student, The course fee is listed on the website. I noticed this during the course.",Neutral
+702,"In my experience, I would recommend this course to other learners.",Positive
+703,The instructor explained the topic very poorly. This relates to the current batch.,Negative
+704,"As a student, The instructor did not provide useful examples.",Negative
+705,"From a learner's perspective, The platform shows the current course progress. This was mentioned during the class.",Neutral
+706,The instructor explained the topic very clearly.,Positive
+707,"In my experience, The practical examples were insufficient.",Negative
+708,"For this course, The course did not meet my expectations.",Negative
+709,"From a learner's perspective, The learning platform is simple and convenient to use. This relates to the current batch.",Positive
+710,"Overall, The assignments were confusing and unhelpful.",Negative
+711,"From a learner's perspective, The assignment contains ten questions. This happened during the current course.",Neutral
+712,"Overall, The next module will be released tomorrow. I noticed this during the course.",Neutral
+713,"In my experience, The course contains six modules.",Neutral
+714,"As a student, The course fee is listed on the website. This relates to the current batch.",Neutral
+715,"In my experience, The course has 25 recorded videos.",Neutral
+716,"From a learner's perspective, The learning platform is difficult to use.",Negative
+717,The course starts next Monday.,Neutral
+718,"For this course, The examples made difficult concepts easy to understand.",Positive
+719,"In my experience, I would not recommend this course. This happened during the current course.",Negative
+720,I found that The assignments helped me understand the concepts.,Positive
+721,"For this course, The course did not meet my expectations. This happened during the current course.",Negative
+722,"From a learner's perspective, The instructor has shared the reading material. This relates to the current batch.",Neutral
+723,"In my experience, I really enjoyed the practical examples in this course.",Positive
+724,The course includes both lectures and quizzes. This was mentioned during the class.,Neutral
+725,The course videos are excellent and easy to follow.,Positive
+726,The learning platform is difficult to use.,Negative
+727,"Overall, The next module will be released tomorrow.",Neutral
+728,"Overall, The class is scheduled at 10 AM. This relates to the current batch.",Neutral
+729,The support team received my request yesterday.,Neutral
+730,The course includes both lectures and quizzes.,Neutral
+731,The certificate is issued after course completion.,Neutral
+732,"As a student, The course has 25 recorded videos. I noticed this during the course.",Neutral
+733,"Overall, The class is scheduled at 10 AM.",Neutral
+734,"From a learner's perspective, The platform worked smoothly throughout the course.",Positive
+735,"As a student, The course has 25 recorded videos.",Neutral
+736,"In my experience, The instructor used excellent real-world examples. This relates to the current batch.",Positive
+737,"Overall, The quizzes were confusing and poorly designed.",Negative
+738,The platform worked smoothly throughout the course.,Positive
+739,The course videos are difficult to follow.,Negative
+740,"In my experience, I would not recommend this course. This relates to the current batch.",Negative
+741,The next live class is scheduled for Friday. This relates to the current batch.,Neutral
+742,"Overall, I learned very little from this course. This was mentioned during the class.",Negative
+743,I found that The support team was not helpful.,Negative
+744,The learning platform is simple and convenient to use. This happened during the current course.,Positive
+745,"Overall, The instructor has scheduled an additional session.",Neutral
+746,"Overall, The class is scheduled at 10 AM. This was mentioned during the class.",Neutral
+747,The course includes both lectures and quizzes.,Neutral
+748,"For this course, The course starts next Monday. I noticed this during the course.",Neutral
+749,"Overall, The assignment deadline is 20 September.",Neutral
+750,"For this course, The instructor has excellent teaching skills. This happened during the current course.",Positive
+751,The course exceeded my expectations.,Positive
+752,The examples made difficult concepts easy to understand. This was mentioned during the class.,Positive
+753,"From a learner's perspective, The study material is clear and comprehensive. This happened during the current course.",Positive
+754,"From a learner's perspective, The learning platform is difficult to use. This happened during the current course.",Negative
+755,"From a learner's perspective, The course videos are difficult to follow. This relates to the current batch.",Negative
+756,"From a learner's perspective, The course videos are excellent and easy to follow. I noticed this during the course.",Positive
+757,I found that The instructor has scheduled an additional session. I noticed this during the course.,Neutral
+758,"As a student, The course duration is eight weeks.",Neutral
+759,"For this course, The examples did not help me understand the concepts.",Negative
+760,The platform frequently stopped working.,Negative
+761,"Overall, The explanations were too complicated.",Negative
+762,"Overall, The explanations were too complicated. This relates to the current batch.",Negative
+763,"From a learner's perspective, The live classes were engaging and informative.",Positive
+764,"In my experience, The instructor did not provide useful examples. This was mentioned during the class.",Negative
+765,"In my experience, The instructor has uploaded a new assignment. This happened during the current course.",Neutral
+766,"Overall, The assignment deadline is 20 September. I noticed this during the course.",Neutral
+767,"For this course, The course exceeded my expectations.",Positive
+768,"For this course, The exam will be conducted online.",Neutral
+769,"As a student, The instructor used excellent real-world examples.",Positive
+770,"Overall, The quizzes were useful for checking my understanding. This was mentioned during the class.",Positive
+771,The live classes were boring and uninformative. I noticed this during the course.,Negative
+772,"Overall, The class is scheduled at 10 AM. This happened during the current course.",Neutral
+773,The learning platform is difficult to use.,Negative
+774,"In my experience, The instructor did not provide useful examples. I noticed this during the course.",Negative
+775,"As a student, The course duration is eight weeks. I noticed this during the course.",Neutral
+776,The platform worked smoothly throughout the course.,Positive
+777,I found that The assignments were confusing and unhelpful. I noticed this during the course.,Negative
+778,"As a student, The instructor has uploaded a new assignment. This happened during the current course.",Neutral
+779,The instructor explained the topic very poorly.,Negative
+780,The instructor has excellent teaching skills. This was mentioned during the class.,Positive
+781,"In my experience, The course material is well organized. This relates to the current batch.",Positive
+782,"Overall, The support team was very helpful. I noticed this during the course.",Positive
+783,I found that I learned very little from this course.,Negative
+784,"As a student, The practical examples were insufficient. This happened during the current course.",Negative
+785,"In my experience, The course contains six modules.",Neutral
+786,"Overall, The support team was very helpful.",Positive
+787,The platform worked smoothly throughout the course. I noticed this during the course.,Positive
+788,"Overall, The quiz is available until Sunday. This relates to the current batch.",Neutral
+789,The course did not meet my expectations. This relates to the current batch.,Negative
+790,"From a learner's perspective, The instructor uploaded three new lectures.",Neutral
+791,The instructor answered my questions quickly.,Positive
+792,I found that I learned very little from this course. This relates to the current batch.,Negative
+793,The next live class is scheduled for Friday. This was mentioned during the class.,Neutral
+794,"As a student, The instructor has uploaded a new assignment. This was mentioned during the class.",Neutral
+795,"For this course, The instructor has excellent teaching skills.",Positive
+796,The examples did not help me understand the concepts. This relates to the current batch.,Negative
+797,"From a learner's perspective, The study material is unclear and incomplete.",Negative
+798,"As a student, The course material is well organized. This was mentioned during the class.",Positive
+799,I found that The next module will be released tomorrow.,Neutral
+800,"Overall, The quiz is available until Sunday. This was mentioned during the class.",Neutral
+801,I found that The quizzes were confusing and poorly designed. I noticed this during the course.,Negative
+802,"As a student, The assignments were interesting and relevant.",Positive
+803,"As a student, The instructor has uploaded a new assignment.",Neutral
+804,"As a student, The course contains six modules. This happened during the current course.",Neutral
+805,The study material is clear and comprehensive.,Positive
+806,"As a student, The course contains six modules.",Neutral
+807,"In my experience, The course has 25 recorded videos. I noticed this during the course.",Neutral
+808,"As a student, The course duration is eight weeks.",Neutral
+809,The study material is clear and comprehensive.,Positive
+810,I found that The quiz is available until Sunday. This happened during the current course.,Neutral
+811,I found that The support team was very helpful. This relates to the current batch.,Positive
+812,"As a student, The practical examples were insufficient.",Negative
+813,"As a student, I would not recommend this course. This happened during the current course.",Negative
+814,I found that The quizzes were useful for checking my understanding.,Positive
+815,The study material is unclear and incomplete.,Negative
+816,"Overall, The instructor has scheduled an additional session. I noticed this during the course.",Neutral
+817,"For this course, The instructor did not answer my questions.",Negative
+818,The course includes both lectures and quizzes. This relates to the current batch.,Neutral
+819,The assignment contains ten questions. This relates to the current batch.,Neutral
+820,"As a student, I really enjoyed the practical examples in this course.",Positive
+821,"As a student, The course has 25 recorded videos. This was mentioned during the class.",Neutral
+822,The course videos are excellent and easy to follow. This relates to the current batch.,Positive
+823,The instructor has excellent teaching skills. This happened during the current course.,Positive
+824,"As a student, The course duration is eight weeks. This happened during the current course.",Neutral
+825,The study material is clear and comprehensive. This happened during the current course.,Positive
+826,"From a learner's perspective, The support team received my request yesterday.",Neutral
+827,I found that The quizzes were useful for checking my understanding. This relates to the current batch.,Positive
+828,"As a student, The instructor used excellent real-world examples. I noticed this during the course.",Positive
+829,The instructor uploaded three new lectures. This happened during the current course.,Neutral
+830,"For this course, The instructor has excellent teaching skills.",Positive
+831,"In my experience, The instructor did not provide useful examples. This relates to the current batch.",Negative
+832,I found that I learned very little from this course.,Negative
+833,The platform shows the current course progress.,Neutral
+834,"In my experience, The course contains six modules. I noticed this during the course.",Neutral
+835,The instructor explained the topic very poorly.,Negative
+836,The learning platform is difficult to use. This was mentioned during the class.,Negative
+837,The instructor explained the topic very clearly.,Positive
+838,"As a student, The course material is badly organized.",Negative
+839,"As a student, The course material is well organized. I noticed this during the course.",Positive
+840,The live classes were boring and uninformative. This relates to the current batch.,Negative
+841,"Overall, I learned very little from this course. This happened during the current course.",Negative
+842,"In my experience, The course fee is listed on the website.",Neutral
+843,"For this course, The instructor answered my questions quickly. This happened during the current course.",Positive
+844,"Overall, The quiz is available until Sunday. This happened during the current course.",Neutral
+845,I found that I learned a lot from this course. This relates to the current batch.,Positive
+846,"Overall, The class is scheduled at 10 AM. This relates to the current batch.",Neutral
+847,"For this course, The course did not meet my expectations.",Negative
+848,"In my experience, The course material is badly organized. This relates to the current batch.",Negative
+849,"In my experience, I would recommend this course to other learners. I noticed this during the course.",Positive
+850,The live classes were boring and uninformative.,Negative
+851,I found that The support team was very helpful.,Positive
+852,"Overall, The instructor has scheduled an additional session.",Neutral
+853,"For this course, The instructor did not answer my questions. This happened during the current course.",Negative
+854,"From a learner's perspective, The instructor uploaded three new lectures. This was mentioned during the class.",Neutral
+855,"For this course, The instructor explained the topic very clearly.",Positive
+856,"As a student, I would recommend this course to other learners.",Positive
+857,The instructor has shared the reading material. This was mentioned during the class.,Neutral
+858,The examples did not help me understand the concepts. This was mentioned during the class.,Negative
+859,"For this course, The next live class is scheduled for Friday. This relates to the current batch.",Neutral
+860,"Overall, The next module will be released tomorrow. This happened during the current course.",Neutral
+861,"In my experience, I really enjoyed the practical examples in this course. This happened during the current course.",Positive
+862,The instructor has shared the reading material. I noticed this during the course.,Neutral
+863,The support team received my request yesterday. This happened during the current course.,Neutral
+864,I found that The quizzes were useful for checking my understanding. This was mentioned during the class.,Positive
+865,"For this course, The certificate is issued after course completion. This relates to the current batch.",Neutral
+866,"For this course, The instructor answered my questions quickly. This relates to the current batch.",Positive
+867,"In my experience, The course contains six modules.",Neutral
+868,"As a student, I would not recommend this course.",Negative
+869,The learning platform is simple and convenient to use. I noticed this during the course.,Positive
+870,The live classes were boring and uninformative.,Negative
+871,"As a student, The course fee is listed on the website.",Neutral
+872,I found that The class is scheduled at 10 AM. This was mentioned during the class.,Neutral
+873,The instructor has shared the reading material. This happened during the current course.,Neutral
+874,"From a learner's perspective, The platform shows the current course progress.",Neutral
+875,"In my experience, I really enjoyed the practical examples in this course.",Positive
+876,"Overall, The support team was not helpful. I noticed this during the course.",Negative
+877,"In my experience, The course material is well organized. This was mentioned during the class.",Positive
+878,The course includes both lectures and quizzes. This happened during the current course.,Neutral
+879,The platform frequently stopped working.,Negative
+880,I found that The explanations were concise and easy to understand.,Positive
+881,"As a student, I really enjoyed the practical examples in this course. This was mentioned during the class.",Positive
+882,"As a student, The assignments were interesting and relevant. This relates to the current batch.",Positive
+883,I found that I learned a lot from this course. This happened during the current course.,Positive
+884,The course exceeded my expectations. This relates to the current batch.,Positive
+885,"For this course, The course did not meet my expectations. This was mentioned during the class.",Negative
+886,"For this course, The next live class is scheduled for Friday. This relates to the current batch.",Neutral
+887,The live classes were engaging and informative.,Positive
+888,"Overall, The explanations were too complicated. This was mentioned during the class.",Negative
+889,I found that The class is scheduled at 10 AM. This relates to the current batch.,Neutral
+890,"For this course, The exam will be conducted online. I noticed this during the course.",Neutral
+891,The instructor answered my questions quickly. This was mentioned during the class.,Positive
+892,"Overall, The next module will be released tomorrow.",Neutral
+893,I found that The assignments helped me understand the concepts. This happened during the current course.,Positive
+894,"For this course, The examples made difficult concepts easy to understand. This relates to the current batch.",Positive
+895,"Overall, I learned a lot from this course.",Positive
+896,The course videos are excellent and easy to follow. I noticed this during the course.,Positive
+897,"As a student, The course has 25 recorded videos.",Neutral
+898,The learning platform is simple and convenient to use. This relates to the current batch.,Positive
+899,"Overall, The support team was very helpful. This happened during the current course.",Positive
+900,I found that The next module will be released tomorrow.,Neutral

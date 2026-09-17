@@ -1,0 +1,13 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: securelife-prometheus
+    type: prometheus
+    access: proxy
+    # "prometheus" here is the other container's SERVICE NAME from docker-compose.yml -
+    # containers on the same compose network resolve each other by service name, no
+    # host.docker.internal needed for container-to-container traffic like this one.
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false

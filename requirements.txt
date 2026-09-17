@@ -19,6 +19,11 @@ autogen-ext[anthropic]==0.7.5
 google-adk==2.3.0
 phidata==2.7.10
 
+# Guardrails
+nemoguardrails==0.24.0  # NVIDIA NeMo Guardrails, used by 14_advanced/16_guardrails; bumps click to 8.5.0
+presidio-analyzer==2.2.364  # Microsoft Presidio, used by 14_advanced/16_guardrails/16_3_presidio.py; also needs `python -m spacy download en_core_web_lg` once (not a pip dependency)
+presidio-anonymizer==2.2.364
+
 # LangChain / LangGraph ecosystem (pinned to the pre-1.0 line since the
 # repo's scripts use the 0.x APIs; langchain-core>=1.0 breaks them)
 langchain==0.3.30
@@ -44,6 +49,12 @@ langserve==0.3.3
 langfuse==4.13.0
 langchain-google-genai==2.0.8  # pinned below latest (like langchain-core) since 2.1.x+ needs google-ai-generativelanguage>=0.7, which conflicts with google-generativeai==0.8.6's hard pin of 0.6.15; 3.0.0+ needs langchain-core>=1.0
 
+# Observability / tracing
+opentelemetry-api==1.42.1  # used by 14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/17_1_opentelemetry_langgraph.py
+opentelemetry-sdk==1.42.1
+opentelemetry-exporter-otlp-proto-http==1.42.1  # OTLP/HTTP exporter, used by 14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/17_2_jaeger_trace_waterfall.py to ship spans to a local Jaeger container
+prometheus-client==0.21.1  # used by 14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/17_3_prometheus_metrics_agent.py to expose a /metrics endpoint for a local Prometheus container to scrape
+
 # MCP
 mcp==1.28.1
 fastmcp==3.4.4
@@ -64,6 +75,15 @@ umap-learn==0.5.12
 # RAG evaluation
 ragas==0.4.3  # used by 15_real/ragas_evaluation.py and 14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py
 deepeval==4.1.5  # used by 15_real/deepeval_evaluation.py
+# KNOWN CONFLICT: deepeval==4.1.5 requires posthog>=7.0.0,<8.0.0 but chromadb==1.1.1 above
+# requires posthog>=2.4.0,<6.0.0 - genuinely incompatible ranges, not a resolver quirk.
+# `uv pip install -r requirements.txt` (or a from-scratch `pip install -r requirements.txt`
+# with a strict resolver) will fail on this outright. Working fix: install this file with
+# the deepeval line removed first (resolves cleanly), then install deepeval on its own with
+# `--no-deps` (e.g. `uv pip install deepeval==4.1.5 --no-deps`) - deepeval doesn't hard-require
+# posthog at runtime, so this leaves chromadb's posthog constraint satisfied and deepeval
+# working anyway. Do NOT try to fix this by bumping chromadb or downgrading deepeval without
+# checking the "don't bump chromadb" crewai note above.
 
 # Voice / audio
 sounddevice==0.5.5  # microphone capture, used by 15_real/voice_assistant_whisper_langchain.py ("mic" mode)
@@ -76,6 +96,8 @@ lime==0.2.0.1
 joblib==1.5.3
 matplotlib==3.11.0
 datasets==5.0.0
+peft==0.21.0  # LoRA adapters, used by 14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/17_4_lora_sentiment_finetuning.py
+accelerate==1.15.0  # required by transformers.Trainer, used by the same script
 yfinance==1.5.1
 
 # Document / file handling

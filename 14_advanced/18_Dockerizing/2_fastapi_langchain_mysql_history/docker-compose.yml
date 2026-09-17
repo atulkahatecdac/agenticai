@@ -1,0 +1,45 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Infrastructure wiring, not secrets - "mysql" below is this compose
+      # file's mysql SERVICE NAME, resolvable only on the shared compose network.
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=app_password
+      - MYSQL_DATABASE=summarizer
+    env_file:
+      - .env  # copy .env.example to .env first and fill in OPENAI_API_KEY
+    depends_on:
+      mysql:
+        condition: service_healthy  # MySQL takes real time to init - don't let api race it
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.4
+    container_name: mysql_container  # fixed name for `docker exec -it mysql_container ...` instead of compose's auto-generated one
+    environment:
+      # Plaintext demo credentials, fine for a local compose stack - a real
+      # deployment would pull these from Docker/Kubernetes secrets or a
+      # secrets manager, never bake them into a compose file.
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=summarizer
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=app_password
+    # No `ports:` here either - same reasoning as the Redis version: nothing
+    # outside this compose stack needs to reach MySQL directly.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

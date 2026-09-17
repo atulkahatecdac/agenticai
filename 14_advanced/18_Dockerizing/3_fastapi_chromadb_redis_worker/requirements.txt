@@ -1,0 +1,16 @@
+# One requirements.txt for ONE image, used by both the api and worker
+# services (see docker-compose.yml) - the api half only actually needs
+# fastapi/uvicorn/redis, but keeping a single image means one build, one set
+# of pinned versions, no risk of api/worker drifting apart. Expect a heavier
+# image than ../1_fastapi_langchain or ../2_fastapi_langchain_mysql_history -
+# chromadb pulls in its own sizeable dependency tree even used purely as an
+# HTTP client. Versions match the root requirements.txt pins for consistency.
+fastapi==0.139.0
+uvicorn[standard]==0.50.0
+langchain-core==0.3.86
+langchain-openai==0.3.35
+langchain-chroma==0.2.6
+chromadb==1.1.1
+pydantic==2.13.4
+python-dotenv==1.2.2
+redis==8.1.0

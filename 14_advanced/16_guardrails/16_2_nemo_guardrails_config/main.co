@@ -1,0 +1,9 @@
+# `guardrails` is what actually wires "flow input rails $input_text" /
+# "flow output rails $output_text" (rails.co) into the pipeline - without
+# this import they're just unused flows and neither one ever runs.
+import core
+import llm
+import guardrails
+
+flow main
+  activate llm continuation

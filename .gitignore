@@ -26,6 +26,9 @@ ENV/
 *.sqlite-shm
 *.sqlite-wal
 **/*chroma*/
+# Exception: this is source code (a Dockerized example), not a recreated
+# vector-store data directory - its name just happens to contain "chroma".
+!14_advanced/18_Dockerizing/3_fastapi_chromadb_redis_worker/
 **/*faiss*/
 **/llamaindex_storage/
 **/.langgraph_api/

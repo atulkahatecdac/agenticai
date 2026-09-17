@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: SecureLife dashboards
+    orgId: 1
+    folder: ""
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      # Matches the grafana/dashboards -> /var/lib/grafana/dashboards volume mount
+      # in docker-compose.yml.
+      path: /var/lib/grafana/dashboards

@@ -1,0 +1,11 @@
+global:
+  # Default is 1m; 5s gives a demo script that only runs for a couple of minutes
+  # enough data points for the Grafana graphs to actually show a trend.
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: securelife-insurance-agent
+    static_configs:
+      # 17_3_prometheus_metrics_agent.py exposes /metrics on the HOST via
+      # prometheus_client.start_http_server(8000) - see that file's SETUP comment.
+      - targets: ["host.docker.internal:8000"]
