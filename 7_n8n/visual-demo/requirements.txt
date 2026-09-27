@@ -1,0 +1,20 @@
+# Install into this folder's OWN venv, not the repo's shared .venv:
+# facenet-pytorch 2.6.0 hard-pins torch 2.2.x, torchvision 0.17.x,
+# Pillow 10.2.x and numpy<2, which clash with the root requirements.txt.
+#
+#   uv venv --python 3.12 venv
+#   uv pip install --python venv -r requirements.txt --index-strategy unsafe-best-match
+#   (or with plain pip: venvScriptspip install -r requirements.txt)
+#
+# CPU-only torch wheels (avoids multi-GB CUDA downloads).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.2.2
+torchvision==0.17.2
+facenet-pytorch==2.6.0
+numpy==1.26.4
+pillow==10.2.0
+fastapi==0.115.6
+uvicorn==0.34.0
+python-multipart==0.0.20
+qdrant-client==1.19.1
+requests==2.34.2
