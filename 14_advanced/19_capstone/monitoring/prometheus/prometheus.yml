@@ -1,0 +1,10 @@
+global:
+  # Default is 1m; 5s gives a short demo enough data points for the Grafana
+  # graphs to show a trend.
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: capstone-warranty-returns-agent
+    static_configs:
+      # 19_7_api.py serves /metrics on the HOST at port 8019.
+      - targets: ["host.docker.internal:8019"]

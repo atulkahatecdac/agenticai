@@ -1,0 +1,38 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: capstone-prometheus
+    ports:
+      # Host port 9096 (not 9090/9095): 9090 is taken by the Langfuse demo's MinIO
+      # and 9095 by the Module 17 monitoring stack, so all three can run together.
+      - "9096:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    # The scrape target (19_7_api.py) runs on the HOST, not in a container.
+    # host.docker.internal is built into Docker Desktop; this entry makes the
+    # same file work on Linux too.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: capstone-grafana
+    ports:
+      # Host port 3001: the Module 17 Grafana already uses 3000.
+      - "3001:3000"
+    environment:
+      # Demo-only credentials/anonymous access - fine for localhost, never for a
+      # real deployment.
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      # Pre-provisions the Prometheus datasource AND the dashboard, so the
+      # dashboard is already there the first time Grafana opens.
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped

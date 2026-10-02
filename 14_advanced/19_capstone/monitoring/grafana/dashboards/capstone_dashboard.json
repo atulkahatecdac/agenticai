@@ -1,0 +1,134 @@
+{
+  "uid": "capstone-warranty-returns",
+  "title": "Capstone - Warranty & Returns Assistant",
+  "tags": ["capstone", "prometheus"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Tickets resolved / min",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "sum(rate(capstone_tickets_total[1m])) * 60",
+          "legendFormat": "tickets/min"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Tickets by decision",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "sum by (decision) (capstone_tickets_total)",
+          "legendFormat": "{{decision}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Escalation rate (share of tickets sent to a human)",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "capstone_escalations_total / clamp_min(sum(capstone_tickets_total), 1)",
+          "legendFormat": "escalated"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Ticket latency, end-to-end (p50 / p95)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(capstone_ticket_duration_seconds_bucket[1m])))",
+          "legendFormat": "p50"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(capstone_ticket_duration_seconds_bucket[1m])))",
+          "legendFormat": "p95"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "p95 latency by agent (LangGraph node)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "histogram_quantile(0.95, sum by (le, node) (rate(capstone_node_duration_seconds_bucket[1m])))",
+          "legendFormat": "{{node}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Token cost per ticket (USD, gpt-4o-mini list price)",
+      "description": "Assumes $0.15 per 1M input tokens and $0.60 per 1M output tokens. Zero in offline mode.",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "currencyUSD", "decimals": 5 }, "overrides": [] },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "(sum(capstone_llm_tokens_total{kind=\"input\"}) * 0.15 / 1e6 + sum(capstone_llm_tokens_total{kind=\"output\"}) * 0.60 / 1e6) / clamp_min(sum(capstone_tickets_total), 1)",
+          "legendFormat": "USD per ticket"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Errors / min by component",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "sum by (component) (rate(capstone_errors_total[1m])) * 60",
+          "legendFormat": "{{component}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Guardrail blocks by rail",
+      "type": "bargauge",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "capstone-prometheus" },
+          "expr": "sum by (rail) (capstone_guardrail_blocks_total)",
+          "legendFormat": "{{rail}}"
+        }
+      ]
+    }
+  ]
+}

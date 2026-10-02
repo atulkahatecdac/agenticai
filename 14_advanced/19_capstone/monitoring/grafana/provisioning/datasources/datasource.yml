@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: capstone-prometheus
+    type: prometheus
+    access: proxy
+    # "prometheus" is the other container's SERVICE NAME from docker-compose.yml;
+    # containers on the same compose network resolve each other by service name.
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
