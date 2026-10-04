@@ -1,0 +1,22 @@
+[
+  {
+    "file": "Health_Policy_Wording.pdf",
+    "policy_type": "health",
+    "doc_type": "policy_wording"
+  },
+  {
+    "file": "Health_FAQ.pdf",
+    "policy_type": "health",
+    "doc_type": "faq"
+  },
+  {
+    "file": "Motor_Policy_Wording.pdf",
+    "policy_type": "motor",
+    "doc_type": "policy_wording"
+  },
+  {
+    "file": "Life_Policy_Wording.pdf",
+    "policy_type": "life",
+    "doc_type": "policy_wording"
+  }
+]
