@@ -19,7 +19,7 @@ from capstone_common import API_URL, TICKETS_FILE
 #   Submit          -> POST /tickets, then GET /tickets/{id} until it stops
 #   Approve/Reject  -> POST /tickets/{id}/approve
 #
-# Run it (two terminals, from 14_advanced/19_capstone):
+# Run it (two terminals, from 14_advanced/19_capstone/warranty_returns):
 #   python 19_7_api.py                  terminal 1 - the backend
 #   streamlit run 19_8_ui_streamlit.py  terminal 2 - opens http://localhost:8501
 # =====================================================================
