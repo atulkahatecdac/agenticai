@@ -1,0 +1,12 @@
+{
+  "name": "deck-builder",
+  "private": true,
+  "description": "Shared engine that builds the course decks (16_PGP-Agentic, 14_advanced) from content/*.js – see README.md",
+  "dependencies": {
+    "pptxgenjs": "4.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-icons": "5.5.0",
+    "sharp": "0.34.4"
+  }
+}

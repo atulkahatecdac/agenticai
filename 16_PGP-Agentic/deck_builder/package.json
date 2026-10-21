@@ -1,0 +1,8 @@
+{
+  "name": "pgp-agentic-deck",
+  "private": true,
+  "description": "Builds ../PGP_Agentic_AI.pptx with the shared engine in tools/deck_builder (see README.md)",
+  "scripts": {
+    "build": "node ../../tools/deck_builder/build.js ."
+  }
+}

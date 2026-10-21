@@ -1,5 +1,9 @@
 # PGP – Agentic AI: Session Plan
 
+> **The deck itself is no longer assembled from these slide references.** `PGP_Agentic_AI.pptx` is now
+> rebuilt from `deck_builder/content/*.js` in its own design (see `deck_builder/README.md`). The tables below
+> remain the record of which original slides each topic was drawn from, and of the code to demo.
+
 Each session lists its topics. For each topic, the table points to the slides in the
 original decks and the code to demo. Slide-deck paths are relative to the repo root (`c:\code\agenticai`);
 code paths are relative to `16_PGP-Agentic/code/`, where every demo is copied into a per-session folder and

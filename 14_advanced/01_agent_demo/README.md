@@ -13,11 +13,33 @@ answer can't come from the model's general knowledge. It has to search.
 ## Run
 
 ```bash
-ollama pull qwen3:8b               # once; keep the Ollama app/server running
 cd 14_advanced/01_agent_demo
-python hunt_agent.py               # console trace
-streamlit run app.py               # live web UI
+streamlit run app.py               # web UI: Replay works with no Ollama at all
+
+ollama pull qwen3:8b               # once, for Live mode; keep the Ollama app/server running
+python hunt_agent.py               # console trace of a live run
+python hunt_agent.py --save        # same, and save it as the run the app replays
 ```
+
+The app is built for the first class of the course, so it is shown in plain language:
+
+- **A floor plan of the house.** Rooms light up as the agent discovers and searches them; a 🤖 moves
+  room to room and leaves a numbered, dotted trail. Spots inside a room (piano, sofa, wardrobe …) appear
+  once the agent has walked into that room.
+- **A thought bubble** with the agent's own reason for each step ("Walks into the Kitchen -
+  *the note says the coldest thing in the house*"). Page ids in its text are replaced by room names.
+- **A board of what it has found**: the sticky notes and wrapped boxes. When the hunt ends (or with the
+  spoiler toggle), each is marked: Dad's real clue, a prank, last year's note, a guess, a decoy, the gift.
+- **🔧 Under the hood** (a toggle, off by default): the same steps as the real tool calls and results,
+  for when you move on to how it works.
+
+Two modes, chosen in the sidebar:
+
+- **Replay** steps through `recorded_run.json`, a real run of `qwen3:8b`. Press **Play** (set the
+  seconds per step) or click **Next step** to talk through each decision. No Ollama, no waiting, and the
+  opening demo can't fail on a slow laptop.
+- **Live** runs the agent now; every run takes its own route. After a good run, **Use this run as the
+  recorded replay** saves it over `recorded_run.json`.
 
 No API key is needed. Set `OLLAMA_BASE_URL` if Ollama isn't on `http://localhost:11434/v1`.
 You can type a different local model (e.g. `llama3.2`) in the sidebar to compare.
@@ -28,9 +50,11 @@ Tracing is turned off because, by default, it uploads to OpenAI.
 | File | Role |
 |---|---|
 | `pages.json` | The 15 rooms and hiding spots (title, content, links), the mission, the answer and the required evidence |
-| `hunt_engine.py` | Game state (`HuntState`) and the 3 tools. No LLM code here |
-| `hunt_agent.py` | The `Agent` (Ollama via `OpenAIChatCompletionsModel`) and the streamed run loop. Runnable as a CLI demo |
-| `app.py` | Streamlit UI: decision timeline, where the agent is now, rooms searched, explored house map |
+| `hunt_engine.py` | Game state (`HuntState`), the 3 tools, and `replay()` that rebuilds the state from saved tool calls. No LLM code here |
+| `hunt_agent.py` | The `Agent` (Ollama via `OpenAIChatCompletionsModel`) and the streamed run loop. Runnable as a CLI demo; `--save` records the run |
+| `house_view.py` | The floor plan (SVG), plain-language wording for each step, and the found-notes board. No LLM or Streamlit code |
+| `recorded_run.json` | The run the app replays |
+| `app.py` | Streamlit UI: floor plan, thought bubble, found-notes board, route, under-the-hood view; Replay and Live modes |
 
 ## Tools
 

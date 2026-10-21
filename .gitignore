@@ -59,3 +59,6 @@ desktop.ini
 
 # Office lock files
 ~$*
+
+# Node dependencies (e.g. tools/deck_builder - restore with npm install)
+node_modules/

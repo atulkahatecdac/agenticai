@@ -9,10 +9,13 @@ next, when to ignore a misleading note, and when it has enough evidence.
 Prerequisites:  ollama pull qwen3:8b   (and the Ollama app/server running)
 
 Run from the console:   python hunt_agent.py
+Save the run for the app's replay mode:   python hunt_agent.py --save
 Run with the web UI:    streamlit run app.py
 """
 
 import asyncio
+import datetime
+import json
 import os
 import re
 import sys
@@ -26,6 +29,7 @@ from hunt_engine import HUNT, MAX_TOOL_CALLS, TOOLS, HuntState
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
 MODEL = "qwen3:8b"
 MAX_TURNS = MAX_TOOL_CALLS + 5   # SDK-level backstop on top of the engine's tool budget
+RECORDED_RUN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded_run.json")
 
 # Tracing uploads to OpenAI's servers by default; there is no OpenAI key in a local-only setup.
 set_tracing_disabled(True)
@@ -85,6 +89,13 @@ async def run_hunt(state: HuntState, model: str = MODEL, on_event=None) -> str:
     return strip_thinking(str(result.final_output or ""))
 
 
+def save_run(state: HuntState, summary: str, model: str = MODEL, path: str = RECORDED_RUN) -> None:
+    """Write a finished run to JSON so the app can replay it without Ollama."""
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"model": model, "recorded": datetime.date.today().isoformat(), "status": state.status,
+                   "tool_calls": state.tool_calls, "summary": summary}, f, indent=2, ensure_ascii=False)
+
+
 def _console_printer(event, state: HuntState) -> None:
     if event.type != "run_item_stream_event":
         return
@@ -105,3 +116,6 @@ if __name__ == "__main__":
     print("STATUS:", state.status, "| tool calls used:", len(state.tool_calls))
     print("VISITED:", " -> ".join(state.visited))
     print("\nAGENT SUMMARY:\n" + summary)
+    if "--save" in sys.argv:
+        save_run(state, summary)
+        print(f"\nSaved for replay: {RECORDED_RUN}")

@@ -155,3 +155,27 @@ def submit_answer(ctx: RunContextWrapper[HuntState], answer: str,
 
 
 TOOLS: list[Tool] = [read_page, list_links, submit_answer]
+
+
+def replay(tool_calls: list[dict]) -> HuntState:
+    """Rebuild the HuntState a recorded run had after these tool calls (no LLM, no tools run).
+    Used by the app's replay mode, which steps through a run saved with `hunt_agent.py --save`."""
+    state = HuntState()
+    for call in tool_calls:
+        state.tool_calls.append(call)
+        result = call["result"]
+        if result.startswith("BUDGET"):
+            state.status = "out_of_steps"
+        elif call["tool"] == "read_page" and result.startswith("PAGE"):
+            pid = call["args"]["page_id"]
+            state.current_page = pid
+            if pid not in state.visited:
+                state.visited.append(pid)
+            state.reachable.update(PAGES[pid]["links"])
+        elif call["tool"] == "list_links" and result.startswith("Links"):
+            state.reachable.update(PAGES[call["args"]["page_id"]]["links"])
+        elif call["tool"] == "submit_answer" and result.startswith("ACCEPTED"):
+            state.status = "solved"
+            state.final_answer = HUNT["answer"]
+            state.final_evidence = call["args"]["evidence_page_ids"]
+    return state
