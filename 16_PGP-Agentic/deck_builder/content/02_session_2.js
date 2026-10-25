@@ -85,8 +85,8 @@ module.exports = {
     },
 
     // ---------------------------------------------------------------- RAG fundamentals
-    { kind: "image", src: "why_rag.png", alt: "Why do we need RAG?", demo: S + "2_7_chroma_db_basic.py" },
-    { kind: "image", src: "embeddings.png", alt: "Embeddings: turning text into vectors", demo: S + "2_7_chroma_db_basic.py, 2_8_rag_cosine_euclidean.py" },
+    { kind: "image", src: "why_rag_pgp.png", alt: "Why do we need RAG?", demo: S + "2_7_chroma_db_basic.py" },
+    { kind: "image", src: "embeddings_pgp.png", alt: "Embeddings: turning text into vectors", demo: S + "2_7_chroma_db_basic.py, 2_8_rag_cosine_euclidean.py" },
     {
       title: "Measuring Similarity",
       subtitle: "Nearest-neighbour retrieval ranks stored vectors by how close they are to the query vector",
