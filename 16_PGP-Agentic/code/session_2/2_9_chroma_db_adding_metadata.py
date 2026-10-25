@@ -76,3 +76,15 @@ for i in range(len(results["ids"][0])):
     print("Priority :", results["metadatas"][0][i]["priority"])
     print("Distance :", results["distances"][0][i])
     print()
+
+# Same search, but only among questions tagged category="returns".
+# "where" filters on metadata first; similarity then ranks what is left.
+results = collection.query(
+    query_texts=[user_input],
+    n_results=1,
+    where={"category": "returns"}
+)
+
+print("Filtered to category = returns:")
+print("Question :", results["documents"][0][0])
+print("Answer   :", results["metadatas"][0][0]["answer"])

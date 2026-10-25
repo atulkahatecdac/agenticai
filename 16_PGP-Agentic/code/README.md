@@ -45,30 +45,20 @@ session and numbered `<session>_<sequence>_<name>.py` in the order the session u
 |---|---|
 | `session_2/2_1_langchain_lcel.py` | `3_langgraph/3_0_langchain_lcel.py` |
 | `session_2/2_2_langchain_lcel_ollama.py` | `3_langgraph/3_0_langchain_lcel_ollama.py` |
-| `session_2/2_3_output_parsers.py` | `14_advanced/05_langchain/output_parsers.py` |
-| `session_2/2_4_output_parsers_openai.py` | `14_advanced/05_langchain/output_parsers_openai.py` |
-| `session_2/2_5_prompt_templates.py` | `14_advanced/05_langchain/prompt_templates.py` |
-| `session_2/2_6_prompt_templates_openai.py` | `14_advanced/05_langchain/prompt_templates_openai.py` |
-| `session_2/2_7_memory_types.py` | `14_advanced/05_langchain/memory_types.py` |
-| `session_2/2_8_persistent_chatbot.py` | `14_advanced/05_langchain/persistent_chatbot.py` |
-| `session_2/2_9_chroma_db_basic.py` | `9_general/rag/rag_1_chroma_db_basic.py` |
-| `session_2/2_10_vector_embedding_cosine_similarity.py` | `2_openai_agents/vector_embedding_cosine_similarity.py` |
-| `session_2/2_11_chromadb_crud.py` | `14_advanced/04_rag/chromadb_crud.py` |
-| `session_2/2_12_chromadb_search.py` | `14_advanced/04_rag/chromadb_search.py` |
-| `session_2/2_13_chroma_db_adding_metadata.py` | `9_general/rag/rag_4_chroma_db_adding_metadata.py` |
-| `session_2/2_14_faiss_search.py` | `14_advanced/04_rag/faiss_search.py` |
-| `session_2/2_15_faiss_search_ollama.py` | `14_advanced/04_rag/faiss_search_ollama.py` |
-| `session_2/2_16_rag_cosine_euclidean_1.py` | `9_general/rag/rag_cosine_euclidean_1.py` |
-| `session_2/2_17_document_loaders.py` | `14_advanced/05_langchain/document_loaders.py` |
-| `session_2/2_18_text_splitters.py` | `14_advanced/05_langchain/text_splitters.py` |
-| `session_2/2_19_rag_pipeline.py` | `14_advanced/05_langchain/rag_pipeline.py` |
-| `session_2/2_20_rag_pipeline_ollama.py` | `14_advanced/05_langchain/rag_pipeline_ollama.py` |
-| `session_2/2_21_langchain_rag.py` | `3_langgraph/3_1_langchain_rag.py` |
-| `session_2/2_22_retrievers.py` | `14_advanced/05_langchain/retrievers.py` |
-| `session_2/2_23_langchain_qand_a_bot_chroma.py` | `15_real/langchain_qand_a_bot_chroma.py` |
-| `session_2/2_24_langchain_qand_a_bot_chroma_ollama.py` | `15_real/langchain_qand_a_bot_chroma_ollama.py` |
-| `session_2/2_25_langchain_qanda_bot_faiss.py` | `C:\code\agenticai_realpage\module_2\2_langchain_qanda_bot_faiss.py` (separate repo) |
-| `session_2/2_26_chroma_db_data_science_pdf_chatbot.py` | `9_general/rag/rag_10_chroma_db_data_science_pdf_chatbot.py` |
+| `session_2/2_3_prompt_templates.py` | `14_advanced/05_langchain/prompt_templates.py` |
+| `session_2/2_4_output_parsers.py` | `14_advanced/05_langchain/output_parsers.py` |
+| `session_2/2_5_memory_types.py` | `14_advanced/05_langchain/memory_types.py` |
+| `session_2/2_6_persistent_chatbot.py` | `14_advanced/05_langchain/persistent_chatbot.py` |
+| `session_2/2_7_chroma_db_basic.py` | `9_general/rag/rag_1_chroma_db_basic.py` |
+| `session_2/2_8_rag_cosine_euclidean.py` | `9_general/rag/rag_cosine_euclidean_1.py` |
+| `session_2/2_9_chroma_db_adding_metadata.py` | `9_general/rag/rag_4_chroma_db_adding_metadata.py` |
+| `session_2/2_10_faiss_search.py` | `14_advanced/04_rag/faiss_search.py` |
+| `session_2/2_11_document_loaders.py` | `14_advanced/05_langchain/document_loaders.py` |
+| `session_2/2_12_text_splitters.py` | `14_advanced/05_langchain/text_splitters.py` |
+| `session_2/2_13_rag_pipeline.py` | `14_advanced/05_langchain/rag_pipeline.py` |
+| `session_2/2_14_retrievers.py` | `14_advanced/05_langchain/retrievers.py` |
+| `session_2/2_15_langchain_qand_a_bot_chroma.py` | `15_real/langchain_qand_a_bot_chroma.py` |
+| `session_2/2_16_langchain_qanda_bot_faiss.py` | `C:\code\agenticai_realpage\module_2\2_langchain_qanda_bot_faiss.py` (separate repo) |
 
 ## Session 3: LangChain Agents and Tool Use
 
