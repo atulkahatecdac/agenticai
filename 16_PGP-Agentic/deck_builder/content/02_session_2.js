@@ -135,6 +135,7 @@ module.exports = {
         ] },
       ],
     },
+    { kind: "image", src: "chroma_vs_faiss.png", alt: "Chroma vs FAISS: documents with details vs vectors in a fast index", demo: S + "2_7_chroma_db_basic.py, 2_10_faiss_search.py" },
     {
       title: "FAISS: Search Without Comparing Everything",
       subtitle: "Facebook AI Similarity Search – Meta's library for fast similarity search over dense vectors",
