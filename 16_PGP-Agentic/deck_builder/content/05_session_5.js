@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 5  ·  Sun 7-Nov  ·  08:00–11:00 AM",
+      eyebrow: "Session 5",
       title: "LangGraph: Cycles, Human-in-the-Loop and Persistence",
       subtitle: "Graphs that loop until the work is good enough, pause for a human, and survive a crash",
       goals: [

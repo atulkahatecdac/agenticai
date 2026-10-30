@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 2  ·  Sat 25-Oct  ·  08:00–11:00 AM",
+      eyebrow: "Session 2",
       title: "LangChain Core: Chains, Memory and RAG",
       subtitle: "Compose LLM apps from small parts, give them memory, and ground them in your own documents",
       goals: [

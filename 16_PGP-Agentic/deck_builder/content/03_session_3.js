@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 3  ·  Sun 31-Oct  ·  08:00–11:00 AM",
+      eyebrow: "Session 3",
       title: "LangChain Agents and Tool Use",
       subtitle: "Prompting techniques that drive agents, custom tools, and agents connected to real systems",
       goals: [

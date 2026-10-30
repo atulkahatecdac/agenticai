@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 9  ·  Sun 21-Nov  ·  08:00–11:00 AM",
+      eyebrow: "Session 9",
       title: "Deep Agents: Reflection, Planning and Memory",
       subtitle: "Agents that check their own work, plan and re-plan, remember, and get better from their mistakes",
       goals: [

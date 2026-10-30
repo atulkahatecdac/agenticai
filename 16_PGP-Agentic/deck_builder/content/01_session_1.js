@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 1  ·  Sat 24-Oct  ·  08:00–11:00 AM",
+      eyebrow: "Session 1",
       title: "Agentic AI Foundations and Agent Architectures",
       subtitle: "What agents are, how they are built, and the patterns behind them – using the OpenAI Agents SDK",
       goals: [

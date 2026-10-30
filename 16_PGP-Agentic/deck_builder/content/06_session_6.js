@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 6  ·  Sat 8-Nov  ·  08:00–11:00 AM",
+      eyebrow: "Session 6",
       title: "Multi-Agent Orchestration with CrewAI",
       subtitle: "Teams of role-playing agents (crews) and the event-driven flows that control them",
       goals: [

@@ -121,9 +121,8 @@ K.map = async (ctx, s) => {
     const y = y0 + i * rowH;
     if (i % 2 === 0) card(sl, G.MX, y, G.CW, rowH - 0.04);
     pill(sl, `S${i + 1}`, G.MX + 0.12, y + 0.07, 0.5, rowH - 0.18, i % 2 ? C.navy : C.coral, 9.5);
-    text(sl, r.date, { x: G.MX + 0.78, y, w: 1.0, h: rowH - 0.04, fontSize: 11, color: C.slate, valign: "middle" });
-    text(sl, r.title, { x: G.MX + 1.85, y, w: 3.75, h: rowH - 0.04, fontSize: 12.5, bold: true, valign: "middle" });
-    text(sl, r.focus, { x: G.MX + 5.65, y, w: 3.25, h: rowH - 0.04, fontSize: 10.5, color: C.slate, valign: "middle" });
+    text(sl, r.title, { x: G.MX + 0.78, y, w: 4.4, h: rowH - 0.04, fontSize: 12.5, bold: true, valign: "middle" });
+    text(sl, r.focus, { x: G.MX + 5.25, y, w: 3.65, h: rowH - 0.04, fontSize: 10.5, color: C.slate, valign: "middle" });
   }
 };
 

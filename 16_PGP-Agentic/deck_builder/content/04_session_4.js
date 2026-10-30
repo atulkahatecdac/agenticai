@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 4  ·  Sat 1-Nov  ·  08:00–11:00 AM",
+      eyebrow: "Session 4",
       title: "LangGraph: Stateful Workflows and Routing",
       subtitle: "Model an LLM application as a graph: shared state, nodes that update it, and edges that decide what runs next",
       goals: [

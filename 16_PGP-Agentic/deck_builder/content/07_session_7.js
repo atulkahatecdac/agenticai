@@ -5,7 +5,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 7  ·  Sun 14-Nov  ·  08:00–11:00 AM",
+      eyebrow: "Session 7",
       title: "Multi-Agent Systems with Microsoft AutoGen",
       subtitle: "Agents that cooperate by talking to each other – in teams, group chats and graphs",
       goals: [

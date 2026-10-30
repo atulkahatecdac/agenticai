@@ -6,7 +6,7 @@ module.exports = {
   slides: [
     {
       kind: "opener",
-      eyebrow: "Session 8  ·  Sat 15-Nov  ·  08:00–11:00 AM",
+      eyebrow: "Session 8",
       title: "Agentic RAG and GraphRAG for Agents",
       subtitle: "When simple retrieve-then-generate is not enough: smarter retrieval, self-checking, graphs – and how to measure it",
       goals: [
