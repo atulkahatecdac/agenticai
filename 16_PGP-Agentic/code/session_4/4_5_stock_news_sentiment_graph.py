@@ -23,7 +23,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
 
 # =====================================================================
-# Same idea as stock_price_graph.py's plain node chain, plus a branch:
+# Same idea as 4_4_stock_price_graph.py's plain node chain, plus a branch:
 # fetch_news -> classify_sentiment -> conditional edge -> one of two
 # summary nodes, depending on the sentiment the LLM assigns to the
 # news. add_conditional_edges picks the next node at runtime instead

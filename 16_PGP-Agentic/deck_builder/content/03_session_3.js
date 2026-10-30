@@ -7,11 +7,10 @@ module.exports = {
       kind: "opener",
       eyebrow: "Session 3  ·  Sun 31-Oct  ·  08:00–11:00 AM",
       title: "LangChain Agents and Tool Use",
-      subtitle: "Prompting techniques that drive agents, custom tools, and the executors that run the loop",
+      subtitle: "Prompting techniques that drive agents, custom tools, and agents connected to real systems",
       goals: [
         { icon: "FaPenToSquare", title: "Write prompts that steer agents", text: "personas, few-shot examples, chain-of-thought, ReAct" },
         { icon: "FaScrewdriverWrench", title: "Create and bind custom tools", text: "@tool, bind_tools, and Pydantic schemas" },
-        { icon: "FaArrowsRotate", title: "Run the agent loop", text: "AgentExecutor, ReAct and plan-and-execute agents" },
         { icon: "FaDatabase", title: "Connect agents to real systems", text: "SQL databases, chained tools and web research" },
       ],
       agenda: [
@@ -19,9 +18,6 @@ module.exports = {
         "Prompting techniques that drive agents",
         "Creating custom tools and binding them to an LLM",
         "Tools with Pydantic schemas",
-        "AgentExecutor",
-        "ReAct agent",
-        "Plan-and-Execute agent",
         "SQL database agents",
         "Multi-step reasoning and tool chaining",
         "Tool-augmented research agent",
@@ -39,7 +35,7 @@ module.exports = {
           { icon: "FaScrewdriverWrench", label: "Act", caption: "Execute it with a tool" },
           { icon: "FaMagnifyingGlassChart", label: "Observe", caption: "Look at the result" },
         ] },
-        { type: "callout", eyebrow: "This session", text: "The same loop, built with LangChain: prompts steer the Reason step, tools power the Act step, and an executor runs the loop." },
+        { type: "callout", eyebrow: "This session", text: "The same loop, built with LangChain: prompts steer the Reason step, tools power the Act step, and a short loop in our own code ties them together." },
       ],
     },
 
@@ -70,76 +66,72 @@ When answering:
 - Ask clarifying questions if information is missing.
 - Do not make up facts. If uncertain, say so.
 Respond in a professional and concise manner.` },
-        { type: "code", caption: "Example", code:
-`You are an experienced physician specialising
-in internal medicine. Always:
-- Explain medical terminology simply.
-- Recommend a professional for emergencies.
-- Do not diagnose with certainty from limited data.` },
+        { type: "code", caption: "Example from the demo (REACT_INSTRUCTIONS)", code:
+`You are a customer-support assistant that decides
+refund eligibility using ReAct-style reasoning.
+You do NOT know order details in advance -
+you must look them up.` },
       ],
     },
     {
       title: "Zero-Shot, One-Shot and Few-Shot Prompting",
-      subtitle: "Show the model examples of what you want – or none at all",
+      subtitle: "The same refund decision for order A1002, with examples or with none at all",
       demo: S + "3_1_prompting_techniques.py",
       blocks: [
         { type: "cards", size: 10.5, codeSize: 8.5, items: [
-          { n: 0, title: "Zero-shot", tag: "Instruction only", lines: ["**Best for:** QA, summaries, translation, simple classification", "**Watch out:** inconsistent on complex tasks"],
-            code: `Classify the sentiment:
-"Arrived on time, works
-perfectly."` },
+          { n: 0, title: "Zero-shot", tag: "Policy and case only", lines: ["**Best for:** QA, summaries, translation, simple classification", "**Watch out:** inconsistent on complex tasks"],
+            code: `Headphones, 42 days, opened,
+undamaged. Eligible for a
+refund? Yes/No and amount.` },
           { n: 1, title: "One-shot", tag: "One example", lines: ["**Best for:** teaching a format or style", "**Watch out:** one example rarely covers every case"],
-            code: `Review: Terrible phone.
-→ Negative
-Review: Arrived on time…
+            code: `Desk Lamp, 10 days, unopened
+→ Yes, refund of $19.99
+Headphones, 42 days…
 → ?` },
-          { n: "2+", title: "Few-shot", tag: "2–10 examples", lines: ["**Best for:** complex classification, extraction, structured output", "**Watch out:** longer prompts cost tokens and time"],
-            code: `Excellent service. → Positive
-Very slow delivery. → Negative
-Damaged packaging. → Negative
-Arrived on time… → ?` },
+          { n: "2+", title: "Few-shot", tag: "Three examples here", lines: ["**Best for:** complex classification, extraction, structured output", "**Watch out:** longer prompts cost tokens and time"],
+            code: `Desk Lamp, unopened → Yes
+Coffee Mug, damaged → No
+Yoga Mat, 35 days → No
+Headphones, 42 days… → ?` },
         ] },
       ],
     },
     {
-      title: "Chain-of-Thought (CoT) Prompting",
-      subtitle: "Ask the model to reason step by step before it answers",
+      title: "Chain-of-Thought and Tree-of-Thought Prompting",
+      subtitle: "Ask the model to reason step by step, or to compare several lines of reasoning",
       demo: S + "3_1_prompting_techniques.py",
       blocks: [
-        { type: "text", text: "**Prompt:** A customer has a budget of $1,200 and needs a laptop for programming, machine learning and occasional gaming. Recommend the best option." },
+        { type: "text", text: "**Case:** \"I'd like to return order A1002. Can I get a refund?\" Bluetooth Headphones, delivered 42 days ago, opened but undamaged. The policy allows returns within 30 days." },
         { type: "compare", size: 11, cols: [
-          { title: "Without CoT", color: "slate", items: [
-            "\"I recommend Laptop B because it offers the best balance of CPU, GPU, memory and price.\"",
+          { title: "Zero-shot: answer directly", color: "slate", items: [
+            "\"No, this order is not eligible.\"",
             "Plausible – but we cannot see or check the reasoning",
           ] },
-          { title: "With CoT: \"Reason step by step first\"", color: "teal", items: [
-            "Budget limit is $1,200",
-            "Programming needs a fast CPU and 16 GB+ RAM",
-            "ML and gaming both need a dedicated GPU",
-            "Laptop B: i7, 16 GB, RTX 4060, 1 TB SSD – $1,180",
-            "**So:** Laptop B meets every requirement within budget",
+          { title: "CoT: \"Think through the policy step by step\"", color: "teal", items: [
+            "First the window: 42 days is past the 30-day limit",
+            "Then the condition: opened but undamaged is acceptable",
+            "**Final Decision:** not eligible, because of the window",
           ] },
         ] },
+        { type: "callout", eyebrow: "Tree-of-thought", text: "Three separate calls each explore one line of reasoning (temperature 0.9); a final call evaluates them against the policy and gives one decision." },
       ],
     },
     {
       title: "ReAct Prompting",
-      subtitle: "Reason + Act: alternate thinking with tool calls, and use each result to decide the next step",
+      subtitle: "Reason + Act: alternate thinking with tool calls, and use each result to decide the next step\nWe have discussed this in Section 1, earlier; but now want to see the inside working of the loop",
       demo: S + "3_1_prompting_techniques.py",
       split: [1, 1.35],
       left: [
-        { type: "text", text: "**User:** I have ₹10 lakh to invest for 10 years. Equity mutual fund, fixed deposit or balanced fund?" },
+        { type: "text", text: "**User:** I'd like to return order A1003. Can I get a refund?" },
         { type: "chain", items: ["Question", "Thought", "Action", "Observation", "Thought", "Answer"], highlight: [2] },
       ],
       right: [
         { type: "steps", size: 10.5, titleSize: 11.5, gap: 0.09, items: [
-          { n: "T", title: "Thought: I need the user's risk profile" },
-          { n: "A", title: "Action: getCustomerProfile(id)", color: "navy" },
-          { n: "O", title: "Observation: age 38, moderate risk, 10-year horizon", color: "teal" },
-          { n: "T", title: "Thought: compare returns and risk of the options" },
-          { n: "A", title: "Action: getInvestmentOptions([...])", color: "navy" },
-          { n: "O", title: "Observation: equity 12% high · FD 7% low · balanced 10% medium", color: "teal" },
-          { n: "✓", title: "Answer: a balanced fund suits a moderate risk profile over 10 years", color: "slate" },
+          { n: "T", title: "Thought: I don't know this order yet, so I must look it up" },
+          { n: "A", title: "Action: lookup_order[A1003]", color: "navy" },
+          { n: "O", title: "Observation: Laptop Stand, 6 days since delivery, opened, damaged, $34.5", color: "teal" },
+          { n: "T", title: "Thought: within 30 days, but the policy excludes opened and damaged items" },
+          { n: "✓", title: "Final Answer: No, this order is not eligible for a refund", color: "slate" },
         ] },
       ],
     },
@@ -195,46 +187,11 @@ structured_llm = llm.with_structured_output(BookAnswer)` },
       ],
     },
     {
-      title: "AgentExecutor: The Runtime for the Loop",
-      subtitle: "Calls the model, runs the tools it asks for, feeds the results back, and knows when to stop",
-      demo: S + "3_4_agent_executor_serp_gutenberg.py",
-      blocks: [
-        { type: "steps", size: 11, items: [
-          { title: "Call 1 – the model asks for a tool", text: "Question: \"Who wrote Pride and Prejudice?\" → `serp_search(query=…)`" },
-          { title: "The executor runs the tool, not the model", text: "Looks up serp_search, executes it, gets the web results" },
-          { title: "Results go back into context", text: "The (call, result) pair is added to `agent_scratchpad`; loop back to the model" },
-          { title: "Call 2 – another tool", text: "Sees \"Jane Austen\" → `search_gutenberg_books(query=\"Jane Austen\")`" },
-          { title: "Call 3 – a plain-text answer", text: "No tool call this time = AgentFinish; the loop ends and `result[\"output\"]` is returned" },
-        ] },
-      ],
-    },
-    {
-      title: "ReAct and Plan-and-Execute in LangChain",
-      subtitle: "The two patterns from Session 1, now built with LangChain agents",
-      demo: S + "3_5_react_agent_web_search_python_repl.py, 3_6_plan_and_execute_agent.py",
-      blocks: [
-        { type: "compare", size: 11, cols: [
-          { title: "ReAct agent – 3_5", color: "navy", items: [
-            "Thought → Action → Observation, repeated",
-            "Tools: web search and a Python REPL",
-            "Decides each step from the latest observation",
-            "Great when the path is not known in advance",
-          ] },
-          { title: "Plan-and-execute agent – 3_6", color: "teal", items: [
-            "Goal → Planner → Plan → Executor → Steps → Answer",
-            "The plan is made once, up front",
-            "Each step runs as its own small ReAct loop",
-            "Great for long, structured tasks",
-          ] },
-        ] },
-      ],
-    },
-    {
       title: "Talking to Databases: SQLDatabaseToolkit",
       subtitle: "Natural language → SQL query → answer",
-      demo: S + "3_7_create_sales_db.py → 3_8_sql_database_toolkit_agent.py, 3_9_sales_db_agent.py",
+      demo: S + "3_4_create_sales_db.py → 3_5_sql_database_toolkit_agent.py, 3_6_sales_db_agent.py",
       blocks: [
-        { type: "text", text: "\"Which department has the highest average salary?\" – the agent inspects the schema, writes the SQL, runs it, fixes it if it fails, and explains the result." },
+        { type: "text", text: "\"Which product generated the highest total revenue?\" – the agent inspects the schema, writes the SQL, runs it and explains the result. `3_6` asks the same kind of question with one hand-written `run_sql` tool on the OpenAI Agents SDK." },
         { type: "tiles", cols: 2, items: [
           { icon: "FaTableList", title: "sql_db_list_tables", text: "Which tables exist?" },
           { icon: "FaSitemap", title: "sql_db_schema", text: "Columns of the chosen tables" },
@@ -245,31 +202,67 @@ structured_llm = llm.with_structured_output(BookAnswer)` },
       ],
     },
     {
+      title: "The Agent Loop, in Our Own Code",
+      subtitle: "The bind_tools idea from 3_2, repeated until the LLM stops asking for tools",
+      demo: S + "3_5_sql_database_toolkit_agent.py, 3_7_chaining_tool_outputs.py",
+      split: [1.35, 1],
+      left: [
+        { type: "code", caption: "run_agent() from 3_5 (prints and try/except left out)", code:
+`def run_agent(question, max_steps=8):
+    messages = [SystemMessage(SYSTEM_PROMPT),
+                HumanMessage(question)]
+
+    for _ in range(max_steps):
+        ai_message = llm_with_tools.invoke(messages)
+        messages.append(ai_message)
+
+        if not ai_message.tool_calls:
+            return ai_message.content
+
+        for tool_call in ai_message.tool_calls:
+            tool = tools_by_name[tool_call["name"]]
+            result = tool.invoke(tool_call["args"])
+            messages.append(ToolMessage(
+                content=str(result),
+                tool_call_id=tool_call["id"]))` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, titleSize: 11.5, items: [
+          { title: "Ask the LLM", text: "It sees the question and all results so far" },
+          { title: "No tool calls?", text: "Then this is the final answer, so stop" },
+          { title: "Run the tools", text: "Our code runs them, not the LLM" },
+          { title: "Feed the results back", text: "Each ToolMessage goes into the history; loop again" },
+          { title: "Limit the steps", text: "max_steps stops a confused agent from looping forever" },
+        ] },
+      ],
+    },
+    {
       title: "Multi-Step Reasoning: Chaining Tools",
-      subtitle: "\"Book the cheapest flight and email me the ticket\" – no single tool can do that",
-      demo: S + "3_10_chaining_tool_outputs.py, 3_11_chaining_tool_outputs_flask.py",
+      subtitle: "\"What should I wear outside today in Tokyo?\" – no single tool can answer that",
+      demo: S + "3_7_chaining_tool_outputs.py, 3_8_chaining_tool_outputs_flask.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaCity", label: "User city", caption: "Input" },
           { icon: "FaLocationDot", label: "geocode_city()", caption: "→ latitude / longitude" },
           { icon: "FaCloudSun", label: "get_current_weather()", caption: "uses the coordinates" },
-          { icon: "FaMapPin", label: "find_nearby_places()", caption: "uses the coordinates" },
           { icon: "FaShirt", label: "recommend_clothing()", caption: "uses the weather" },
+          { icon: "FaMapPin", label: "find_nearby_places()", caption: "uses the coordinates" },
         ] },
-        { type: "callout", eyebrow: "Tool chaining", text: "Tool 1 → output → Tool 2 → output → Tool 3 → final answer. The Flask app (3_11) puts a UI on top of the chaining script (3_10)." },
+        { type: "callout", eyebrow: "Two ways", text: "3_7 runs this twice: first the agent decides each next tool, then the same chain is hardcoded with no LLM. The Flask app (3_8) puts a UI on the hardcoded version." },
       ],
     },
     {
       title: "Tool-Augmented Research Agent",
-      subtitle: "Search the web, dig deeper where needed, and write up what it found",
-      demo: S + "3_12_research_agent_tools.py, 3_13_research_agent_tools_serp.py",
+      subtitle: "Search the web, dig deeper where needed, and save a report of what it found",
+      demo: S + "3_9_research_agent_tools.py, 3_10_research_agent_tools_serp.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaMagnifyingGlass", label: "Search", caption: "SERP API on the topic" },
-          { icon: "FaCalendarDays", label: "Recent?", caption: "Use date-based search for fresh topics" },
-          { icon: "FaCode", label: "Dig deeper", caption: "BeautifulSoup reads specific pages" },
-          { icon: "FaFileLines", label: "Report", caption: "Summarise with sources" },
+          { icon: "FaCalendarDays", label: "get_current_date()", caption: "When the topic depends on recency" },
+          { icon: "FaMagnifyingGlass", label: "web_search()", caption: "Tavily (3_9) or SerpAPI (3_10)" },
+          { icon: "FaCode", label: "fetch_page_content()", caption: "BeautifulSoup reads promising pages" },
+          { icon: "FaFileLines", label: "save_report()", caption: "Markdown file with sources" },
         ] },
+        { type: "callout", eyebrow: "Different framework", text: "These two demos use the OpenAI Agents SDK from Session 1, not LangChain. The agent decides the tool order, and the script then checks that the report file really exists." },
       ],
     },
     {
@@ -277,15 +270,15 @@ structured_llm = llm.with_structured_output(BookAnswer)` },
       title: "Session 3 Summary",
       subtitle: "What you built today",
       built: [
-        { tag: "3_1", title: "Prompting techniques", text: "Personas, few-shot, chain-of-thought and ReAct prompts" },
+        { tag: "3_1", title: "Prompting techniques", text: "Few-shot, chain-of-thought, tree-of-thought and ReAct" },
         { tag: "3_2", title: "Custom tools", text: "@tool, bind_tools and Pydantic input schemas" },
-        { tag: "3_4", title: "AgentExecutor", text: "The tool loop with web search and Gutenberg tools" },
-        { tag: "3_8", title: "SQL agent", text: "Natural-language questions over a sales database" },
-        { tag: "3_12", title: "Research agent", text: "Search, scrape and summarise" },
+        { tag: "3_5", title: "SQL agent", text: "Natural-language questions, with our own agent loop" },
+        { tag: "3_7", title: "Tool chaining", text: "One tool's output becomes the next tool's input" },
+        { tag: "3_9", title: "Research agent", text: "Search, scrape and summarise" },
       ],
       takeaways: [
         "Prompts are the agent's operating manual – structure them",
-        "The LLM requests tool calls; the executor runs them",
+        "The LLM requests tool calls; your code runs them",
         "A clear docstring and schema are what make a tool usable",
         "Chain tools when one output is the next one's input",
         "Restrict what tools can do (read-only DB, allow-lists)",

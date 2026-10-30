@@ -25,8 +25,8 @@ module.exports = {
       rows: [
         { date: "Sat 24-Oct", title: "Agentic AI Foundations and Agent Architectures", focus: "OpenAI Agents SDK, tools, design patterns" },
         { date: "Sat 25-Oct", title: "LangChain Core: Chains, Memory and RAG", focus: "LCEL, memory, vector stores, RAG pipeline" },
-        { date: "Sun 31-Oct", title: "LangChain Agents and Tool Use", focus: "Prompting, custom tools, AgentExecutor, SQL agents" },
-        { date: "Sat 1-Nov", title: "LangGraph: Stateful Workflows and Routing", focus: "State, nodes, edges, reducers, routing" },
+        { date: "Sun 31-Oct", title: "LangChain Agents and Tool Use", focus: "Prompting, custom tools, SQL agents, tool chaining" },
+        { date: "Sat 1-Nov", title: "LangGraph: Stateful Workflows and Routing", focus: "State, nodes, edges, streaming, LangGraph Studio" },
         { date: "Sun 7-Nov", title: "LangGraph: Cycles, HITL and Persistence", focus: "Loops, human approval, checkpointers, guardrails" },
         { date: "Sat 8-Nov", title: "Multi-Agent Orchestration with CrewAI", focus: "Crews, flows, managers, memory, observability" },
         { date: "Sun 14-Nov", title: "Multi-Agent Systems with Microsoft AutoGen", focus: "AgentChat, teams, GraphFlow, memory" },

@@ -50,10 +50,10 @@ tools_by_name = {t.name: t for t in tools}
 # No ReAct here: bind_tools uses OpenAI's native function-calling instead
 # of a hand-written Thought/Action/Observation prompt the model has to
 # follow and we have to text-parse. The model either returns tool_calls
-# or a plain answer - no prompt template, no AgentExecutor, no parsing
-# errors to handle. The tradeoff is this loop only runs one round of
-# tool calls before asking for a final answer; a multi-step ReAct-style
-# agent can keep looping until it decides it's done.
+# or a plain answer - no prompt template, no parsing errors to handle.
+# The tradeoff is this code only runs one round of tool calls before
+# asking for a final answer; 3_5_sql_database_toolkit_agent.py wraps the
+# same idea in a loop that keeps going until the agent decides it's done.
 # -----------------------------
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 llm_with_tools = llm.bind_tools(tools)

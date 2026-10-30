@@ -34,7 +34,7 @@ module.exports = {
       blocks: [
         { type: "cards", size: 10.5, items: [
           { icon: "FaUser", title: "Agents", tag: "Team members", lines: ["**Role:** what they do", "**Goal:** what they aim for", "**Backstory:** context that sharpens them", "**Tools:** what they can call"] },
-          { icon: "FaListCheck", title: "Tasks", tag: "Assignments", lines: ["**Description:** what to do", "**Expected output:** format and content", "**Agent:** who does it", "e.g. \"Extract customer names\""] },
+          { icon: "FaListCheck", title: "Tasks", tag: "Assignments", lines: ["**Description:** what to do", "**Expected output:** format and content", "**Agent:** who does it", "e.g. \"Fetch the current financial snapshot for {ticker}\""] },
           { icon: "FaUserTie", title: "Crew", tag: "Team lead", lines: ["Delegates tasks", "Coordinates the agents", "Runs the process", "Combines the results"] },
           { icon: "FaScrewdriverWrench", title: "Tools", tag: "Utilities", lines: ["File readers, web search, APIs, databases", "Custom tools for your domain"] },
         ] },
@@ -46,10 +46,9 @@ module.exports = {
       demo: S + "6_1_crewai_basics.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaMagnifyingGlass", label: "Agent 1", caption: "Research" },
-          { icon: "FaChartLine", label: "Agent 2", caption: "Analysis" },
-          { icon: "FaPen", label: "Agent 3", caption: "Writing" },
-          { icon: "FaUserTie", label: "Crew", caption: "Orchestrates all three", color: "coral" },
+          { icon: "FaMagnifyingGlass", label: "Financial Data Analyst", caption: "Fetches a stock snapshot with a tool" },
+          { icon: "FaPen", label: "Investment Writer", caption: "Turns it into a plain-English brief" },
+          { icon: "FaUserTie", label: "Crew", caption: "Runs the two tasks in order", color: "coral" },
         ] },
         { type: "cols", ratio: [1.45, 1], cols: [
           [{ type: "chain", items: ["Agent", "Task", "Crew"] }, { type: "chain", gapBefore: 0.12, items: ["Agent", "Orchestration", "State", "Control"], highlight: [1, 2, 3] }],
@@ -85,7 +84,7 @@ module.exports = {
           { title: "Crew", color: "navy", items: ["A team of agents working together", "Focus: collaboration", "Agents perform the tasks", "Good for multi-agent work"] },
           { title: "Flow", color: "teal", items: ["Controls the overall application", "Focus: orchestration", "Decides what happens next", "Good for complex, branching workflows"] },
         ] },
-        { type: "chain", items: ["START", "Research", "Evaluate", "Good → Analyze → Report", "Poor → Research again"], highlight: [2] },
+        { type: "chain", items: ["START", "Fetch snapshot", "Route on confidence", "Good → Crew analysis → Report", "Retry → Explain why not → Report"], highlight: [2] },
       ],
     },
     {
@@ -158,7 +157,7 @@ class StockResearchFlow(Flow[ResearchState]):
       demo: S + "6_7_hierarchical_crew.py",
       blocks: [
         { type: "cols", ratio: [1.1, 1], cols: [
-          [{ type: "tree", boxW: 1.6, rows: [[{ label: "Manager agent", fill: "coral" }], ["Research", "Data", "Critic"], [{ label: "Final output", fill: "navy" }]] }],
+          [{ type: "tree", boxW: 1.6, rows: [[{ label: "Research Manager", fill: "coral" }], ["Fundamentals", "News & Sentiment", "Valuation"], [{ label: "Final output", fill: "navy" }]] }],
           [{ type: "bullets", size: 11.5, items: ["Understands the overall objective", "Delegates work to specialists", "Reviews their results", "Decides what needs more work", "Coordinates the final output"] }],
         ] },
         { type: "callout", eyebrow: "Use it only when needed", text: "If the workflow is straightforward and not agentic, a sequential crew is simpler and cheaper than a manager agent." },
@@ -171,9 +170,9 @@ class StockResearchFlow(Flow[ResearchState]):
       split: [1.35, 1],
       left: [
         { type: "table", size: 10.5, widths: [1.7, 1.6, 1.8], head: ["Level", "Agent behaviour", "Example"], rows: [
-          ["Human-in-the-loop", "A human approves each action", "Approve a refund"],
-          ["Human-on-the-loop", "A human supervises", "Monitor automated decisions"],
-          ["Human-out-of-the-loop", "Fully autonomous", "Automated classification"],
+          ["Human-in-the-loop", "A human approves each action", "Approve a trade recommendation (this demo)"],
+          ["Human-on-the-loop", "A human supervises", "A review dashboard"],
+          ["Human-out-of-the-loop", "Fully autonomous", "The snapshot summary in 6_1"],
         ] },
       ],
       right: [
@@ -218,7 +217,7 @@ class StockResearchFlow(Flow[ResearchState]):
           ],
           [
             { type: "text", text: "**What a guardrail checks**", size: 12.5 },
-            { type: "bullets", size: 11, items: ["Required fields exist", "The answer contains evidence", "Confidence is above a threshold", "Output follows policy", "SQL is read-only", "Values are within an allowed range"] },
+            { type: "bullets", size: 11, items: ["**In the demo:** states buy, hold or sell", "**In the demo:** gives reasoning, not one word", "**In the demo:** any claimed price is near the real one", "Also common: required fields, evidence, confidence", "Also common: read-only SQL, allowed value ranges"] },
           ],
         ] },
         { type: "chain", items: ["Format", "Content", "Quality", "Safety / policy"], highlight: [0, 1, 2, 3] },

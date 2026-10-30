@@ -44,18 +44,18 @@ module.exports = {
     },
     {
       title: "The Advanced-RAG Toolbox",
-      subtitle: "The techniques this session covers – each targets a specific weakness",
-      demo: S + "8_1_rag_hallucination_eval.py",
+      subtitle: "Common techniques, each aimed at a specific weakness – this session demos most of them",
+      demo: "Concept",
       blocks: [
         { type: "tiles", cols: 4, size: 10, items: [
           { icon: "FaRobot", title: "Agentic RAG", text: "An agent decides what, how and when to retrieve" },
-          { icon: "FaRotateRight", title: "Self-RAG", text: "Checks the evidence; retrieves again if weak" },
+          { icon: "FaRotateRight", title: "Self-RAG", text: "Checks its draft answer; regenerates if unsupported" },
           { icon: "FaGlobe", title: "Corrective RAG", text: "Falls back to web search when local fails" },
           { icon: "FaRankingStar", title: "Reranking", text: "A stronger model re-orders the chunks" },
           { icon: "FaLightbulb", title: "HyDE", text: "Embed a hypothetical answer, search with it" },
           { icon: "FaClone", title: "Query expansion", text: "Several rewrites of the question" },
           { icon: "FaCircleNodes", title: "GraphRAG", text: "Entities and relationships as a graph" },
-          { icon: "FaShuffle", title: "Hybrid RAG", text: "Combine keyword, vector and graph search" },
+          { icon: "FaShuffle", title: "Hybrid RAG", text: "Combine keyword and vector search" },
           { icon: "FaStairs", title: "Multi-hop", text: "Chain several facts to one answer" },
           { icon: "FaBrain", title: "Retrieval + reasoning", text: "Compute and decide on retrieved facts" },
           { icon: "FaGaugeHigh", title: "RAGAS", text: "Measure retrieval and answer quality" },
@@ -74,7 +74,7 @@ module.exports = {
         ] },
       ],
     },
-    { kind: "image", src: "traditional_vs_agentic_rag.png", alt: "Traditional RAG vs agentic RAG flow", demo: S + "8_3_traditional_vs_agentic_rag.py" },
+    { kind: "image", src: "traditional_vs_agentic_rag.png", alt: "Traditional RAG vs agentic RAG flow", demo: S + "8_3_traditional_vs_agentic_rag.py (FAQ index from 8_2_support_ticketing_agent_hitl.py)" },
     {
       title: "Adaptive Retrieval Strategies",
       subtitle: "An agentic system picks how to retrieve – including not retrieving at all",
@@ -85,7 +85,7 @@ module.exports = {
           { icon: "FaMagnifyingGlass", title: "Single retrieval", text: "Retrieve once for simple factual questions" },
           { icon: "FaRotate", title: "Iterative retrieval", text: "Fetch more when the first pass isn't enough" },
           { icon: "FaPenToSquare", title: "Query reformulation", text: "Rewrite the question for better search" },
-          { icon: "FaLayerGroup", title: "Multi-source", text: "Combine vector DB, SQL, APIs and web search" },
+          { icon: "FaLayerGroup", title: "Multi-source", text: "Combine the FAQ knowledge base, web search and a calculator" },
           { icon: "FaScrewdriverWrench", title: "Tool-based", text: "Pick the right tool for the request" },
         ] },
       ],
@@ -116,17 +116,18 @@ module.exports = {
       ],
     },
     {
-      title: "Self-RAG: Don't Trust the First Retrieval",
-      subtitle: "Retrieve → check → retrieve or generate again if needed → answer",
+      title: "Self-RAG: Don't Trust the First Draft",
+      subtitle: "Retrieve → draft → critique the draft → regenerate if needed → answer",
       demo: S + "8_11_self_rag.py",
       blocks: [
-        { type: "flow", loop: "evidence insufficient → retrieve again", items: [
-          { icon: "FaUser", label: "Question", caption: "Documents for a cashless health claim?" },
-          { icon: "FaMagnifyingGlass", label: "Retrieve", caption: "3 chunks from the policy DB" },
-          { icon: "FaScaleBalanced", label: "Check", caption: "Sufficient and relevant? One chunk is off-topic", color: "coral" },
-          { icon: "FaFileLines", label: "Generate", caption: "Claim form, original bills, discharge summary, prescription, diagnostic reports", color: "teal" },
+        { type: "flow", loop: "draft not supported → regenerate, at most 2 more times", items: [
+          { icon: "FaUser", label: "Question", caption: "Covered after 3 years? Can I switch insurer?" },
+          { icon: "FaMagnifyingGlass", label: "Retrieve", caption: "Chunks from the insurance policy KB" },
+          { icon: "FaFileLines", label: "Draft", caption: "A first answer from those chunks" },
+          { icon: "FaScaleBalanced", label: "Critique", caption: "Every claim backed? Question fully answered?", color: "coral" },
+          { icon: "FaRotateRight", label: "Regenerate", caption: "Stricter grounding or a follow-up retrieval", color: "teal" },
         ] },
-        { type: "text", size: 11.5, color: "slate", text: "Plain RAG trusts whatever comes back. Self-RAG grades its own evidence and searches again – here, specifically for cashless-claim documents." },
+        { type: "text", size: 11.5, color: "slate", text: "This catches what grading documents cannot: the chunks were relevant, but the answer still overreached beyond them." },
       ],
     },
     {
@@ -135,10 +136,10 @@ module.exports = {
       demo: S + "8_12_corrective_rag.py",
       blocks: [
         { type: "cols", ratio: [1.15, 1], cols: [
-          [{ type: "tree", boxW: 2.0, labels: ["", "", "relevant?", ""], rows: [["Question"], ["Retrieve from the vector DB"], [{ label: "Grade the chunks", fill: "coral" }], [{ label: "Good → use them", fill: "teal" }, { label: "Poor → web search", fill: "navy" }], ["Generate the answer"]] }],
+          [{ type: "tree", boxW: 1.5, labels: ["", "", "how many are relevant?", ""], rows: [["Question"], ["Retrieve from the vector DB"], [{ label: "Grade the documents", fill: "coral" }], [{ label: "All: KB only", fill: "teal" }, { label: "Some: KB + web", fill: "slate" }, { label: "None: web only", fill: "navy" }], ["Generate the answer"]] }],
           [
-            { type: "bullets", size: 11.5, items: ["Plain RAG answers from whatever it retrieved – even the wrong thing", "CRAG grades the retrieved chunks first", "Poor or missing evidence triggers a web search instead of a guess", "The answer comes from the best evidence available"] },
-            { type: "callout", eyebrow: "Self-RAG vs CRAG", text: "Self-RAG retries the same knowledge base; CRAG reaches for a different source." },
+            { type: "bullets", size: 11.5, items: ["Plain RAG answers from whatever it retrieved – even the wrong thing", "CRAG grades the retrieved chunks first", "Some relevant: refine them, then add a web search. None: rewrite the query and use the web only", "The answer comes from the best evidence available"] },
+            { type: "callout", eyebrow: "Self-RAG vs CRAG", text: "Self-RAG grades the generated answer; CRAG grades the retrieved documents and can change source." },
           ],
         ] },
       ],
@@ -148,8 +149,8 @@ module.exports = {
       subtitle: "The most similar chunk is not always the most relevant one",
       demo: S + "8_13_cohere_reranking.py",
       blocks: [
-        { type: "chain", items: ["Query", "Vector search", "Top 20 chunks", "Reranker", "Best 3–5", "LLM"], highlight: [3] },
-        { type: "table", size: 10.5, widths: [3.6, 1.1, 1.1], head: ["\"Documents for a cashless health insurance claim?\"", "Vector score", "Reranked"], rows: [
+        { type: "chain", items: ["Query", "Vector search", "Top 10 chunks", "Reranker", "Best 3", "LLM"], highlight: [3] },
+        { type: "table", size: 10.5, widths: [3.6, 1.1, 1.1], head: ["\"Documents for a cashless health insurance claim?\" (illustrative scores)", "Vector score", "Reranked"], rows: [
           ["A – Submit the claim form, original bills and discharge summary", "0.82", "**0.97 ✓**"],
           ["B – Premiums must be paid within the grace period", "0.79", "0.18 ✗"],
           ["C – Required documents include prescription and diagnostic reports", "0.76", "**0.94 ✓**"],
@@ -164,19 +165,19 @@ module.exports = {
       blocks: [
         { type: "cols", cols: [
           [
-            { type: "text", text: "**Keyword + semantic (8_14)**", size: 12.5 },
+            { type: "text", text: "**TF-IDF + embeddings (8_14)**", size: 12.5 },
             { type: "compare", size: 11, cols: [
-              { title: "Keyword", color: "navy", items: ["Exact words", "Error codes, names, acronyms"] },
-              { title: "Semantic", color: "teal", items: ["Meaning", "Paraphrases, natural language"] },
+              { title: "Keyword", color: "navy", items: ["Exact words", "\"SIP investment plan\""] },
+              { title: "Semantic", color: "teal", items: ["Meaning", "\"put money away for old age\""] },
             ] },
+            { type: "text", size: 10.5, color: "slate", text: "Two ways to combine: a weighted average, or Reciprocal Rank Fusion." },
           ],
           [
-            { type: "text", text: "**Vector + graph (8_15)**", size: 12.5 },
-            { type: "text", size: 11, text: "\"My Savings Account Plus card was used fraudulently – am I covered, and how long will it take?\"" },
+            { type: "text", text: "**BM25 + dense vectors (8_15)**", size: 12.5 },
             { type: "bullets", size: 10.5, items: [
-              "**Vector** finds the fraud-protection FAQ and the Zero Liability page",
-              "**Graph** chains Savings Account Plus → Zero Liability → 60-day window → Fraud Resolution → 5 business days",
-              "Merge both pools, then rerank",
+              "**Favours BM25:** \"What is the IRDAI mandated claim settlement timeline…?\" – an exact acronym",
+              "**Favours vectors:** \"If my mom already had a health condition…\" – avoids the policy's own wording",
+              "Reciprocal Rank Fusion lifts a document ranked highly by either retriever",
             ] },
           ],
         ] },
@@ -186,34 +187,34 @@ module.exports = {
       title: "GraphRAG: Connecting Facts Across Documents",
       subtitle: "Extract entities and relationships into a knowledge graph instead of treating chunks as isolated",
       demo: S + "8_16_graph_rag.py",
-      split: [1, 1.15],
+      split: [1.2, 1],
       left: [
-        { type: "text", text: "**Three separate policy documents**", size: 12 },
+        { type: "text", text: "**\"If I switch insurer through portability, do I keep credit for the waiting period already completed?\"**", size: 11.5 },
         { type: "steps", size: 10.5, titleSize: 11, gap: 0.08, items: [
-          { title: "Account terms", text: "Savings Account Plus customers are enrolled in Zero Liability Protection" },
-          { title: "Program rules", text: "It covers unauthorised transactions reported within 60 days" },
-          { title: "Claims policy", text: "Claims go to the Fraud Resolution team; turnaround 5 business days" },
+          { title: "Extract once", text: "An LLM pulls (subject, relation, object) triples from the policy chunks" },
+          { title: "Build the graph", text: "Those triples become a networkx graph" },
+          { title: "Find the entities", text: "Match what the question mentions to graph nodes" },
+          { title: "Walk outward", text: "Collect every connected fact in one traversal" },
         ] },
       ],
       right: [
-        { type: "text", text: "**The same facts as a graph**", size: 12 },
-        { type: "tree", boxW: 2.1, size: 10.5, labels: ["enrols customers in", "covers (60 days) · processed by", "turnaround"], rows: [["Savings Account Plus"], [{ label: "Zero Liability Protection", fill: "navy" }], ["Unauthorised transactions", "Fraud Resolution team"], [{ label: "5 business days", fill: "teal" }]] },
+        { type: "text", text: "**One triple as a graph**", size: 12 },
+        { type: "tree", boxW: 2.1, size: 10.5, labels: ["processed_by"], rows: [[{ label: "Cashless Claim", fill: "navy" }], [{ label: "TPA", fill: "teal" }]] },
       ],
     },
     {
       title: "Multi-Hop Reasoning",
-      subtitle: "Follow several relationships to reach an answer no single chunk contains",
+      subtitle: "Follow several facts to reach an answer no single chunk contains",
       demo: S + "8_17_multi_hop_reasoning.py",
       blocks: [
-        { type: "callout", eyebrow: "Question", text: "\"Is a Savings Account Plus customer covered for fraud reported 3 weeks ago, and how long will resolution take?\"" },
-        { type: "flow", items: [
-          { icon: "FaBuildingColumns", label: "Savings Account Plus", caption: "enrols in →" },
-          { icon: "FaShieldHalved", label: "Zero Liability", caption: "covers →" },
-          { icon: "FaCalendarCheck", label: "Within 60 days", caption: "3 weeks ✓ inside the window", color: "teal" },
-          { icon: "FaUserShield", label: "Fraud Resolution", caption: "turnaround →" },
-          { icon: "FaClock", label: "5 business days", caption: "the answer", color: "coral" },
+        { type: "callout", eyebrow: "Question", text: "\"I'm on a Family Floater Gold plan and intimated the insurer 20 hours after an emergency admission. Will a cashless claim be accepted, who processes it, and how long will settlement take?\"" },
+        { type: "flow", loop: "at most 4 hops", items: [
+          { icon: "FaMagnifyingGlass", label: "Retrieve", caption: "Vector search for the current query" },
+          { icon: "FaBrain", label: "Decide", caption: "What is still missing?", color: "coral" },
+          { icon: "FaRoute", label: "next_hop_query", caption: "A new search for the missing fact" },
+          { icon: "FaReply", label: "Answer", caption: "From everything collected", color: "teal" },
         ] },
-        { type: "text", size: 11.5, color: "slate", text: "Four facts from three documents, plus a condition applied to this customer's situation." },
+        { type: "text", size: 11.5, color: "slate", text: "The demo compares this with a single search (k=3). Unlike GraphRAG, it chains facts with repeated vector searches and no stored graph." },
       ],
     },
 
@@ -234,7 +235,7 @@ module.exports = {
     { kind: "image", src: "ragas_pipeline.png", alt: "RAGAS evaluation of a RAG pipeline", demo: RAGAS },
     {
       title: "RAGAS Metrics, Worked Through",
-      subtitle: "One cashless-claim question, scored four ways",
+      subtitle: "One cashless-claim question, scored four ways (illustrative numbers – run the demos for real scores)",
       demo: RAGAS,
       blocks: [
         { type: "cards", size: 10, items: [
@@ -251,9 +252,9 @@ module.exports = {
       subtitle: "What you built today",
       built: [
         { tag: "8_3", title: "Traditional vs agentic RAG", text: "The same question through both pipelines" },
-        { tag: "8_11", title: "Self-RAG and CRAG", text: "Grade the evidence; retry or fall back to the web" },
-        { tag: "8_13", title: "Reranking and hybrid search", text: "Cohere reranker; keyword + semantic + graph" },
-        { tag: "8_16", title: "GraphRAG and multi-hop", text: "A bank-policy knowledge graph" },
+        { tag: "8_11", title: "Self-RAG and CRAG", text: "Grade the answer or the documents; regenerate or use the web" },
+        { tag: "8_13", title: "Reranking and hybrid search", text: "Cohere reranker; keyword + semantic with rank fusion" },
+        { tag: "8_16", title: "GraphRAG and multi-hop", text: "An insurance-policy knowledge graph; chained searches" },
         { tag: "8_18", title: "RAGAS evaluation", text: "Four metrics on an insurance Q&A system" },
       ],
       takeaways: [

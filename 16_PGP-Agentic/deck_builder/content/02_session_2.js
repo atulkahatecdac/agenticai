@@ -49,8 +49,8 @@ module.exports = {
       ],
     },
     { kind: "image", src: "lcel_operators.png", alt: "LCEL operators and example", demo: S + "2_1_langchain_lcel.py, 2_2_langchain_lcel_ollama.py" },
-    { kind: "image", src: "prompt_template_types.png", alt: "Three types of prompt templates in LangChain", demo: S + "2_3_prompt_templates.py" },
-    { kind: "image", src: "output_parsers.png", alt: "LangChain output parsers", demo: S + "2_4_output_parsers.py" },
+    { kind: "image", src: "prompt_template_types.png", alt: "Three types of prompt templates in LangChain", demo: S + "2_3_prompt_templates.py (chat, MessagesPlaceholder and partial templates)" },
+    { kind: "image", src: "output_parsers.png", alt: "LangChain output parsers", demo: S + "2_4_output_parsers.py (Str, JSON and Pydantic parsers)" },
 
     // ---------------------------------------------------------------- memory
     {
@@ -95,7 +95,7 @@ module.exports = {
         { type: "cards", size: 11, items: [
           { icon: "FaCompassDrafting", title: "Cosine similarity", lines: ["Angle between two vectors – ignores length", "**Larger is better** (1 = same direction)"] },
           { icon: "FaRulerHorizontal", title: "L2 (Euclidean) distance", lines: ["Straight-line distance between two points", "**Smaller is better** (0 = identical)"] },
-          { icon: "FaArrowsLeftRight", title: "Dot product", lines: ["Alignment and magnitude together", "**Larger is better**; equals cosine for normalised vectors"] },
+          { icon: "FaArrowsLeftRight", title: "Dot product", lines: ["Alignment and magnitude together", "**Larger is better**; equals cosine for normalised vectors", "Not in the demo"] },
         ] },
         { type: "callout", eyebrow: "Retrieval in one line", text: "Embed the question, score it against every stored vector, keep the top-k closest – those chunks go to the LLM." },
       ],
@@ -115,7 +115,7 @@ module.exports = {
       right: [
         { type: "code", caption: "Search by meaning, filter by metadata", code:
 `results = collection.query(
-    query_texts=["delivery lag"],
+    query_texts=["can i use cash?"],
     n_results=1,
     where={"category": "returns"},
 )` },
@@ -141,15 +141,35 @@ module.exports = {
       subtitle: "Facebook AI Similarity Search – Meta's library for fast similarity search over dense vectors",
       demo: S + "2_10_faiss_search.py",
       blocks: [
-        { type: "text", text: "One million documents, and the user asks **\"What is machine learning?\"**" },
+        { type: "text", text: "Imagine one million documents (the demo has ten), and the user asks **\"What is artificial intelligence?\"**" },
         { type: "compare", size: 11.5, cols: [
           { title: "Without FAISS – linear scan", color: "slate", items: ["Embed the query", "Compare with document 1, then 2, then 3 …", "… all the way to document 1,000,000", "Slow, and gets slower as data grows"] },
-          { title: "With FAISS – an index", color: "teal", items: ["Embed the query", "Look it up in the FAISS index", "Get the top 5 results directly", "Saved to disk as a .index file (+ .pkl for the documents)"] },
+          { title: "With FAISS – an index", color: "teal", items: ["Embed the query", "Search the FAISS index", "Get the top-k results (top_k=3 in the demo)", "`IndexFlatL2` in the demo still compares all; `IndexHNSW` skips most"] },
         ] },
       ],
     },
 
     // ---------------------------------------------------------------- RAG pipeline
+    {
+      title: "Loading and Chunking Documents",
+      subtitle: "Turn files into Document objects, then into chunks small enough to embed and retrieve",
+      demo: S + "2_11_document_loaders.py, 2_12_text_splitters.py",
+      split: [1, 1.4],
+      left: [
+        { type: "icons", d: 0.36, size: 11, items: [
+          { icon: "FaFileImport", title: "Loaders", text: "One per format – PDF, CSV, web, Notion; a PDF loads as one Document per page" },
+          { icon: "FaWindowMaximize", title: "Why chunk: context window", text: "Whole documents do not fit, and tokens cost money" },
+          { icon: "FaBullseye", title: "Why chunk: better retrieval", text: "Small focused chunks match questions better" },
+        ] },
+      ],
+      right: [
+        { type: "table", size: 10.5, widths: [1.3, 2.6, 1.6], head: ["Strategy", "How it splits", "Best for"], rows: [
+          ["Fixed-size", "Every N characters, with overlap so ideas are not cut in half", "Quick prototypes (not in the demo)"],
+          ["Recursive", "Paragraph → sentence → word until each chunk fits", "**General RAG (most common)**"],
+          ["Semantic", "Where the topic changes, judged with embeddings", "High-quality RAG"],
+        ] },
+      ],
+    },
     {
       title: "The RAG Pipeline, End to End",
       subtitle: "Index once, then answer many questions",
@@ -174,26 +194,6 @@ module.exports = {
       ],
     },
     {
-      title: "Loading and Chunking Documents",
-      subtitle: "Turn files into Document objects, then into chunks small enough to embed and retrieve",
-      demo: S + "2_11_document_loaders.py, 2_12_text_splitters.py",
-      split: [1, 1.4],
-      left: [
-        { type: "icons", d: 0.36, size: 11, items: [
-          { icon: "FaFileImport", title: "Loaders", text: "One per format – PDF, CSV, web, Notion; a PDF loads as one Document per page" },
-          { icon: "FaWindowMaximize", title: "Why chunk: context window", text: "Whole documents do not fit, and tokens cost money" },
-          { icon: "FaBullseye", title: "Why chunk: better retrieval", text: "Small focused chunks match questions better" },
-        ] },
-      ],
-      right: [
-        { type: "table", size: 10.5, widths: [1.3, 2.6, 1.6], head: ["Strategy", "How it splits", "Best for"], rows: [
-          ["Fixed-size", "Every N characters, with overlap so ideas are not cut in half", "Quick prototypes"],
-          ["Recursive", "Paragraph → sentence → word until each chunk fits", "**General RAG (most common)**"],
-          ["Semantic", "Where the topic changes, judged with embeddings", "High-quality RAG"],
-        ] },
-      ],
-    },
-    {
       title: "Retrievers",
       subtitle: "The bridge between the vector database and the LLM – only the relevant chunks reach the prompt",
       demo: S + "2_14_retrievers.py",
@@ -203,7 +203,7 @@ module.exports = {
           { icon: "FaShuffle", title: "MultiQueryRetriever", tag: "Rephrase", lines: ["An LLM writes several versions of the question, retrieves for each, merges the results", "**Catches** chunks a single wording misses"] },
           { icon: "FaCompress", title: "ContextualCompression", tag: "Trim", lines: ["Retrieves candidates, then an LLM keeps only the parts that answer the question", "**Less noise** in the prompt"] },
         ] },
-        { type: "callout", eyebrow: "More in later sessions", text: "Self-query, parent-document and ensemble retrievers build on the same idea – they change how a question becomes the final chunks." },
+        { type: "callout", eyebrow: "Beyond these three", text: "Self-query, parent-document and ensemble retrievers (not demoed in this course) build on the same idea – they change how a question becomes the final chunks." },
       ],
     },
     {

@@ -9,8 +9,7 @@ import requests
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain_core.messages import BaseMessage, HumanMessage, ToolMessage
 
 load_dotenv(override=True)
 
@@ -139,6 +138,37 @@ def find_nearby_places(lat_lon: str) -> str:
 
 tools = [geocode_city, get_current_weather, recommend_clothing, find_nearby_places]
 
+llm_with_tools = llm.bind_tools(tools)
+tools_by_name = {t.name: t for t in tools}
+
+# -----------------------------
+# The agent loop: the LLM asks for tools, our code runs them and feeds the
+# results back, until the LLM answers without asking for a tool. max_steps
+# stops a confused agent from looping (and spending tokens) forever.
+# -----------------------------
+def run_agent(question: str, max_steps: int = 6) -> str:
+    messages: list[BaseMessage] = [HumanMessage(question)]
+
+    for _ in range(max_steps):
+        ai_message = llm_with_tools.invoke(messages)
+        messages.append(ai_message)
+
+        if not ai_message.tool_calls:
+            return ai_message.content
+
+        for tool_call in ai_message.tool_calls:
+            print(f"Calling tool: {tool_call['name']}({tool_call['args']})")
+            # A failed tool is reported back to the LLM so it can try to
+            # fix the problem, instead of crashing the whole agent.
+            try:
+                result = tools_by_name[tool_call["name"]].invoke(tool_call["args"])
+            except Exception as e:
+                result = f"Tool failed: {e}"
+            print(f"Tool result:\n{result}\n")
+            messages.append(ToolMessage(content=str(result), tool_call_id=tool_call["id"]))
+
+    return f"Stopped: no final answer after {max_steps} steps."
+
 if __name__ == "__main__":
     city = input("Enter a city: ").strip() or "Tokyo"
     question = (
@@ -159,14 +189,7 @@ if __name__ == "__main__":
     print("1. AGENT-DRIVEN chaining (tool-calling agent)")
     print("=" * 70)
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("human", "{input}"),
-        MessagesPlaceholder("agent_scratchpad"),
-    ])
-
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=6)
-    agent_result = agent_executor.invoke({"input": question})
+    agent_answer = run_agent(question)
 
     # =====================================================================
     # 2. DETERMINISTIC chaining
@@ -196,6 +219,6 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("RESULTS")
     print("=" * 70)
-    print(f"Agent-driven:  {agent_result['output']}")
+    print(f"Agent-driven:  {agent_answer}")
     print(f"Deterministic: {recommendation}")
     print(f"Nearby places:\n{places}")

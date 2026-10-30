@@ -78,12 +78,12 @@ graph.add_conditional_edges(
 graph.add_edge("cheerful_reply", END)
 graph.add_edge("sympathetic_reply", END)
 
-# LangGraph Studio (via `langgraph dev`) imports this module and looks
-# up this exact name, per the "greeter" entry in langgraph.json.
+# Studio looks up a compiled graph by name, so this one could be added to
+# langgraph.json too (that file currently lists only stock_news).
 app = graph.compile()
 
 if __name__ == "__main__":
-    # Optional: lets you sanity-check the graph with `python greeter_graph.py`
+    # Optional: lets you sanity-check the graph with `python 4_2_greeter_graph.py`
     # without needing Studio at all.
     for msg in ["I just got promoted!", "My cat passed away yesterday."]:
         result = app.invoke({"message": msg, "mood": "", "reply": ""})

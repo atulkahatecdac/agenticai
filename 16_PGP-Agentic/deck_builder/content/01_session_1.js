@@ -204,7 +204,7 @@ print(result.final_output)` },
       demo: S + "1_6_openai_agent_pattern_tool.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaUser", label: "User input", caption: "\"What is the return policy?\"" },
+          { icon: "FaUser", label: "User input", caption: "\"What's the temperature in Tokyo?\"" },
           { icon: "FaBrain", label: "Decide", caption: "Answer directly, or call a tool?" },
           { icon: "FaFileCode", label: "Tool call", caption: "Structured call that matches the tool's schema" },
           { icon: "FaGears", label: "Runner executes", caption: "Runs our Python function with those arguments" },
@@ -268,7 +268,7 @@ agent = Agent(name="QuickAssistant", model="gpt-4o-mini",
 async def run_agent():
     queries = ["What's the temperature in Tokyo?",
                "Calculate 25 * 4 + 10",
-               "What time is it in New York?"]
+               "What time is it in New York timezone?"]
     tasks = [Runner.run(agent, q) for q in queries]
     results = await asyncio.gather(*tasks)
     for q, r in zip(queries, results):
@@ -380,6 +380,7 @@ asyncio.run(main())` },
           { icon: "FaBolt", title: "Parallelism", text: "Agents work concurrently" },
           { icon: "FaShieldHalved", title: "Robustness", text: "One failure doesn't sink the rest" },
         ] },
+        { type: "text", size: 11, color: "slate", text: "In `1_11`, three agents run in sequence for each candidate: extractor → evaluator → decider." },
       ],
     },
     {
@@ -390,11 +391,11 @@ asyncio.run(main())` },
         { type: "table", size: 9.5, widths: [0.35, 2.4, 2.2, 2.4], head: ["#", "What changes", "Pattern / feature", "Script"], rows: [
           ["1", "FAQ bot with a hardcoded knowledge base, keyword match", "Function calling", "1_12_openai_agent_tool_hardcoded_knowledge.py"],
           ["2", "Search by meaning instead of keywords", "Semantic search (embeddings)", "1_13_openai_agent_hardcoded_semantic.py"],
-          ["3", "Let OpenAI host the vector store", "Hosted RAG", "1_14_openai_agent_openai_vectorstore.py"],
+          ["3", "Local Chroma store with OpenAI embeddings", "Basic RAG", "1_14_openai_agent_openai_vectorstore.py"],
           ["4", "FAQs in SQLite, vectorised locally", "Basic RAG", "1_15_…_create_faq_db.py → 1_16_…_faq_db_vectorized.py"],
           ["5", "Chat UI in the browser", "Separate the UI (Flask)", "1_17_openai_agent_flask.py"],
           ["6", "Answers from an insurance PDF", "RAG over a document", "1_18_openai_agent_insurance_flask.py"],
-          ["7", "Block unsafe or off-topic input", "Guardrails", "1_19_openai_agent_guardrails.py"],
+          ["7", "Block balance questions before the agent answers", "Input guardrail", "1_19_openai_agent_guardrails.py"],
           ["8", "Traditional vs agentic RAG", "Agentic RAG", "1_20_… vs 1_21_…_agentic_rag.py"],
           ["9", "Agents used as tools by a manager agent", "Agents as tools", "1_22_openai_agent_agent_as_tool.py"],
           ["10", "Remember earlier turns", "Short-term memory", "1_23_openai_agent_short_term_memory.py"],

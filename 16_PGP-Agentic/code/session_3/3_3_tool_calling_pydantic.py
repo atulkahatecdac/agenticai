@@ -23,7 +23,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 GUTENDEX_URL = "https://gutendex.com/books/"
 
 # -----------------------------
-# Same tool as tool_calling.py, but with its input schema spelled out as a
+# Same tool as 3_2_tool_calling.py, but with its input schema spelled out as a
 # Pydantic model (args_schema) instead of inferred from the function's
 # type hints. Functionally identical - this is just the explicit form,
 # useful once a tool takes more than one argument or needs per-field

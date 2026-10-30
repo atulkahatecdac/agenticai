@@ -15,7 +15,7 @@ REPORTS_DIR = os.path.join(os.path.dirname(__file__), "research_reports")
 
 # =====================================================================
 # Tool-augmented Research Agent, built on the OpenAI Agents SDK.
-# Same as research_agent_tools.py, but web_search is backed by SerpAPI
+# Same as 3_9_research_agent_tools.py, but web_search is backed by SerpAPI
 # (Google search results) instead of Tavily. Given a topic, the agent
 # decides on its own when to call each tool: web_search (can be called
 # multiple times with different queries), get_current_date (so it

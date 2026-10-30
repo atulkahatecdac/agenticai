@@ -35,7 +35,7 @@ module.exports = {
           { icon: "FaComments", title: "AgentChat", tag: "What we use", lines: ["High-level Python API for single- and multi-agent conversational apps", "**Use when:** dialogue and turn-taking matter most"] },
           { icon: "FaMicrochip", title: "Core", tag: "Low level", lines: ["Event-driven runtime: agents, messages, handlers at scale", "**Use when:** many agents coordinate beyond simple chats"] },
         ] },
-        { type: "callout", eyebrow: "In this session", text: "Every demo uses AgentChat (packages autogen-agentchat and autogen-ext) with an OpenAI model client – 7_5 also uses Anthropic Claude." },
+        { type: "callout", eyebrow: "In this session", text: "Every demo uses AgentChat (packages autogen-agentchat and autogen-ext) with an OpenAI model client – except 7_5, which uses Anthropic Claude." },
       ],
     },
     {
@@ -81,7 +81,7 @@ module.exports = {
 
 async def main():
     await Console(agent.run_stream(
-        task="Current forex rate of USD to INR?"))
+        task="What is the current forex rate of USD to INR?"))
 
 asyncio.run(main())` },
       ],
@@ -103,7 +103,7 @@ asyncio.run(main())` },
       blocks: [
         { type: "flow", items: [
           { icon: "FaUser", label: "Create", caption: "TextMessage(content=…, source=\"User\")" },
-          { icon: "FaInbox", label: "Receive", caption: "agent.run_stream(task=text_message)" },
+          { icon: "FaInbox", label: "Receive", caption: "agent.run_stream(task=text_message.content)" },
           { icon: "FaRightLeft", label: "Convert", caption: "to_model_message() – automatic" },
           { icon: "FaMicrochip", label: "Model", caption: "The model client generates a reply" },
           { icon: "FaReply", label: "Wrap", caption: "TextMessage(content=\"1 USD = 83.12 INR\", source=\"forex_agent\")" },
@@ -121,11 +121,11 @@ asyncio.run(main())` },
 `desc = await desc_agent.on_messages([...])
 ctx  = await context_agent.on_messages([...])` },
           { title: "Concurrent", color: "teal", items: ["Independent agents run together", "Use when tasks don't depend on each other", "Faster; shared state is harder to manage"], code:
-`t1 = asyncio.create_task(
-    desc_agent.on_messages(...))
-t2 = asyncio.create_task(
-    context_agent.on_messages(...))
-desc, ctx = await asyncio.gather(t1, t2)` },
+`stock_task = asyncio.create_task(
+    stock_return_agent.on_messages(...))
+index_task = asyncio.create_task(
+    index_return_agent.on_messages(...))
+await asyncio.gather(stock_task, index_task)` },
         ] },
       ],
     },
@@ -146,13 +146,13 @@ desc, ctx = await asyncio.gather(t1, t2)` },
     {
       title: "Teams: Agents Talking to Agents",
       subtitle: "Who speaks next is what distinguishes the team types",
-      demo: S + "7_8_…_round_robin_group_chat.py, 7_9_…_selector_….py, 7_10_…_magentic_….py, 7_11_….py",
+      demo: S + "7_8_…_round_robin_group_chat.py, 7_9_…_selector_….py, 7_10_…_magentic_….py",
       blocks: [
         { type: "cards", size: 10, items: [
-          { icon: "FaArrowsSpin", title: "Round-robin", lines: ["Agents take turns in a fixed order; everyone sees everything", "**e.g.** Writer and Critic refine a post until the Critic says APPROVE"] },
+          { icon: "FaArrowsSpin", title: "Round-robin", lines: ["Agents take turns in a fixed order; everyone sees everything", "**e.g.** primary and critic refine a text until the critic says STOP"] },
           { icon: "FaHandPointer", title: "Selector", lines: ["An LLM picks the next speaker after each message", "**e.g.** Reviewer, Coder and Tester – whoever is needed next"] },
-          { icon: "FaWandMagicSparkles", title: "Magentic-One", lines: ["A general-purpose team for open-ended tasks over web and files", "**e.g.** analyse a PDF report or a web page end to end"] },
-          { icon: "FaRightLeft", title: "Swarm", lines: ["Agents hand off control with HandoffMessage", "**e.g.** a DataCollector passes results to a DataAnalyzer"] },
+          { icon: "FaWandMagicSparkles", title: "Magentic-One", lines: ["A general-purpose team for open-ended tasks over web and files", "**e.g.** extract, summarise, analyse and review a PDF"] },
+          { icon: "FaRightLeft", title: "Swarm", lines: ["Agents hand off control with HandoffMessage", "**e.g.** a DataCollector passes results to a DataAnalyzer (no demo)"] },
         ] },
       ],
     },
@@ -196,9 +196,9 @@ assistant_agent = AssistantAgent(
     memory=[user_memory],
 )
 
-lang = input("Preferred language? ")   # e.g. Hindi
+preferred_language = input("...preferred language...")
 await user_memory.add(MemoryContent(
-    content=f"The user prefers replies in {lang}.",
+    content=f"The user prefers replies in {preferred_language}.",
     mime_type=MemoryMimeType.TEXT))` },
       ],
       right: [

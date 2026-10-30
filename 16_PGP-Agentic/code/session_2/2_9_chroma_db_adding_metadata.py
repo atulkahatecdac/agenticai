@@ -58,7 +58,7 @@ collection.add(
 )
 
 # Query ChromaDB using HF embeddings
-user_input = "delivery lag"
+user_input = "can i use cash?"
 
 results = collection.query(
     query_texts=[user_input],

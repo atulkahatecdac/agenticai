@@ -9,13 +9,13 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 from flask import Flask, request, render_template_string
 
-_chaining_tool_outputs = importlib.import_module("3_10_chaining_tool_outputs")  # file names start with a digit
+_chaining_tool_outputs = importlib.import_module("3_7_chaining_tool_outputs")  # file names start with a digit
 geocode_city = _chaining_tool_outputs.geocode_city
 get_current_weather = _chaining_tool_outputs.get_current_weather
 recommend_clothing = _chaining_tool_outputs.recommend_clothing
 find_nearby_places = _chaining_tool_outputs.find_nearby_places
 
-# Web front end for chaining_tool_outputs.py's DETERMINISTIC chain only -
+# Web front end for 3_7_chaining_tool_outputs.py's DETERMINISTIC chain only -
 # geocode_city -> get_current_weather -> recommend_clothing, plus
 # find_nearby_places branching off the same coordinates. No agent/LLM
 # call here, so each request is just four fast HTTP calls.
