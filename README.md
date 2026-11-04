@@ -79,7 +79,7 @@ Files inside a folder are numbered in teaching order (`2_1_...` before `2_2_...`
 | `17_problems` | Solutions to non-obvious problems (e.g. PDF headers/footers and tables breaking RAG); see its README |
 | `tools` | Repo maintenance scripts: the smoke test below, and `deck_builder/`, the engine that generates the 14_advanced and PGP decks |
 
-Some folders have their own README with more detail: `13_a2a`, `14_advanced/01_agent_demo`, `14_advanced/19_capstone`, `16_PGP-Agentic/code`, `17_problems`, `12_project/12_2_banking_chatbot`.
+Some folders have their own README with more detail: `13_a2a`, `14_advanced/19_capstone`, `16_PGP-Agentic/code`, `17_problems`, `12_project/12_2_banking_chatbot`.
 
 ## Checking that nothing is broken
 

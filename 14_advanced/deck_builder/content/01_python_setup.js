@@ -1,4 +1,3 @@
-const M = "01_agent_demo/";
 const ASYNC = "../15_real/sync_vs_async_llm_calls_openai.py";
 
 module.exports = {
@@ -10,42 +9,18 @@ module.exports = {
       title: "Python & AI Dev Environment Setup",
       subtitle: "What an agentic application is made of, and a clean, repeatable Python setup to build one",
       goals: [
-        { icon: "FaRobot", title: "See an agent at work", text: "and name the parts of the agentic AI ecosystem" },
+        { icon: "FaRobot", title: "Know what an agent is made of", text: "and name the parts of the agentic AI ecosystem" },
         { icon: "FaBoxOpen", title: "Isolate and pin dependencies", text: "venv, pip, requirements.txt and uv" },
         { icon: "FaKey", title: "Keep secrets out of code", text: "API keys in .env, loaded with python-dotenv" },
         { icon: "FaBolt", title: "Make concurrent LLM calls", text: "async, await and asyncio.gather()" },
       ],
       agenda: [
-        "Demo: an agent hunts for a birthday gift",
         "The agentic AI ecosystem",
         "Typical agent architecture and Python libraries",
         "Virtual environments and dependency management",
         "Managing API keys with .env",
         "Git: clone, branch, commit",
         "asyncio for concurrent LLM calls",
-      ],
-    },
-    {
-      title: "Demo: The Birthday Gift Hunt",
-      subtitle: "Dad has hidden Mom's gift and left a trail of sticky notes – an AI agent searches the house on its own",
-      demo: "streamlit run " + M + "app.py   (Replay mode needs no Ollama)",
-      split: [1, 1.1],
-      left: [
-        { type: "text", text: "**What you see on screen**", size: 12 },
-        { type: "icons", d: 0.4, items: [
-          { icon: "FaHouse", title: "A floor plan of the house", text: "The robot walks room to room and leaves a numbered trail" },
-          { icon: "FaCommentDots", title: "A thought bubble", text: "The agent's own reason for every step, in plain words" },
-          { icon: "FaNoteSticky", title: "A board of what it found", text: "Real clues, a brother's prank, last year's note, decoy gifts" },
-        ] },
-      ],
-      right: [
-        { type: "text", text: "**The agent can only do three things**", size: 12 },
-        { type: "steps", size: 10.5, items: [
-          { title: "Walk into a room or look at a spot", text: "and read what is there" },
-          { title: "Peek through a door", text: "to see where it leads" },
-          { title: "Say where the gift is", text: "and prove it – a wrong guess is rejected" },
-        ] },
-        { type: "callout", eyebrow: "The point", text: "Nobody wrote the route. The model chooses every step – and each run can go differently." },
       ],
     },
     { kind: "image", src: "agent_trip_workflow.png", alt: "What an agent does: understand, plan, use tools, use memory, collaborate, learn, deliver", demo: "Concept" },
@@ -260,9 +235,8 @@ r3 = await call_llm("Classify...")` },
     {
       kind: "summary",
       title: "Module 01 Summary",
-      subtitle: "What you set up and saw",
+      subtitle: "What you set up",
       built: [
-        { tag: "01", title: "A live agent", text: "The gift hunt: tools, decisions and decoys, all local" },
         { tag: "venv", title: "An isolated environment", text: "uv venv and the repo's pinned requirements" },
         { tag: ".env", title: "Secrets handled properly", text: "Keys in .env, template in .env.example" },
         { tag: "async", title: "Concurrent calls", text: "asyncio.gather() for independent LLM requests" },
