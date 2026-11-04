@@ -1,10 +1,20 @@
-from typing import TypedDict, List
+from typing import TypedDict, List, Literal, cast
+from pydantic import BaseModel
 from langgraph.graph import StateGraph, START, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 
 from dotenv import load_dotenv
 load_dotenv(override=True)
+
+MAX_ITERATIONS = 3
+
+# The question has checkable rules, so a first attempt often misses one
+# and the evaluator sends it back round the loop.
+QUESTION = (
+    "Explain how LangGraph helps build agentic AI apps in exactly 3 bullet points, "
+    "each under 20 words, mentioning state, conditional edges and checkpointing."
+)
 
 # -----------------------------
 # 1. STATE = SCHEMA
@@ -15,6 +25,7 @@ class AgentState(TypedDict):
     history: List[str]
     iterations: int
     decision: str  # "continue" or "stop"
+    feedback: str  # what the evaluator wants fixed
 
 
 # -----------------------------
@@ -23,41 +34,56 @@ class AgentState(TypedDict):
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
+class Verdict(BaseModel):
+    decision: Literal["continue", "stop"]
+    feedback: str
+
+
+evaluator_llm = llm.with_structured_output(Verdict)
+
+
 # -----------------------------
 # 3. NODES
 # -----------------------------
-def answer_node(state: AgentState) -> AgentState:
-    """Generate or refine the answer"""
+def answer_node(state: AgentState) -> dict:
+    """Generate the answer, or revise it using the evaluator's feedback"""
     prompt = f"""
     Question: {state['question']}
-    Previous attempts: {state['history']}
+    Previous attempt: {state['answer'] or 'none'}
+    Reviewer feedback: {state['feedback'] or 'none'}
 
-    Improve the answer if needed.
+    Write the answer, fixing everything the reviewer pointed out.
     """
     response = llm.invoke([HumanMessage(content=prompt)])
+    iteration = state["iterations"] + 1
+
+    print(f"\n--- Attempt {iteration} ---\n{response.content}")
 
     return {
         "answer": response.content,
         "history": state["history"] + [response.content],
-        "iterations": state["iterations"] + 1,
+        "iterations": iteration,
     }
 
 
-def evaluate_node(state: AgentState) -> AgentState:
-    """Decide whether to stop or continue"""
+def evaluate_node(state: AgentState) -> dict:
+    """Check the answer against every rule in the question"""
     prompt = f"""
     Question: {state['question']}
     Current answer: {state['answer']}
 
-    Is this answer complete and correct?
-    Reply with only one word: continue or stop
+    Check the answer strictly against every rule in the question: the number of
+    bullet points, the word limit for each bullet (count the words), and each
+    required term. Reply "stop" only if every rule is met; otherwise reply
+    "continue" and say exactly which rules were broken.
     """
-    response = llm.invoke([HumanMessage(content=prompt)])
+    verdict = cast(Verdict, evaluator_llm.invoke([HumanMessage(content=prompt)]))
 
-    decision = "stop" if "stop" in response.content.lower() else "continue"
+    print(f"[evaluate] {verdict.decision}: {verdict.feedback}")
 
     return {
-        "decision": decision
+        "decision": verdict.decision,
+        "feedback": verdict.feedback,
     }
 
 
@@ -65,8 +91,8 @@ def evaluate_node(state: AgentState) -> AgentState:
 # 4. CONDITIONAL LOGIC
 # -----------------------------
 def should_continue(state: AgentState) -> str:
-    # Memory-aware transition
-    if state["iterations"] >= 3:
+    # Memory-aware transition: always give the loop an exit
+    if state["iterations"] >= MAX_ITERATIONS:
         return "stop"
 
     return state["decision"]
@@ -99,15 +125,16 @@ graph = builder.compile()
 # -----------------------------
 # 6. RUN
 # -----------------------------
-initial_state = {
-    "question": "Explain how LangGraph helps build Agentic AI apps",
+initial_state: AgentState = {
+    "question": QUESTION,
     "answer": "",
     "history": [],
     "iterations": 0,
     "decision": "continue",
+    "feedback": "",
 }
 
 result = graph.invoke(initial_state)
 
-print("\nFINAL ANSWER:\n")
+print(f"\nFINAL ANSWER (after {result['iterations']} attempt(s)):\n")
 print(result["answer"])

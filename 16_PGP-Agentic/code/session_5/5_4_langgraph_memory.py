@@ -209,8 +209,15 @@ def read_sqlite_memory():
 # -------------------------------
 # Run All Examples
 # -------------------------------
+def pause():
+    input("\nPress Enter to continue...")
+
+
 if __name__ == "__main__":
     run_without_memory()
+    pause()
     run_with_memory_saver()
+    pause()
     run_with_sqlite_saver()
+    pause()
     read_sqlite_memory()

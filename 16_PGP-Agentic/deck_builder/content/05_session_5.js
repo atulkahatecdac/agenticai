@@ -31,8 +31,8 @@ module.exports = {
       split: [1.15, 1],
       left: [
         { type: "flow", loop: "continue → back to answer", items: [
-          { icon: "FaPen", label: "answer", caption: "Ask the LLM to answer or improve; iterations + 1" },
-          { icon: "FaScaleBalanced", label: "evaluate", caption: "Ask the LLM: continue or stop?" },
+          { icon: "FaPen", label: "answer", caption: "Answer, or revise it using the feedback" },
+          { icon: "FaScaleBalanced", label: "evaluate", caption: "Check the rules: continue or stop, plus feedback" },
           { icon: "FaCodeBranch", label: "should_continue", caption: "Stop if iterations ≥ 3, else use the decision", color: "coral" },
         ] },
       ],
@@ -44,6 +44,7 @@ module.exports = {
     history: List[str]
     iterations: int
     decision: str   # "continue" | "stop"
+    feedback: str   # what to fix next time
 
 builder.add_conditional_edges(
     "evaluate",
@@ -55,26 +56,26 @@ builder.add_conditional_edges(
     },
     {
       title: "Retry Loops in a Workflow",
-      subtitle: "An order-processing state machine: approve, retry the payment, or give up",
-      demo: S + "5_2_order_processing_state_machine.py",
+      subtitle: "Chat message → fund transfer: the LLM extracts, code validates, errors go back to the LLM",
+      demo: S + "5_2_bank_transfer_retry_loop.py",
       split: [1, 1.1],
       left: [
-        { type: "code", caption: "Routing after payment", code:
+        { type: "code", caption: "Routing after validation", code:
 `graph.add_conditional_edges(
-    "process_payment",        # source node
-    route_after_payment,      # routing function
+    "validate_transfer",      # source node
+    route_after_validation,   # routing function
     {
-        "approved": "ship_order",
-        "retry":    "process_payment",   # loop
-        "give_up":  "fail_order",
+        "valid":   "make_transfer",
+        "retry":   "extract_transfer",   # loop
+        "give_up": "human_review",
     },
 )` },
       ],
       right: [
         { type: "icons", d: 0.38, size: 11, items: [
-          { icon: "FaCircleCheck", title: "approved", text: "Continue to ship_order", color: "teal" },
-          { icon: "FaRotateRight", title: "retry", text: "Go back to process_payment – this is the cycle", color: "coral" },
-          { icon: "FaCircleXmark", title: "give_up", text: "Stop at fail_order after too many attempts", color: "slate" },
+          { icon: "FaCircleCheck", title: "valid", text: "Payee is saved and amount > 0: make_transfer", color: "teal" },
+          { icon: "FaRotateRight", title: "retry", text: "Errors go back to extract_transfer – the cycle", color: "coral" },
+          { icon: "FaCircleXmark", title: "give_up", text: "Still invalid after 3 attempts: human_review", color: "slate" },
         ] },
         { type: "callout", eyebrow: "Always", text: "Give every loop an exit: an attempt counter, a quality threshold, or both." },
       ],

@@ -283,7 +283,7 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
 | MAIN | 179 | Looping in LangGraph | `session_5/5_1_langgraph_looping_agents.py` |
-| ADV | 168 | Creating Loops in LangGraph | `session_5/5_2_order_processing_state_machine.py` |
+| ADV | 168 | Creating Loops in LangGraph | `session_5/5_2_bank_transfer_retry_loop.py` |
 
 ### 2. Human-in-the-loop (HITL)
 | Deck | Slides | Slide content | Code example |
