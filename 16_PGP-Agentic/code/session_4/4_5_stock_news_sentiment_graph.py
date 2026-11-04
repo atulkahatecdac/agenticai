@@ -59,7 +59,7 @@ def fetch_news(state: StockNewsState) -> StockNewsState:
     symbol = state["stock_name"]
     # NSE-listed Indian stocks need a ".NS" suffix on Yahoo Finance
     # ("TCS" -> "TCS.NS").
-    candidate = f"{symbol}.NS"
+    candidate = f"{symbol}"
     try:
         articles = yf.Ticker(candidate).news[:5]
     except Exception:

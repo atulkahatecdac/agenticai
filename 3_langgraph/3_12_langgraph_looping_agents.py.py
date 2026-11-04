@@ -1,5 +1,5 @@
 from typing import TypedDict, List
-from langgraph.graph import StateGraph, END
+from langgraph.graph import StateGraph, START, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 
@@ -80,7 +80,7 @@ builder = StateGraph(AgentState)
 builder.add_node("answer", answer_node)
 builder.add_node("evaluate", evaluate_node)
 
-builder.set_entry_point("answer")
+builder.add_edge(START, "answer")
 
 builder.add_edge("answer", "evaluate")
 

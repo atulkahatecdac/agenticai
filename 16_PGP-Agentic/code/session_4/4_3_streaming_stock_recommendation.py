@@ -135,7 +135,7 @@ graph.add_edge("generate_recommendation", END)
 app = graph.compile()
 
 if __name__ == "__main__":
-    ticker = "AAPL"
+    ticker = "INFY.NS"
     initial = {
         "ticker": ticker,
         "returns_summary": "",

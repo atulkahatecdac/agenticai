@@ -1,6 +1,6 @@
 # pip install langchain-openai langchain-core langgraph python-dotenv requests
 
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, END
@@ -22,7 +22,11 @@ class AgentState(TypedDict):
 # Setup
 # --------------------------
 load_dotenv(override=True)
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
+llm = ChatOllama(
+    model="qwen3:8b",     
+    temperature=0.3
+)
+
 
 # --------------------------
 # Helper: Fetch code
@@ -42,7 +46,8 @@ def fetch_code(repo_url: str, path: str = "") -> str:
                 code_files.append(f"// {item['path']}\n{file_content}\n")
             elif item["type"] == "dir":
                 code_files.append(fetch_code(repo_url, item["path"]))
-        return "\n".join(code_files)[:10000]
+        # return "\n".join(code_files)[:10000]
+        return "\n".join(code_files)
     except Exception as e:
         return f"Error fetching code: {e}"
 

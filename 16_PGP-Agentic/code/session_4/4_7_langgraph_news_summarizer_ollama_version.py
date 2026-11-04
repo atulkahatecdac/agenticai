@@ -25,7 +25,7 @@ load_dotenv(override=True)
 
 # Use local Ollama model
 llm = ChatOllama(
-    model="llama3.2",     
+    model="qwen3:8b",     
     temperature=0.3
 )
 
