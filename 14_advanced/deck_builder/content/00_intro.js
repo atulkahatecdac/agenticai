@@ -50,5 +50,31 @@ module.exports = {
         ] },
       ],
     },
+    {
+      title: "Software 1.0 → 2.0 → 3.0",
+      subtitle: "Andrej Karpathy: how we program computers has changed twice",
+      demo: "Concept",
+      blocks: [
+        { type: "flow", d: 0.8, labelSize: 14, size: 11, items: [
+          { icon: "FaCode", label: "Software 1.0", caption: "Humans write code" },
+          { icon: "FaBrain", label: "Software 2.0", caption: "Networks learn weights from data" },
+          { icon: "FaComments", label: "Software 3.0", caption: "Prompts in English program an LLM" },
+        ] },
+        { type: "cards", titleSize: 13, codeSize: 9.5, items: [
+          { n: "1", color: "navy", title: "The program is code", code:
+`if "great" in review:
+    return "positive"
+if "awful" in review:
+    return "negative"` },
+          { n: "2", color: "coral", title: "The program is weights", code:
+`model.fit(reviews, labels)
+model.predict(review)` },
+          { n: "3", color: "teal", title: "The program is a prompt", code:
+`Is this review positive
+or negative?
+{review}` },
+        ] },
+      ],
+    },
   ],
 };
