@@ -26,7 +26,31 @@ module.exports = {
         "Visualising embeddings with UMAP",
       ],
     },
-    { kind: "image", src: "why_rag.png", alt: "Why do we need RAG?", demo: "Concept" },
+    {
+      title: "Why Do We Need RAG?",
+      subtitle: "The LLM knows the general rules of insurance – your premiums live only in your own knowledge base",
+      demo: "Concept",
+      blocks: [
+        { type: "callout", eyebrow: "Customer asks", text: "\"My 2018 hatchback had one claim last year. Can I renew with **comprehensive** motor cover, and what will the premium be?\"" },
+        { type: "compare", size: 10.5, cols: [
+          { title: "LLM alone", color: "slate", items: [
+            "✓ Eligibility: knows general guidelines – valid RC and licence, vehicle age limits, a claim resets the no-claim bonus",
+            "✗ Premium: has never seen **your** rate card, so it guesses"
+          ] },
+          { title: "Internal KB (retrieved)", color: "coral", items: [
+            "Premium rate card by vehicle age, city and IDV",
+            "Claim loading and no-claim-bonus table",
+            "Underwriting rules and current offers",
+          ] },
+          { title: "LLM + RAG", color: "teal", items: [
+            "LLM reasons on eligibility from general knowledge",
+            "Retrieved rate-card chunks supply the actual numbers",
+            "Grounded answer that cites its source",
+          ] },
+        ] },
+        { type: "callout", style: "dark", text: "RAG = Retrieve the internal facts → Augment the prompt with them → Generate an answer that combines both" },
+      ],
+    },
     { kind: "image", src: "what_happens_in_rag.png", alt: "What happens in RAG", demo: "Concept" },
     { kind: "image", src: "rag_retriever.png", alt: "How the retriever works", demo: "Concept" },
     { kind: "image", src: "embeddings.png", alt: "Embeddings: turning text into vectors", demo: "Concept" },
