@@ -76,8 +76,8 @@ or negative?
         ] },
       ],
     },
-    { kind: "image", src: "software_1_2_3.png", alt: "Software 1.0 → 2.0 → 3.0: the evolution of programming" },
-    { kind: "image", src: "ml_to_agentic_ai.png", alt: "From ML to Agentic AI – key terms with a travel-planning example" },
-    { kind: "image", src: "llm_landscape_pricing.png", alt: "The LLM landscape – models and API pricing" },
+    { kind: "image", full: true, src: "software_1_2_3.png", alt: "Software 1.0 → 2.0 → 3.0: the evolution of programming" },
+    { kind: "image", full: true, src: "ml_to_agentic_ai.png", alt: "From ML to Agentic AI – key terms with a travel-planning example" },
+    { kind: "image", full: true, src: "llm_landscape_pricing.png", alt: "The LLM landscape – models and API pricing" },
   ],
 };
