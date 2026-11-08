@@ -41,22 +41,6 @@ module.exports = {
       ],
     },
     {
-      title: "From a Basic Crew to an Advanced One",
-      subtitle: "A simple crew runs tasks in order; advanced applications also need orchestration, state and control",
-      demo: S + "6_2_crewai_context_and_memory.py",
-      blocks: [
-        { type: "flow", items: [
-          { icon: "FaMagnifyingGlass", label: "Financial Data Analyst", caption: "Fetches a stock snapshot with a tool" },
-          { icon: "FaPen", label: "Investment Writer", caption: "Turns it into a plain-English brief" },
-          { icon: "FaUserTie", label: "Crew", caption: "Runs the two tasks in order", color: "coral" },
-        ] },
-        { type: "cols", ratio: [1.45, 1], cols: [
-          [{ type: "chain", items: ["Agent", "Task", "Crew"] }, { type: "chain", gapBefore: 0.12, items: ["Agent", "Orchestration", "State", "Control"], highlight: [1, 2, 3] }],
-          [{ type: "callout", eyebrow: "Advanced crews must answer", text: "What should happen next? · Which agent should act? · What carries forward? · What if the result is poor? · Where should a human step in?" }],
-        ] },
-      ],
-    },
-    {
       title: "Context and Memory",
       subtitle: "Context passes work forward inside one run; memory carries facts from one run to the next",
       demo: S + "6_2_crewai_context_and_memory.py",

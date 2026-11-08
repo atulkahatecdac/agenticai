@@ -75,18 +75,21 @@ umap-learn==0.5.12
 
 # RAG evaluation
 ragas==0.4.3  # used by 15_real/ragas_evaluation.py and 14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py
-deepeval==4.1.5  # used by 15_real/deepeval_evaluation.py
+# deepeval==4.1.5  # used by 15_real/deepeval_evaluation.py - INTENTIONALLY COMMENTED OUT, see below
 # KNOWN CONFLICT: deepeval==4.1.5 requires posthog>=7.0.0,<8.0.0 but chromadb==1.1.1 above
 # requires posthog>=2.4.0,<6.0.0 - genuinely incompatible ranges, not a resolver quirk.
-# `uv pip install -r requirements.txt` (or a from-scratch `pip install -r requirements.txt`
-# with a strict resolver) will fail on this outright. Working fix: install this file with
-# the deepeval line removed first (resolves cleanly), then install deepeval on its own with
-# `--no-deps` (e.g. `uv pip install deepeval==4.1.5 --no-deps`) - deepeval doesn't hard-require
-# posthog at runtime, so this leaves chromadb's posthog constraint satisfied and deepeval
-# working anyway. BUT --no-deps also skips deepeval's other deps, and `import deepeval` then
-# fails (No module named 'sentry_sdk'), so add them afterwards (pure additions, bump no pins):
-#   uv pip install pyfiglet pytest pytest-asyncio pytest-repeat pytest-rerunfailures pytest-xdist "questionary>=2.0.0,<3.0.0" sentry-sdk "tabulate>=0.9.0,<0.10.0" wheel Do NOT try to fix this by bumping chromadb or downgrading deepeval without
-# checking the "don't bump chromadb" crewai note above.
+# Both pip and uv refuse to install this file if the deepeval line is active, so it is
+# commented out. Install deepeval separately AFTER this file, with --no-deps (deepeval doesn't
+# hard-require posthog at runtime, so chromadb's posthog constraint stays satisfied):
+#   pip install deepeval==4.1.5 --no-deps
+# --no-deps also skips deepeval's other deps, and `import deepeval` then fails
+# (No module named 'sentry_sdk'), so add them too (pure additions, bump no pins):
+#   pip install pyfiglet pytest pytest-asyncio pytest-repeat pytest-rerunfailures pytest-xdist "questionary>=2.0.0,<3.0.0" sentry-sdk "tabulate>=0.9.0,<0.10.0" wheel
+# (`uv pip install ...` works the same way.) `pip check` / `uv pip check` then reports two
+# harmless deepeval mismatches: posthog 5.4.0 (wants >=7) and click 8.5.1 (wants <8.4).
+# Don't pin click lower - huggingface-hub needs click>=8.4.2; deepeval imports and its CLI
+# were verified working with click 8.5.1. Do NOT try to fix the posthog clash by bumping chromadb or
+# downgrading deepeval without checking the "don't bump chromadb" crewai note above.
 
 # Voice / audio
 sounddevice==0.5.5  # microphone capture, used by 15_real/voice_assistant_whisper_langchain.py ("mic" mode)

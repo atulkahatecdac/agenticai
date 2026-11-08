@@ -80,9 +80,79 @@ module.exports = {
       ],
     },
     {
-      title: "Set Up the Course Repo",
-      subtitle: "Windows PowerShell, from a blank machine to a running script",
+      title: "Set Up the Course Repo – Windows",
+      subtitle: "Windows PowerShell, from a blank machine to a running script – uv also fetches Python 3.12",
       demo: "Repo: github.com/atulkahatecdac/agenticai  ·  README.md → Quick start",
+      split: [1.12, 1],
+      left: [
+        { type: "code", caption: "1. Install uv, Git, VS Code – then reopen the terminal", code:
+`winget install astral-sh.uv
+winget install Git.Git
+winget install Microsoft.VisualStudioCode` },
+        { type: "code", caption: "2. Get the code and open it", code:
+`mkdir C:\\code; cd C:\\code
+git clone https://github.com/atulkahatecdac/agenticai.git
+cd agenticai
+code .` },
+        { type: "code", caption: "3. Create .env", code:
+`copy .env.example .env
+code .env      # fill in OPENAI_API_KEY=sk-...` },
+      ],
+      right: [
+        { type: "code", caption: "4. venv + packages (VS Code terminal: Ctrl+`)", code:
+`uv venv --python 3.12 --seed .venv
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+.venv\\Scripts\\activate
+uv pip install -r requirements.txt
+# deepeval (optional): README → Quick start, step 2
+# never run: uv pip sync (removes packages)` },
+        { type: "code", caption: "5. Python extension + interpreter", code:
+`code --install-extension ms-python.python
+Ctrl+Shift+P → Python: Select Interpreter
+→ .\\.venv\\Scripts\\python.exe` },
+        { type: "code", caption: "6. Test", code:
+`python 2_openai_agents/2_1_openai_agent_basic.py` },
+      ],
+    },
+    {
+      title: "Set Up the Course Repo – macOS / Linux",
+      subtitle: "Terminal (zsh / bash), from a blank machine to a running script – uv also fetches Python 3.12",
+      demo: "Repo: github.com/atulkahatecdac/agenticai  ·  README.md → Quick start",
+      split: [1.12, 1],
+      left: [
+        { type: "code", caption: "1. Install uv, Git, VS Code – then reopen the terminal", code:
+`brew install uv git                               # macOS
+brew install --cask visual-studio-code
+curl -LsSf https://astral.sh/uv/install.sh | sh   # Linux
+sudo apt install git; sudo snap install code --classic` },
+        { type: "code", caption: "2. Get the code and open it", code:
+`mkdir -p ~/code && cd ~/code
+git clone https://github.com/atulkahatecdac/agenticai.git
+cd agenticai
+code .` },
+        { type: "code", caption: "3. Create .env", code:
+`cp .env.example .env
+code .env      # fill in OPENAI_API_KEY=sk-...` },
+      ],
+      right: [
+        { type: "code", caption: "4. venv + packages (VS Code terminal: Ctrl+`)", code:
+`uv venv --python 3.12 --seed .venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+# deepeval (optional): README → Quick start, step 2
+# never run: uv pip sync (removes packages)` },
+        { type: "code", caption: "5. Python extension + interpreter", code:
+`code --install-extension ms-python.python
+Cmd/Ctrl+Shift+P → Python: Select Interpreter
+→ ./.venv/bin/python` },
+        { type: "code", caption: "6. Test", code:
+`python 2_openai_agents/2_1_openai_agent_basic.py` },
+      ],
+    },
+    {
+      title: "Fallback: Set Up with pip",
+      subtitle: "If uv is blocked or misbehaves – the same steps with plain Python and pip (slower, same result)",
+      demo: "Repo: github.com/atulkahatecdac/agenticai  ·  README.md → Fallback: plain pip",
       split: [1.12, 1],
       left: [
         { type: "code", caption: "1. Install Python, Git, VS Code – then reopen the terminal", code:
@@ -104,7 +174,8 @@ code .env      # fill in OPENAI_API_KEY=sk-...` },
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 .venv\\Scripts\\activate
 python -m pip install --upgrade pip
-pip install -r requirements.txt` },
+pip install -r requirements.txt
+# deepeval (optional): README → Fallback: plain pip` },
         { type: "code", caption: "5. Python extension + interpreter", code:
 `code --install-extension ms-python.python
 Ctrl+Shift+P → Python: Select Interpreter
@@ -197,7 +268,7 @@ r3 = await call_llm("Classify...")` },
       takeaways: [
         "An agent = an LLM + tools + memory, in a loop, toward a goal",
         "One project, one virtual environment",
-        "Pin versions; pip install -r requirements.txt",
+        "Pin versions; uv pip install -r requirements.txt",
         "Never commit API keys",
         "Use async when the program spends its time waiting",
       ],

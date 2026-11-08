@@ -4,16 +4,23 @@ Code for the *Agentic AI* course. Every numbered folder is a self-contained play
 
 ## Quick start
 
-You need **Python 3.12** (the version the pins are tested on). [Ollama](https://ollama.com) is optional, for the scripts that run local models.
+The pins are tested on **Python 3.12**. Setup uses [uv](https://docs.astral.sh/uv/), a much faster drop-in for `pip` that also downloads Python 3.12 for you. If uv is not an option, use the [pip fallback](#fallback-plain-pip) below. [Ollama](https://ollama.com) is optional, for the scripts that run local models.
 
 ```bash
-# 1. Create and activate a virtual environment
-python -m venv .venv
+# 0. Install uv once, then reopen the terminal
+winget install astral-sh.uv                          # Windows
+# curl -LsSf https://astral.sh/uv/install.sh | sh    # macOS / Linux
+
+# 1. Create and activate a virtual environment (--seed also puts pip inside it)
+uv venv --python 3.12 --seed .venv
 .venv\Scripts\activate          # Windows
 # source .venv/bin/activate     # macOS / Linux
 
-# 2. Install dependencies (see "Installing requirements" below if this fails)
-pip install -r requirements.txt
+# 2. Install dependencies (see "Installing requirements" below)
+uv pip install -r requirements.txt
+#    deepeval is installed separately (it clashes with chromadb, see below):
+uv pip install deepeval==4.1.5 --no-deps
+uv pip install pyfiglet pytest pytest-asyncio pytest-repeat pytest-rerunfailures pytest-xdist "questionary>=2.0.0,<3.0.0" sentry-sdk "tabulate>=0.9.0,<0.10.0" wheel
 
 # 3. Add your API keys
 copy .env.example .env          # Windows  (cp .env.example .env on macOS/Linux)
@@ -25,11 +32,24 @@ python 2_openai_agents/2_1_openai_agent_basic.py
 
 Scripts find their data files relative to their own location, so you can run them from any working directory.
 
+### Fallback: plain pip
+
+Use this if uv can't be installed (a locked-down laptop, a proxy that blocks it, ...). It installs the same pinned versions, just more slowly. Install Python 3.12 first (`winget install Python.Python.3.12` on Windows).
+
+```bash
+py -3.12 -m venv .venv          # Windows  (python3.12 -m venv .venv on macOS/Linux)
+.venv\Scripts\activate          # Windows  (source .venv/bin/activate on macOS/Linux)
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+pip install deepeval==4.1.5 --no-deps
+pip install pyfiglet pytest pytest-asyncio pytest-repeat pytest-rerunfailures pytest-xdist "questionary>=2.0.0,<3.0.0" sentry-sdk "tabulate>=0.9.0,<0.10.0" wheel
+```
+
 ### Installing requirements
 
 `requirements.txt` pins versions that are known to install and import together. Two things to know:
 
-- **`deepeval` clashes with `chromadb`** over the `posthog` version. `pip` usually copes. A strict resolver such as `uv pip install -r requirements.txt` fails outright. If that happens, install everything except the `deepeval` line, then run `pip install deepeval==4.1.5 --no-deps`. After that, install deepeval's remaining dependencies with the one-line command in the comment under `deepeval` in `requirements.txt`. Without them, `import deepeval` fails.
+- **`deepeval` clashes with `chromadb`** over the `posthog` version (chromadb needs `<6`, deepeval needs `>=7`). Neither pip nor uv can install both from one file, so the `deepeval` line in `requirements.txt` is commented out. Install it afterwards with `--no-deps`, then install its remaining dependencies (the two extra commands in step 2 above). Without that last command, `import deepeval` fails with `No module named 'sentry_sdk'`. deepeval doesn't need posthog at runtime, so this works. `uv pip check` / `pip check` will then report two harmless mismatches for deepeval: `posthog` 5.x (it asks for 7.x) and `click` 8.5 (it asks for `<8.4`, but the newer `huggingface-hub` needs `>=8.4.2`). deepeval's imports and CLI were verified working with both, so leave them alone.
 - **LangChain, LangGraph and CrewAI are pinned to their pre-1.0 releases** on purpose, because the scripts use 0.x-era APIs. Don't upgrade them on their own.
 
 Some folders need their **own** virtual environment instead:
