@@ -17,9 +17,8 @@ module.exports = {
       agenda: [
         "The agentic AI ecosystem",
         "Typical agent architecture and Python libraries",
-        "Virtual environments and dependency management",
-        "Managing API keys with .env",
-        "Git: clone, branch, commit",
+        "Virtual environments",
+        "Set up the course repo: Python, VS Code, venv, .env",
         "asyncio for concurrent LLM calls",
       ],
     },
@@ -81,83 +80,37 @@ module.exports = {
       ],
     },
     {
-      title: "Managing Dependencies",
-      subtitle: "Install, record and reproduce the exact packages a project needs",
-      demo: "Terminal: uv pip install -r requirements.txt",
-      split: [1, 1.15],
+      title: "Set Up the Course Repo",
+      subtitle: "Windows PowerShell, from a blank machine to a running script",
+      demo: "Repo: github.com/atulkahatecdac/agenticai  ·  README.md → Quick start",
+      split: [1.12, 1],
       left: [
-        { type: "table", size: 10.5, widths: [1.4, 2.6], head: ["Tool", "Purpose"], rows: [
-          ["pip", "Install and manage packages"],
-          ["requirements.txt", "Record dependencies and versions"],
-          ["venv", "Create isolated environments"],
-          ["uv", "Fast drop-in replacement for pip, pip-tools and virtualenv"],
-        ] },
-        { type: "callout", eyebrow: "In this repo", text: "Install with `uv pip install -r requirements.txt`. Never `uv pip sync` – it uninstalls everything that isn't listed." },
-      ],
-      right: [
-        { type: "code", caption: "pip", code:
-`pip install openai requests python-dotenv
-pip install --upgrade openai
-pip uninstall openai
-pip install -r requirements.txt` },
-        { type: "code", caption: "uv", code:
-`# install (Windows PowerShell)
-irm https://astral.sh/uv/install.ps1 | iex
-uv venv                      # create .venv
-.venv\\Scripts\\activate       # activate it
-uv pip install -r requirements.txt` },
-      ],
-    },
-    {
-      title: "Keeping API Keys Out of Code",
-      subtitle: "OpenAI, Anthropic, Google, Tavily, GitHub, Pinecone … every service needs a secret",
-      demo: "Repo root: .env (your keys)  ·  .env.example (the template to copy)",
-      split: [1, 1.1],
-      left: [
-        { type: "icons", d: 0.4, items: [
-          { icon: "FaTriangleExclamation", title: "Hard-coded keys leak", text: "Into git history, screenshots and shared notebooks", color: "coral" },
-          { icon: "FaFileShield", title: "Put them in .env", text: "One file in the repo root, listed in .gitignore" },
-          { icon: "FaFileLines", title: "Commit .env.example", text: "The same keys with empty values – a template for everyone else" },
-        ] },
-      ],
-      right: [
-        { type: "code", caption: ".env", code:
-`OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
-TAVILY_API_KEY=tvly-xxxxxxxxxxxx
-DATABASE_URL=postgresql://user:password@localhost/db` },
-        { type: "code", caption: "Load it at run time", code:
-`import os
-from dotenv import load_dotenv
-
-load_dotenv(override=True)
-api_key = os.getenv("OPENAI_API_KEY")` },
-      ],
-    },
-    {
-      title: "Git: Clone, Branch, Commit",
-      subtitle: "A distributed version control system that tracks every change and lets people collaborate",
-      demo: "Terminal: git clone https://github.com/atulkahatecdac/agenticai.git",
-      split: [1, 1.15],
-      left: [
-        { type: "bullets", size: 11.5, items: [
-          "Track code changes over time",
-          "Restore earlier versions",
-          "Experiment on a branch without touching main",
-          "Collaborate with other developers",
-          "Work on several features at once",
-        ] },
-        { type: "callout", eyebrow: ".gitignore", text: "List what must never be committed: `.env`, virtual environments, caches, databases, temporary files." },
-      ],
-      right: [
-        { type: "code", caption: "The everyday commands", code:
-`git clone https://github.com/atulkahatecdac/agenticai.git
+        { type: "code", caption: "1. Install Python, Git, VS Code – then reopen the terminal", code:
+`winget install Python.Python.3.12
+winget install Git.Git
+winget install Microsoft.VisualStudioCode` },
+        { type: "code", caption: "2. Get the code and open it", code:
+`mkdir C:\\code; cd C:\\code
+git clone https://github.com/atulkahatecdac/agenticai.git
 cd agenticai
-
-git switch -c my-feature     # new branch
-git status                   # what changed?
-git add app.py
-git commit -m "Add the summarise endpoint"
-git push -u origin my-feature` },
+code .` },
+        { type: "code", caption: "3. Create .env", code:
+`copy .env.example .env
+code .env      # fill in OPENAI_API_KEY=sk-...` },
+      ],
+      right: [
+        { type: "code", caption: "4. venv + packages (VS Code terminal: Ctrl+`)", code:
+`py -3.12 -m venv .venv
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+.venv\\Scripts\\activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt` },
+        { type: "code", caption: "5. Python extension + interpreter", code:
+`code --install-extension ms-python.python
+Ctrl+Shift+P → Python: Select Interpreter
+→ .\\.venv\\Scripts\\python.exe` },
+        { type: "code", caption: "6. Test", code:
+`python 2_openai_agents/2_1_openai_agent_basic.py` },
       ],
     },
 
@@ -237,14 +190,14 @@ r3 = await call_llm("Classify...")` },
       title: "Module 01 Summary",
       subtitle: "What you set up",
       built: [
-        { tag: "venv", title: "An isolated environment", text: "uv venv and the repo's pinned requirements" },
+        { tag: "venv", title: "An isolated environment", text: ".venv and the repo's pinned requirements" },
         { tag: ".env", title: "Secrets handled properly", text: "Keys in .env, template in .env.example" },
         { tag: "async", title: "Concurrent calls", text: "asyncio.gather() for independent LLM requests" },
       ],
       takeaways: [
         "An agent = an LLM + tools + memory, in a loop, toward a goal",
         "One project, one virtual environment",
-        "Pin versions; install with pip / uv, never sync",
+        "Pin versions; pip install -r requirements.txt",
         "Never commit API keys",
         "Use async when the program spends its time waiting",
       ],
