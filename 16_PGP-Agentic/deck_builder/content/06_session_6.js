@@ -9,22 +9,19 @@ module.exports = {
       title: "Multi-Agent Orchestration with CrewAI",
       subtitle: "Teams of role-playing agents (crews) and the event-driven flows that control them",
       goals: [
-        { icon: "FaPeopleGroup", title: "Build crews from agents and tasks", text: "roles, goals, backstories, tools and processes" },
+        { icon: "FaPeopleGroup", title: "Build crews from agents and tasks", text: "roles, goals, tools, context and memory" },
         { icon: "FaDiagramProject", title: "Control execution with Flows", text: "@start, @listen, @router and shared state" },
         { icon: "FaUserTie", title: "Delegate with managers and humans", text: "hierarchical crews, levels of autonomy" },
-        { icon: "FaShieldHalved", title: "Make crews reliable and observable", text: "memory, structured output, guardrails, LangSmith" },
+        { icon: "FaShieldHalved", title: "Make crews reliable and observable", text: "guardrails, error handling, LangSmith" },
       ],
       agenda: [
-        "CrewAI concepts: agents, tasks, crews, process",
-        "Building crews for real tasks",
+        "CrewAI concepts: agents, tasks, crews",
+        "Context and memory",
         "Crew vs Flow, and conditional routing",
         "Hierarchical crews and manager agents",
         "Human-in-the-loop and controlled autonomy",
-        "Memory and knowledge",
-        "Structured outputs and agent-to-agent communication",
         "Guardrails, error handling and reliability",
-        "Observability for crews",
-        "End-to-end crew application",
+        "Observability with LangSmith",
       ],
     },
     {
@@ -71,22 +68,6 @@ crew.kickoff(inputs={"ticker": "MSFT", ...})` },
         { type: "callout", size: 11, eyebrow: "Why RecallEntityMemory", text: "CrewAI drops matches below 0.6; Apple's facts scored ~0.5, so 6_2 uses 0.45." },
       ],
     },
-    {
-      title: "CrewAI Examples",
-      subtitle: "Real crews to run and adapt",
-      demo: S + "6_3 … 6_5, 6_10/6_11, 6_14, 6_15 → 6_16",
-      blocks: [
-        { type: "table", size: 10, widths: [2.3, 4.3, 2.2], head: ["Crew", "What it does", "Script"], rows: [
-          ["Log analyser", "Parses, analyses and summarises system logs", "6_3_crewai_log_analyzer.py"],
-          ["Cloud bill analysis", "Finds cost drivers in a GCP billing export", "6_4_crewai_cloud_bill.py"],
-          ["Stock analysis", "Market data (marketaux.com key) with a Flask UI", "6_5_crewai_stock_analysis_flask.py"],
-          ["Code reviewer", "Quality review, without and with agent memory", "6_11 vs 6_10"],
-          ["Observability", "The same crew traced in LangSmith", "6_14_crewai_observability.py"],
-          ["Customer service bot", "Vector search, then low → reply, medium → email, high → ntfy alert", "6_15 (embeddings) → 6_16"],
-        ] },
-      ],
-    },
-
     // ---------------------------------------------------------------- flows
     {
       title: "Crew vs Flow",
@@ -193,32 +174,6 @@ class StockResearchFlow(Flow[ResearchState]):
       ],
     },
     {
-      title: "Memory, Knowledge and Structured Output",
-      subtitle: "What agents know, what they remember – and how they hand results to each other reliably",
-      demo: S + "6_9_memory_and_knowledge.py, 6_10 vs 6_11, 6_12_structured_outputs.py",
-      blocks: [
-        { type: "cols", ratio: [1, 1.2], cols: [
-          [
-            { type: "icons", d: 0.38, size: 11, items: [
-              { icon: "FaBook", title: "Knowledge", text: "\"What information do I need to know?\" – documents given up front" },
-              { icon: "FaMemory", title: "Memory", text: "\"What do I remember from earlier work?\" – retrieved when needed" },
-              { icon: "FaDatabase", title: "Flow state ≠ memory", text: "State is this run's temporary context; memory outlives it" },
-            ] },
-          ],
-          [
-            { type: "chain", items: ["Agent", "Structured output", "Validated schema", "Next agent"], highlight: [2] },
-            { type: "code", caption: "6_12_structured_outputs.py", code:
-`class ResearchFinding(BaseModel):
-    company: str
-    revenue_growth: float   # 0.12 = 12%
-    risk_level: str         # low | medium | high
-    confidence: float       # 0-1
-    evidence: list[str]` },
-          ],
-        ] },
-      ],
-    },
-    {
       title: "Guardrails, Error Handling and Reliability",
       subtitle: "Agents fail – plan for it",
       demo: S + "6_13_guardrails_and_reliability.py",
@@ -262,17 +217,17 @@ LANGSMITH_PROJECT="market-research-crew"` },
       title: "Session 6 Summary",
       subtitle: "What you built today",
       built: [
-        { tag: "6_1", title: "A first crew", text: "Agents, tasks and a crew that combines their work" },
+        { tag: "6_1", title: "A first crew", text: "One agent, one task, on a local model" },
+        { tag: "6_2", title: "Context and memory", text: "Hand-offs inside a run, recall across runs" },
         { tag: "6_6", title: "A Flow", text: "@start, @router and @listen around a stock-analysis crew" },
         { tag: "6_7", title: "Hierarchical crew", text: "A manager agent delegating to specialists" },
-        { tag: "6_12", title: "Reliable hand-offs", text: "Pydantic outputs and guardrails between agents" },
-        { tag: "6_16", title: "Customer service bot", text: "Vector search plus priority-based escalation" },
+        { tag: "6_13", title: "Guardrails", text: "Checks that reject a bad answer before it moves on" },
       ],
       takeaways: [
         "A crew is about who works; a flow is about what happens next",
         "Clear roles, goals and expected outputs make agents dependable",
         "Use a manager agent only when the work really needs judgement",
-        "Pass structured data between agents, not free text",
+        "Context passes work inside a run; memory carries it across runs",
         "Trace everything – multi-agent bugs are hard to see otherwise",
       ],
       next: "Session 7: Multi-Agent Systems with Microsoft AutoGen",

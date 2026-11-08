@@ -1,4 +1,4 @@
-const ASYNC = "../15_real/sync_vs_async_llm_calls_openai.py";
+const ASYNC = "01_basic_test/02_sync_vs_async_llm_calls_google.py";
 
 module.exports = {
   section: "Module 01 – Python & AI Dev Environment",
@@ -185,6 +185,102 @@ Ctrl+Shift+P → Python: Select Interpreter
       ],
     },
 
+    {
+      title: "Hello, Agentic AI",
+      subtitle: "Your first LangChain call – to a local model, no API key needed",
+      demo: "01_basic_test/01_hello_agentic_ai.py",
+      split: [1, 1.3],
+      left: [
+        { type: "code", caption: "Once: install Ollama and get the model", code:
+`winget install Ollama.Ollama   # Windows
+brew install ollama            # macOS
+ollama pull qwen3:8b` },
+        { type: "code", caption: "Run it", code:
+`python 14_advanced/01_basic_test/01_hello_agentic_ai.py` },
+      ],
+      right: [
+        { type: "code", caption: "01_hello_agentic_ai.py", code:
+`from langchain_ollama import ChatOllama
+
+llm = ChatOllama(model="qwen3:8b", reasoning=False)
+
+response = llm.invoke("Say hello to a student starting "
+                      "an Agentic AI course, in one sentence.")
+
+print(response.content)` },
+        { type: "callout", eyebrow: "reasoning=False", text: "qwen3 is a thinking model – this returns just the answer, without its <think> text." },
+      ],
+    },
+
+    {
+      title: "Same Code, Any Model",
+      subtitle: "LangChain hides the provider: change the model line, keep everything else",
+      demo: "01_basic_test/: 01 (Ollama), 02 (Google), 03 (OpenAI)",
+      blocks: [
+        { type: "table", size: 10.5, widths: [1.3, 2.0, 5.0], head: ["Provider", "Package", "The only line that changes"], rows: [
+          ["Local – Ollama", "`langchain-ollama`", "`llm = ChatOllama(model=\"qwen3:8b\")`"],
+          ["Google – Gemini", "`langchain-google-genai`", "`llm = ChatGoogleGenerativeAI(model=\"gemini-2.5-flash-lite\")`"],
+          ["OpenAI", "`langchain-openai`", "`llm = ChatOpenAI(model=\"gpt-4o\")`"],
+        ] },
+        { type: "code", caption: "The same for all three", code:
+`response = llm.invoke("Say hello to a student starting an Agentic AI course.")
+print(response.content)` },
+      ],
+    },
+    {
+      title: "Reading Text from an Image",
+      subtitle: "One message with text and an image – the model reads Hindi, French and Japanese, then translates",
+      demo: "01_basic_test/03_read_image_and_audio_openai.py",
+      split: [1, 1.1],
+      left: [
+        { type: "image", src: "multilingual_text.png", alt: "The same two sentences about agentic AI in Hindi, French and Japanese" },
+        { type: "callout", eyebrow: "gpt-4o, not gpt-4o-mini", text: "mini got the meaning but misread the Hindi letters – for reading text, use the bigger model." },
+      ],
+      right: [
+        { type: "code", caption: "Part 1: the image  (to_base64() reads a file as base64)", code:
+`vision_llm = ChatOpenAI(model="gpt-4o")
+image_b64 = to_base64("multilingual_text.png")
+
+image_message = HumanMessage(content=[
+    {"type": "text", "text": "This image has the same "
+        "text in three languages. Write out each one "
+        "exactly as written, naming the language, "
+        "then give one English translation."},
+    {"type": "image_url", "image_url":
+        {"url": f"data:image/png;base64,{image_b64}"}},
+])
+print(vision_llm.invoke([image_message]).content)` },
+      ],
+    },
+    {
+      title: "Reading the Same Text from Audio",
+      subtitle: "Same pattern, different content block: an audio model transcribes and translates each clip",
+      demo: "01_basic_test/03_read_image_and_audio_openai.py  ·  hindi.mp3, french.mp3, japanese.mp3",
+      split: [1.25, 1],
+      left: [
+        { type: "code", caption: "Part 2: the audio", code:
+`audio_llm = ChatOpenAI(model="gpt-audio-mini")
+
+for file_name in ["hindi.mp3", "french.mp3", "japanese.mp3"]:
+    audio_message = HumanMessage(content=[
+        {"type": "text", "text": "Write out exactly what is "
+            "said in this audio, in its original language "
+            "and script, then give an English translation."},
+        {"type": "input_audio", "input_audio":
+            {"data": to_base64(file_name), "format": "mp3"}},
+    ])
+    print(audio_llm.invoke([audio_message]).content)` },
+      ],
+      right: [
+        { type: "table", size: 10.5, widths: [1.3, 2.7], head: ["Input", "Content block"], rows: [
+          ["Text", "{\"type\": \"text\", ...}"],
+          ["Image", "{\"type\": \"image_url\", ...}"],
+          ["Audio", "{\"type\": \"input_audio\", ...}"],
+        ] },
+        { type: "callout", eyebrow: "Model per input", text: "`gpt-4o` reads images; `gpt-audio-mini` listens to audio. The LangChain code around them doesn't change." },
+      ],
+    },
+
     // ---------------------------------------------------------------- asyncio
     {
       title: "asyncio: Stop Waiting in Line",
@@ -209,7 +305,7 @@ Ctrl+Shift+P → Python: Select Interpreter
     {
       title: "Sync vs Async in Code",
       subtitle: "Three tasks that each wait 5 seconds: 15 seconds one by one, 5 seconds together",
-      demo: ASYNC,
+      demo: "Concept",
       blocks: [
         { type: "compare", size: 11, codeSize: 9, cols: [
           { title: "Synchronous – about 15 s", color: "slate", items: ["Each call blocks until it finishes"], code:
@@ -237,22 +333,17 @@ asyncio.run(main())` },
       subtitle: "Independent prompts don't need to queue – send them together with gather()",
       demo: ASYNC,
       blocks: [
-        { type: "code", caption: "One helper, used two ways", code:
-`client = AsyncOpenAI()
+        { type: "code", caption: "One LangChain model", code:
+`from langchain_google_genai import ChatGoogleGenerativeAI
 
-async def call_llm(prompt):
-    response = await client.responses.create(model="gpt-5", input=prompt)
-    return response.output_text` },
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite")` },
         { type: "compare", size: 11, codeSize: 9, cols: [
-          { title: "Sequential – times add up", color: "slate", code:
-`r1 = await call_llm("Summarize...")
-r2 = await call_llm("Translate...")
-r3 = await call_llm("Classify...")` },
-          { title: "Concurrent – time of the slowest", color: "teal", code:
+          { title: "Sync – invoke(), times add up", color: "slate", code:
+`for prompt in PROMPTS:
+    print(llm.invoke(prompt).content)` },
+          { title: "Async – ainvoke(), time of the slowest", color: "teal", code:
 `results = await asyncio.gather(
-    call_llm("Summarize this article"),
-    call_llm("Translate to French"),
-    call_llm("Extract keywords"))` },
+    *(llm.ainvoke(p) for p in PROMPTS))` },
         ] },
       ],
     },
