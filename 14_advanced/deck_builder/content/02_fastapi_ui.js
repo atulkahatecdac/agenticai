@@ -25,6 +25,8 @@ module.exports = {
         "Streamlit / Gradio front end + FastAPI back end",
       ],
     },
+    { kind: "image", full: true, src: "agentic_app_architecture.png", alt: "Agentic AI app: Streamlit + FastAPI + LangChain architecture" },
+    { kind: "image", full: true, src: "agentic_app_code_files.png", alt: "Agentic AI app: Streamlit + FastAPI + LangChain – code and files" },
     {
       title: "The Agentic App – Runnable Code",
       subtitle: "The Streamlit + FastAPI + LangChain picture as three small files you can run and change",

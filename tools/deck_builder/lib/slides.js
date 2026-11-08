@@ -86,7 +86,11 @@ K.content = async (ctx, s) => {
 // Full-slide figure (an infographic that carries its own title).
 K.image = async (ctx, s) => {
   // full: true fits the picture to the whole slide (centred, aspect kept), with no title, margins or DEMO bar.
-  if (s.full) { await B.image.render(ctx, { path: s.path, ratio: s.ratio, alt: s.alt || "" }, 0, 0, G.W, G.H); return; }
+  if (s.full) {
+    const ih = Math.min(G.H, G.W / s.ratio);   // pictures wider than 16:9 are centred vertically too
+    await B.image.render(ctx, { path: s.path, ratio: s.ratio, alt: s.alt || "" }, 0, (G.H - ih) / 2, G.W, ih);
+    return;
+  }
   const top = s.title ? (s.subtitle ? G.top : G.topNoSub) : 0.18;
   if (s.title) header(ctx.slide, s);
   const bottom = s.demo ? G.demoY - 0.1 : G.H - 0.18;
