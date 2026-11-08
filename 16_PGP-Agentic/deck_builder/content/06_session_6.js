@@ -56,7 +56,37 @@ module.exports = {
         ] },
       ],
     },
-    { kind: "image", src: "crewai_context_memory.png", alt: "How context and memory work in CrewAI", demo: S + "6_2_crewai_context_and_memory.py" },
+    {
+      title: "Context and Memory",
+      subtitle: "Context passes work forward inside one run; memory carries facts from one run to the next",
+      demo: S + "6_2_crewai_context_and_memory.py",
+      split: [1, 1],
+      left: [
+        { type: "flow", items: [
+          { icon: "FaMagnifyingGlass", label: "Analyst", caption: "fetch_task: StockSnapshot tool" },
+          { icon: "FaPen", label: "Writer", caption: "brief_task gets the snapshot" },
+        ] },
+        { type: "code", caption: "Context – inside one run", code:
+`brief_task = Task(
+    description="Using the snapshot, write ...",
+    agent=writer,
+    context=[fetch_task],
+)` },
+      ],
+      right: [
+        { type: "flow", items: [
+          { icon: "FaApple", label: "Run 1: AAPL", caption: "saves margin 27.6%, growth 11.7%" },
+          { icon: "FaDatabase", label: "Memory", caption: "short-term, long-term, entity", color: "coral" },
+          { icon: "FaWindows", label: "Run 2: MSFT", caption: "recalls Apple's figures" },
+        ] },
+        { type: "code", caption: "Memory – across runs", code:
+`crew = Crew(..., memory=True,
+            entity_memory=RecallEntityMemory())
+crew.kickoff(inputs={"ticker": "AAPL", ...})
+crew.kickoff(inputs={"ticker": "MSFT", ...})` },
+        { type: "callout", size: 11, eyebrow: "Why RecallEntityMemory", text: "CrewAI drops matches below 0.6; Apple's facts scored ~0.5, so 6_2 uses 0.45." },
+      ],
+    },
     {
       title: "CrewAI Examples",
       subtitle: "Real crews to run and adapt",
