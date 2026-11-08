@@ -26,6 +26,35 @@ module.exports = {
       ],
     },
     {
+      title: "The Agentic App – Runnable Code",
+      subtitle: "The Streamlit + FastAPI + LangChain picture as three small files you can run and change",
+      demo: "02_frontend_backend_agent/  ·  uvicorn backend:app --reload  ·  streamlit run frontend.py",
+      split: [1.25, 1],
+      left: [
+        { type: "table", size: 10.5, widths: [1.35, 1.6, 3.0], head: ["File", "Layer", "What it does"], rows: [
+          ["frontend.py", "Streamlit UI", "Text box + Run button; POSTs {\"query\": q} to /ask, shows the answer"],
+          ["backend.py", "FastAPI API", "POST /ask with a Pydantic model; calls run_agent(query)"],
+          ["agent.py", "LangChain + LLM", "run_agent(query): one ChatOpenAI(gpt-4o-mini).invoke() call"],
+        ] },
+        { type: "chain", size: 10, items: ["Browser :8501", "POST /ask :8000", "run_agent → LLM"], highlight: [2] },
+        { type: "text", size: 10.5, color: "slate", text: "Needs `OPENAI_API_KEY` in the repo-root `.env`." },
+      ],
+      right: [
+        { type: "code", caption: "Run it (two terminals)", code:
+`cd 14_advanced/02_frontend_backend_agent
+
+# terminal 1 – the API + agent
+uvicorn backend:app --reload --port 8000
+
+# terminal 2 – the UI
+streamlit run frontend.py
+
+# open http://localhost:8501
+# or test the API alone at /docs` },
+        { type: "callout", eyebrow: "Why three files?", text: "UI, API and AI stay separate – later, add tools or memory in agent.py without touching the other two." },
+      ],
+    },
+    {
       title: "REST APIs: How Agents Reach Everything",
       subtitle: "A standard way for applications to talk to each other over HTTP",
       demo: "Concept",
