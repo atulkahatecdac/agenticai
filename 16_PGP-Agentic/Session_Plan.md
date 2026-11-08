@@ -341,7 +341,7 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 2. Building crews for real tasks
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 183–184 | CrewAI Examples; (image) | `session_6/6_2_crewai_document_generator.py`, `6_3_crewai_log_analyzer.py`, `6_4_crewai_cloud_bill.py`, `6_5_crewai_stock_analysis_flask.py` |
+| MAIN | 183–184 | CrewAI Examples; (image) | `session_6/6_2_crewai_context_and_memory.py`, `6_3_crewai_log_analyzer.py`, `6_4_crewai_cloud_bill.py`, `6_5_crewai_stock_analysis_flask.py` |
 
 ### 3. Crew vs Flow, and conditional routing
 | Deck | Slides | Slide content | Code example |

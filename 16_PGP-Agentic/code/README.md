@@ -118,8 +118,8 @@ Run `6_15_crewai_create_embeddings_customer_tickets.py` before `6_16_crewai_cust
 
 | File | Copied from |
 |---|---|
-| `session_6/6_1_crewai_basics.py` | `14_advanced/13_crew_ai/13_1_crewai_basics.py` |
-| `session_6/6_2_crewai_document_generator.py` | `4_crewai/4_1_crewai_document_generator.py` |
+| `session_6/6_1_crewai_basics.py` | new: one agent, one task, local `qwen3:8b` via Ollama (no original) |
+| `session_6/6_2_crewai_context_and_memory.py` | `14_advanced/13_crew_ai/13_1_crewai_basics.py`, plus explicit `context` and cross-run `memory` (diverges from the original) |
 | `session_6/6_3_crewai_log_analyzer.py` | `4_crewai/4_2_crewai_log_analyzer.py` |
 | `session_6/6_4_crewai_cloud_bill.py` | `4_crewai/4_4_crewai_cloud_bill.py` |
 | `session_6/6_5_crewai_stock_analysis_flask.py` | `4_crewai/4_6_crewai_stock_analysis_flask.py` |

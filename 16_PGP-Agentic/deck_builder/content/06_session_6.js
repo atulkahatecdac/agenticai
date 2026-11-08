@@ -34,7 +34,7 @@ module.exports = {
       blocks: [
         { type: "cards", size: 10.5, items: [
           { icon: "FaUser", title: "Agents", tag: "Team members", lines: ["**Role:** what they do", "**Goal:** what they aim for", "**Backstory:** context that sharpens them", "**Tools:** what they can call"] },
-          { icon: "FaListCheck", title: "Tasks", tag: "Assignments", lines: ["**Description:** what to do", "**Expected output:** format and content", "**Agent:** who does it", "e.g. \"Fetch the current financial snapshot for {ticker}\""] },
+          { icon: "FaListCheck", title: "Tasks", tag: "Assignments", lines: ["**Description:** what to do", "**Expected output:** format and content", "**Agent:** who does it", "e.g. \"Explain {topic} to a beginner\""] },
           { icon: "FaUserTie", title: "Crew", tag: "Team lead", lines: ["Delegates tasks", "Coordinates the agents", "Runs the process", "Combines the results"] },
           { icon: "FaScrewdriverWrench", title: "Tools", tag: "Utilities", lines: ["File readers, web search, APIs, databases", "Custom tools for your domain"] },
         ] },
@@ -43,7 +43,7 @@ module.exports = {
     {
       title: "From a Basic Crew to an Advanced One",
       subtitle: "A simple crew runs tasks in order; advanced applications also need orchestration, state and control",
-      demo: S + "6_1_crewai_basics.py",
+      demo: S + "6_2_crewai_context_and_memory.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaMagnifyingGlass", label: "Financial Data Analyst", caption: "Fetches a stock snapshot with a tool" },
@@ -56,14 +56,13 @@ module.exports = {
         ] },
       ],
     },
-    { kind: "image", src: "crewai_context_memory.png", alt: "How context and memory work in CrewAI", demo: S + "6_2_crewai_document_generator.py" },
+    { kind: "image", src: "crewai_context_memory.png", alt: "How context and memory work in CrewAI", demo: S + "6_2_crewai_context_and_memory.py" },
     {
       title: "CrewAI Examples",
       subtitle: "Real crews to run and adapt",
-      demo: S + "6_2 … 6_5, 6_10/6_11, 6_14, 6_15 → 6_16",
+      demo: S + "6_3 … 6_5, 6_10/6_11, 6_14, 6_15 → 6_16",
       blocks: [
         { type: "table", size: 10, widths: [2.3, 4.3, 2.2], head: ["Crew", "What it does", "Script"], rows: [
-          ["Document generator", "Researches a technology and writes documentation", "6_2_crewai_document_generator.py"],
           ["Log analyser", "Parses, analyses and summarises system logs", "6_3_crewai_log_analyzer.py"],
           ["Cloud bill analysis", "Finds cost drivers in a GCP billing export", "6_4_crewai_cloud_bill.py"],
           ["Stock analysis", "Market data (marketaux.com key) with a Flask UI", "6_5_crewai_stock_analysis_flask.py"],
