@@ -17,7 +17,7 @@ load_dotenv(override=True)
 sys.stdout.reconfigure(encoding="utf-8")
 
 # =====================================================================
-# Memory consolidation: an episodic store (see episodic_memory_store.py)
+# Memory consolidation: an episodic store (see 9_7_episodic_memory_store.py)
 # grows one raw episode per interaction - left alone, near-duplicate
 # episodes about the same recurring issue pile up, bloating storage and
 # diluting recall() with redundant near-identical matches. Consolidation
@@ -37,7 +37,7 @@ vectorstore = Chroma(
 )
 
 # 8 raw episodes, each a REAL row pulled from 15_real/customer_support_qa_500.csv
-# (the same dataset episodic_memory_store.py seeds from) rather than hand-written
+# (the same dataset 9_7_episodic_memory_store.py seeds from) rather than hand-written
 # text. They were picked because they cluster into 3 recurring issue patterns
 # that genuinely exist in that dataset - the messy, redundant state a live
 # episodic store actually ends up in after enough traffic.

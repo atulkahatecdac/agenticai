@@ -27,7 +27,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # ChromaDB collection and retrieved by SEMANTIC SIMILARITY to the
 # CURRENT message - real semantic search, not just "load everything
 # for this user_id". Unlike short-term memory (see
-# agent_memory_short_term_langgraph.py), this survives a brand-new
+# 9_3_agent_memory_short_term_langgraph.py), this survives a brand-new
 # conversation thread.
 #
 # The proof this isn't a dummy example: the demo below runs a SECOND,

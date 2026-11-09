@@ -16,8 +16,7 @@ module.exports = {
       ],
       agenda: [
         "What makes an agent \"deep\"",
-        "Self-reflection loops",
-        "Multi-turn reflection with a quality threshold",
+        "Self-reflection with a quality threshold",
         "Plan-and-Execute",
         "Replanning",
         "Long-term memory types",
@@ -44,25 +43,9 @@ module.exports = {
       ],
     },
     {
-      title: "Self-Reflection: Generate → Critique → Revise",
-      subtitle: "\"Write a customer-facing outage update\"",
-      demo: S + "9_1_openai_agent_pattern_reflection.py",
-      blocks: [
-        { type: "flow", items: [
-          { icon: "FaPen", label: "draft", caption: "A first customer message" },
-          { icon: "FaClipboardCheck", label: "reflection", caption: "Critique it against a checklist", color: "coral" },
-          { icon: "FaWandMagicSparkles", label: "revised_answer", caption: "Rewrite using the critique", color: "teal" },
-        ] },
-        { type: "cols", cols: [
-          [{ type: "bullets", size: 11, items: ["Clear for non-technical users", "Accountable without blaming individuals", "Honest about impact", "Specific about next steps and prevention"] }],
-          [{ type: "callout", eyebrow: "One pass", text: "One agent returns all three as JSON. The next demo loops until a score is high enough." }],
-        ] },
-      ],
-    },
-    {
-      title: "Multi-Turn Reflection",
+      title: "Self-Reflection: Generate → Verify → Revise",
       subtitle: "A meal plan: iterate until a quality threshold is met – with an upper limit on rounds",
-      demo: S + "9_2_meal_plan_reflection.py",
+      demo: S + "9_1_meal_plan_reflection.py",
       blocks: [
         { type: "chain", items: ["generate", "verify: score < 9", "revise", "verify: score ≥ 9", "STOP"], highlight: [4] },
         { type: "tiles", cols: 3, size: 10, titleSize: 11, items: [
@@ -70,27 +53,27 @@ module.exports = {
           { icon: "FaGavel", title: "Grounded critique", text: "The LLM grades using those totals, not its own opinion" },
           { icon: "FaStop", title: "Stopping rule", text: "Score 9+ or 4 iterations, whichever comes first" },
         ] },
-        { type: "text", size: 11.5, color: "slate", text: "Runs as a Streamlit app: `streamlit run 9_2_meal_plan_reflection.py`." },
+        { type: "text", size: 11.5, color: "slate", text: "Runs as a Streamlit app: `streamlit run 9_1_meal_plan_reflection.py`." },
       ],
     },
     {
       title: "Plan-and-Execute, Revisited",
       subtitle: "Planning decides what to do (strategy); execution does it (action)",
-      demo: S + "9_3_study_plan_plan_execute.py",
+      demo: S + "9_2_pathology_report_replanning.py",
       split: [1.2, 1],
       left: [
-        { type: "text", text: "**Turn a 25-module curriculum PDF into a 4-week study plan for a working professional.**", size: 11.5 },
+        { type: "text", text: "**A borderline marker on a (synthetic) pathology report needs a follow-up plan.**", size: 11.5 },
         { type: "steps", size: 10.5, titleSize: 11, gap: 0.08, items: [
-          { title: "extract_curriculum", text: "Read the PDF text into the task" },
-          { title: "plan_step", text: "Commit to a full ordered plan up front" },
-          { title: "execute_step", text: "Work one step at a time, e.g. \"draft week 1\"" },
-          { title: "replan_step", text: "Shorten, extend or reorder what remains, or finish" },
+          { title: "plan_step", text: "Commit to a full ordered plan of follow-ups up front" },
+          { title: "execute_step", text: "Work one step at a time, e.g. run one follow-up test" },
+          { title: "New fact arrives", text: "A re-check of the marker reverses the original finding" },
+          { title: "replan_step", text: "Drop, add or reorder what remains, or finish" },
         ] },
       ],
       right: [
         { type: "icons", d: 0.42, items: [
           { icon: "FaListOl", title: "Planner", text: "Writes the numbered plan" },
-          { icon: "FaPersonRunning", title: "Executor", text: "A plain LLM call – no tools are needed here" },
+          { icon: "FaPersonRunning", title: "Executor", text: "Calls tools: report, follow-ups, tests, re-check" },
           { icon: "FaRoute", title: "Replanner", text: "Re-examines the plan after every step" },
         ] },
       ],
@@ -98,7 +81,7 @@ module.exports = {
     {
       title: "Replanning",
       subtitle: "Update the plan when new information arrives – during execution the agent may discover that…",
-      demo: S + "9_4_pathology_report_replanning.py",
+      demo: S + "9_2_pathology_report_replanning.py",
       blocks: [
         { type: "tiles", cols: 4, size: 10.5, items: [
           { icon: "FaBan", title: "A resource is unavailable" },
@@ -117,7 +100,7 @@ module.exports = {
     {
       title: "Memory Types",
       subtitle: "Keep context, remember preferences, recall past work – and stop asking the same questions",
-      demo: S + "9_5_agent_memory_short_term_langgraph.py → 9_6, 9_7, 9_8",
+      demo: S + "9_3_agent_memory_short_term_langgraph.py → 9_4",
       blocks: [
         { type: "table", size: 10.5, widths: [1.9, 2.2, 1.4, 2.5], head: ["Memory type", "Purpose", "Lifetime", "Example"], rows: [
           ["Short-term (working)", "The current conversation", "Minutes / session", "Previous chat messages"],
@@ -132,20 +115,19 @@ module.exports = {
     {
       title: "Memory Demos, in Order",
       subtitle: "Each script adds one memory capability",
-      demo: S + "9_5 → 9_12",
+      demo: S + "9_3 → 9_7",
       blocks: [
         { type: "steps", items: [
-          { title: "Short-term memory", text: "`9_5_agent_memory_short_term_langgraph.py`" },
-          { title: "Session ID from the user", text: "`9_6_agent_memory_dynamic_session_id_langgraph.py` – the user ID becomes the session ID" },
-          { title: "Short-term → long-term", text: "`9_7_…_short_to_long_term_langgraph.py` and `9_8_…_short_to_external_sqlite_langgraph.py`" },
-          { title: "The three long-term types", text: "`9_9_…_semantic`, `9_10_…_procedural` and `9_12_…_episodic_langgraph.py`" },
+          { title: "Short-term memory", text: "`9_3_agent_memory_short_term_langgraph.py` – recall within one thread only" },
+          { title: "Short-term → long-term", text: "`9_4_…_short_to_external_sqlite_langgraph.py` – facts worth keeping are promoted into SQLite" },
+          { title: "The three long-term types", text: "`9_5_…_semantic`, `9_6_…_procedural` and `9_7_episodic_memory_store.py`" },
         ] },
       ],
     },
     {
       title: "Long-Term Memory: Three Kinds",
       subtitle: "Episodic = experiences.  Semantic = knowledge.  Procedural = skills.",
-      demo: S + "9_9_agent_memory_semantic_langgraph.py, 9_10_agent_memory_procedural_langgraph.py",
+      demo: S + "9_5_agent_memory_semantic_langgraph.py, 9_6_agent_memory_procedural_langgraph.py",
       blocks: [
         { type: "cards", size: 11, items: [
           { icon: "FaClockRotateLeft", title: "Episodic", tag: "What happened?", lines: ["\"We discussed Project X last Tuesday.\""] },
@@ -157,7 +139,7 @@ module.exports = {
     {
       title: "Episodic Memory in Practice",
       subtitle: "Store specific past episodes outside the model and recall them when a similar case arrives",
-      demo: S + "9_11_episodic_memory_store.py, 9_12_agent_memory_episodic_langgraph.py",
+      demo: S + "9_7_episodic_memory_store.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaDatabase", label: "Seed", caption: "324 past support tickets, one text blob each" },
@@ -172,7 +154,7 @@ module.exports = {
     {
       title: "Memory Consolidation",
       subtitle: "Summarise and compress old episodes before they pile up",
-      demo: S + "9_13_memory_consolidation.py",
+      demo: S + "9_8_memory_consolidation.py",
       blocks: [
         { type: "compare", size: 11, cols: [
           { title: "Without consolidation", color: "slate", items: ["Day 1 → episode 1 … day 100 → episode 100", "Large, redundant, expensive to search", "Hard to reason over"] },
@@ -184,7 +166,7 @@ module.exports = {
     {
       title: "Context Propagation and Trimming",
       subtitle: "Pass the right information forward – and keep it within the context window",
-      demo: S + "9_14_context_management_strategies.py",
+      demo: S + "9_9_context_management_strategies.py",
       split: [1, 1.25],
       left: [
         { type: "text", text: "**The same 16-message support chat, trimmed five ways:**", size: 11.5 },
@@ -208,7 +190,7 @@ module.exports = {
     {
       title: "Self-Improvement from Failures",
       subtitle: "Learn corrected facts from mistakes – good answers leave no trace, mistakes leave a lesson",
-      demo: S + "9_15_self_improving_agent.py",
+      demo: S + "9_10_self_improving_agent.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaMagnifyingGlass", label: "recall_lessons", caption: "Any past lessons relevant to this query?" },
@@ -222,7 +204,7 @@ module.exports = {
     {
       title: "One Unified Deep-Agent Architecture",
       subtitle: "Memory informs planning → planning guides execution → reflection evaluates it → replanning adapts",
-      demo: S + "9_16_personal_memory_assistant.py",
+      demo: "Concept",
       blocks: [
         { type: "flow", loop: "the cycle repeats as the agent works", items: [
           { icon: "FaMemory", label: "Memory", caption: "What do I know?" },
@@ -231,7 +213,7 @@ module.exports = {
           { icon: "FaMagnifyingGlassChart", label: "Reflection", caption: "Is it working?", color: "coral" },
           { icon: "FaRoute", label: "Replanning", caption: "What should change?", color: "teal" },
         ] },
-        { type: "callout", eyebrow: "In the demo", text: "A voice assistant (Whisper + LangChain memory + GPT + TTS) that recalls facts across turns. It shows the memory part; putting all five stages together is your exercise." },
+        { type: "callout", eyebrow: "Your exercise", text: "Each stage has its own demo today: reflection (9_1), planning and replanning (9_2), memory (9_3–9_8). Putting all five together is your exercise." },
       ],
     },
     {
@@ -240,9 +222,9 @@ module.exports = {
       subtitle: "What you built today – and across the course",
       built: [
         { tag: "9_1", title: "Reflection loops", text: "Generate, critique and revise to a quality bar" },
-        { tag: "9_4", title: "Replanning", text: "A plan that changes when a report says so" },
-        { tag: "9_11", title: "Episodic memory", text: "Support tickets recalled and consolidated" },
-        { tag: "9_15", title: "Self-improving agent", text: "Lessons stored only when the agent was wrong" },
+        { tag: "9_2", title: "Replanning", text: "A plan that changes when a report says so" },
+        { tag: "9_7", title: "Episodic memory", text: "Support tickets recalled and consolidated" },
+        { tag: "9_10", title: "Self-improving agent", text: "Lessons stored only when the agent was wrong" },
         { tag: "S1–9", title: "The full journey", text: "SDK agents → LangChain → LangGraph → crews and teams → agentic RAG → deep agents" },
       ],
       takeaways: [

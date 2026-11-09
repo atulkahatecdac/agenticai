@@ -23,7 +23,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 # implicit for the manager; CrewAI creates/uses it, not a worker).
 #
 # NOTE (per the slide): if the workflow is straightforward and not
-# actually agentic - e.g. a fixed 3-step pipeline like 13_1's - a
+# actually agentic - e.g. a fixed pipeline like 6_2's - a
 # hierarchical crew is unnecessary overhead. It earns its keep here
 # because the manager genuinely doesn't know in advance how many
 # specialists it needs to consult, or in what order, to answer an

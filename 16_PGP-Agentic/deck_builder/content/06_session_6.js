@@ -71,8 +71,8 @@ crew.kickoff(inputs={"ticker": "MSFT", ...})` },
     // ---------------------------------------------------------------- flows
     {
       title: "Crew vs Flow",
-      subtitle: "Crew = who does the work.  Flow = how the application runs.",
-      demo: S + "6_6_crew_vs_flow.py",
+      subtitle: "Crew = who does the work.  Flow = Manager who decides how the application runs.",
+      demo: S + "6_3_crew_vs_flow.py",
       blocks: [
         { type: "compare", size: 11.5, cols: [
           { title: "Crew", color: "navy", items: ["A team of agents working together", "Focus: collaboration", "Agents perform the tasks", "Good for multi-agent work"] },
@@ -83,37 +83,64 @@ crew.kickoff(inputs={"ticker": "MSFT", ...})` },
     },
     {
       title: "Flow Building Blocks",
-      subtitle: "Four decorators plus a shared state",
-      demo: S + "6_6_crew_vs_flow.py",
+      subtitle: "Three decorators",
       blocks: [
-        { type: "tiles", cols: 4, items: [
+        { type: "tiles", cols: 3, items: [
           { icon: "FaPlay", title: "@start", text: "Where the flow begins (there can be several)" },
           { icon: "FaEarListen", title: "@listen", text: "Run when another step's output arrives" },
           { icon: "FaCodeBranch", title: "@router", text: "Choose which path to take" },
-          { icon: "FaDatabase", title: "State", text: "Read → update → pass forward" },
         ] },
-        { type: "cols", ratio: [1, 1.1], cols: [
-          [{ type: "code", caption: "Routing on confidence", code:
-`@router(fetch_snapshot)
-def route_on_confidence(self):
-    if self.state.confidence >= 0.8:
-        return "good"
-    return "retry"` }],
-          [{ type: "bullets", size: 11, items: [
-            "Listeners subscribe to the route labels: `@listen(\"good\")` and `@listen(\"retry\")`",
-            "Branches can converge again with `or_(…)`",
-            "No hard-coded sequence – the flow decides at run time",
-          ] }],
+        { type: "cols", ratio: [1, 1], cols: [
+          [{ type: "code", size: 7.8, code:
+`class BlogFlow(Flow):
+    @start()
+    def pick_topic(self):
+        self.state["topic"] = "AI agents"
+
+    @listen(pick_topic)
+    def write_draft(self):
+        # hand off to a Crew of writer agents
+        return WriterCrew().crew().kickoff(
+            inputs={"topic": self.state["topic"]})
+
+    @router(write_draft)
+    def check_quality(self, draft):
+        return "publish" if len(str(draft)) > 500 else "rewrite"` }],
+          [{ type: "code", size: 7.8, code:
+`    @listen("publish")
+    def publish(self):
+        print("Published!")
+
+    @listen("rewrite")
+    def rewrite(self):
+        return WriterCrew().crew().kickoff(
+            inputs={"topic": self.state["topic"],
+                    "note": "Make it longer and deeper"})` }],
         ] },
+        { type: "callout", text: "**Problem:** rewrite would run once and stop. How to make rewrite go back through the quality check?" },
+      ],
+    },
+    {
+      title: "Flow Looping",
+      subtitle: "Using **or_**",
+      blocks: [
+        { type: "callout", text: "By default, the rewrite function would execute only once – to make it run till we get a satisfactory result, we need to make it loop. Now the quality check router listens to both write and rewrite." },
+        { type: "code", code:
+`from crewai.flow.flow import or_
+
+@router(or_(write_draft, rewrite))
+def check_quality(self, draft):
+    return "publish" if len(str(draft)) > 500 else "rewrite"` },
+        { type: "callout", text: "**Note:** This may result into an endless loop. Add a retry counter in self.state so that it cannot loop forever if the rewrite is never satisfactory." },
       ],
     },
     {
       title: "Building a Flow: Stock Research",
       subtitle: "Fetch a live snapshot, judge its quality, then analyse it with a crew – or explain why not",
-      demo: S + "6_6_crew_vs_flow.py",
+      demo: S + "6_3_crew_vs_flow.py",
       split: [1.25, 1],
       left: [
-        { type: "code", caption: "6_6_crew_vs_flow.py (condensed)", code:
+        { type: "code", caption: "6_3_crew_vs_flow.py (condensed)", code:
 `class ResearchState(BaseModel):
     ticker: str = "AAPL"
     snapshot: str = ""
@@ -146,9 +173,38 @@ class StockResearchFlow(Flow[ResearchState]):
 
     // ---------------------------------------------------------------- control
     {
+      title: "Crew Process: Sequential or Hierarchical",
+      subtitle: "How the agents inside one crew share the work – Process is inside a crew, Flow is around crews",
+      blocks: [
+        { type: "compare", size: 10.5, codeSize: 8.5, cols: [
+          { title: "Sequential – an assembly line", color: "navy", items: [
+            "Tasks run in order, each output feeding the next; you assign every agent. The default.",
+          ], code:
+`crew = Crew(
+    agents=[researcher, writer],
+    tasks=[research_task, write_task],
+    process=Process.sequential,
+)` },
+          { title: "Hierarchical – a team with a boss", color: "teal", items: [
+            "A manager agent delegates, reviews and can send work back. Needs `manager_llm` or `manager_agent`.",
+          ], code:
+`crew = Crew(
+    agents=[researcher, writer, editor],
+    tasks=[research_task, write_task],
+    process=Process.hierarchical,
+    manager_llm="gpt-4o",  # or manager_agent=...
+)` },
+        ] },
+        { type: "cols", ratio: [1.25, 1], cols: [
+          [{ type: "callout", eyebrow: "Which to pick?", text: "**Sequential:** known steps – cheaper, faster, easier to debug. **Hierarchical:** open-ended work – more calls, less predictable." }],
+          [{ type: "callout", eyebrow: "\"Hybrid\"", text: "Not a setting – a Flow runs a sequential crew in one step, a hierarchical one in another." }],
+        ] },
+      ],
+    },
+    {
       title: "Hierarchical Crews and Manager Agents",
       subtitle: "Instead of a fixed researcher → analyst → writer chain, a manager decides who does what",
-      demo: S + "6_7_hierarchical_crew.py",
+      demo: S + "6_4_hierarchical_crew.py",
       blocks: [
         { type: "cols", ratio: [1.1, 1], cols: [
           [{ type: "tree", boxW: 1.6, rows: [[{ label: "Research Manager", fill: "coral" }], ["Fundamentals", "News & Sentiment", "Valuation"], [{ label: "Final output", fill: "navy" }]] }],
@@ -160,13 +216,13 @@ class StockResearchFlow(Flow[ResearchState]):
     {
       title: "Human-in-the-Loop and Controlled Autonomy",
       subtitle: "Decide how much the crew may do on its own",
-      demo: S + "6_8_human_in_the_loop.py",
+      demo: S + "6_5_human_in_the_loop.py",
       split: [1.35, 1],
       left: [
         { type: "table", size: 10.5, widths: [1.7, 1.6, 1.8], head: ["Level", "Agent behaviour", "Example"], rows: [
           ["Human-in-the-loop", "A human approves each action", "Approve a trade recommendation (this demo)"],
           ["Human-on-the-loop", "A human supervises", "A review dashboard"],
-          ["Human-out-of-the-loop", "Fully autonomous", "The snapshot summary in 6_1"],
+          ["Human-out-of-the-loop", "Fully autonomous", "The snapshot summary in 6_2"],
         ] },
       ],
       right: [
@@ -176,7 +232,7 @@ class StockResearchFlow(Flow[ResearchState]):
     {
       title: "Guardrails, Error Handling and Reliability",
       subtitle: "Agents fail – plan for it",
-      demo: S + "6_13_guardrails_and_reliability.py",
+      demo: S + "6_6_guardrails_and_reliability.py",
       blocks: [
         { type: "cols", cols: [
           [
@@ -194,7 +250,7 @@ class StockResearchFlow(Flow[ResearchState]):
     {
       title: "Observability with LangSmith",
       subtitle: "See every agent step, prompt, tool call and token count",
-      demo: S + "6_14_crewai_observability.py",
+      demo: S + "6_7_crewai_observability.py",
       split: [1, 1.1],
       left: [
         { type: "steps", items: [
@@ -219,9 +275,9 @@ LANGSMITH_PROJECT="market-research-crew"` },
       built: [
         { tag: "6_1", title: "A first crew", text: "One agent, one task, on a local model" },
         { tag: "6_2", title: "Context and memory", text: "Hand-offs inside a run, recall across runs" },
-        { tag: "6_6", title: "A Flow", text: "@start, @router and @listen around a stock-analysis crew" },
-        { tag: "6_7", title: "Hierarchical crew", text: "A manager agent delegating to specialists" },
-        { tag: "6_13", title: "Guardrails", text: "Checks that reject a bad answer before it moves on" },
+        { tag: "6_3", title: "A Flow", text: "@start, @router and @listen around a stock-analysis crew" },
+        { tag: "6_4", title: "Hierarchical crew", text: "A manager agent delegating to specialists" },
+        { tag: "6_6", title: "Guardrails", text: "Checks that reject a bad answer before it moves on" },
       ],
       takeaways: [
         "A crew is about who works; a flow is about what happens next",

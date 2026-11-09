@@ -21,9 +21,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 # =====================================================================
-# Same promotion process as agent_memory_short_to_long_term_langgraph.py,
-# but the destination is EXTERNAL memory - a real SQLite database file
-# instead of a JSON file. The mechanism doesn't change:
+# The PROMOTION process: how something said in SHORT-TERM memory ends up
+# durable in EXTERNAL long-term memory - a real SQLite database file:
 #
 #   1. Every turn lives in short-term memory first - the in-thread
 #      message buffer, kept alive only by the checkpointer.

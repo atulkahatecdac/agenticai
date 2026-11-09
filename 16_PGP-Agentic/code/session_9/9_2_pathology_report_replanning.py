@@ -19,7 +19,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 # =====================================================================
 # Replanning, isolated as its own concept - distinct from Planning
-# (study_plan_plan_execute.py) and Reflection (meal_plan_reflection.py)
+# (plain plan-and-execute) and Reflection (9_1_meal_plan_reflection.py)
 # in this folder. Same plan_step -> execute_step -> replan_step shape,
 # but the scenario is specifically engineered so replan_step has real
 # work to do: a corrected re-read of the patient's original marker

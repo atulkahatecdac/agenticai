@@ -24,7 +24,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # LONG-TERM PROCEDURAL memory - durable rules about HOW the agent
 # should behave, taught by explicit user feedback, stored per user_id
 # and folded into every future session's system prompt until changed.
-# Unlike semantic memory (see agent_memory_semantic_langgraph.py),
+# Unlike semantic memory (see 9_5_agent_memory_semantic_langgraph.py),
 # this isn't a fact about the user - it's an instruction that reshapes
 # the assistant's own behavior going forward.
 #

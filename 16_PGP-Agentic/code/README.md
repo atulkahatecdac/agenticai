@@ -114,89 +114,60 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 
 ## Session 6: Multi-Agent Orchestration with CrewAI
 
-Run `6_15_crewai_create_embeddings_customer_tickets.py` before `6_16_crewai_customer_service_flask.py`.
-
 | File | Copied from |
 |---|---|
 | `session_6/6_1_crewai_basics.py` | new: one agent, one task, local `qwen3:8b` via Ollama (no original) |
 | `session_6/6_2_crewai_context_and_memory.py` | `14_advanced/13_crew_ai/13_1_crewai_basics.py`, plus explicit `context` and cross-run `memory` (diverges from the original) |
-| `session_6/6_3_crewai_log_analyzer.py` | `4_crewai/4_2_crewai_log_analyzer.py` |
-| `session_6/6_4_crewai_cloud_bill.py` | `4_crewai/4_4_crewai_cloud_bill.py` |
-| `session_6/6_5_crewai_stock_analysis_flask.py` | `4_crewai/4_6_crewai_stock_analysis_flask.py` |
-| `session_6/6_6_crew_vs_flow.py` | `14_advanced/13_crew_ai/13_2_crew_vs_flow.py` |
-| `session_6/6_7_hierarchical_crew.py` | `14_advanced/13_crew_ai/13_3_hierarchical_crew.py` |
-| `session_6/6_8_human_in_the_loop.py` | `14_advanced/13_crew_ai/13_4_human_in_the_loop.py` |
-| `session_6/6_9_memory_and_knowledge.py` | `14_advanced/13_crew_ai/13_5_memory_and_knowledge.py` |
-| `session_6/6_10_crewai_With_Memory.py` | `4_crewai/4_3_crewai_With_Memory.py` |
-| `session_6/6_11_crewai_Without_Memory.py` | `4_crewai/4_3_crewai_Without_Memory.py` |
-| `session_6/6_12_structured_outputs.py` | `14_advanced/13_crew_ai/13_6_structured_outputs.py` |
-| `session_6/6_13_guardrails_and_reliability.py` | `14_advanced/13_crew_ai/13_7_guardrails_and_reliability.py` |
-| `session_6/6_14_crewai_observability.py` | `4_crewai/4_5_crewai_observability.py` |
-| `session_6/6_15_crewai_create_embeddings_customer_tickets.py` | `4_crewai/4_before_7_crewai_create_embeddings_customer_tickets.py` |
-| `session_6/6_16_crewai_customer_service_flask.py` | `4_crewai/4_7_crewai_customer_service_flask.py` |
+| `session_6/6_3_crew_vs_flow.py` | `14_advanced/13_crew_ai/13_2_crew_vs_flow.py` |
+| `session_6/6_4_hierarchical_crew.py` | `14_advanced/13_crew_ai/13_3_hierarchical_crew.py` |
+| `session_6/6_5_human_in_the_loop.py` | `14_advanced/13_crew_ai/13_4_human_in_the_loop.py` |
+| `session_6/6_6_guardrails_and_reliability.py` | `14_advanced/13_crew_ai/13_7_guardrails_and_reliability.py` |
+| `session_6/6_7_crewai_observability.py` | `4_crewai/4_5_crewai_observability.py` |
 
 ## Session 7: Multi-Agent Systems with Microsoft AutoGen
 
 | File | Copied from |
 |---|---|
-| `session_7/7_1_autogen_basic.py` | `5_autogen/5_1_autogen_basic.py` |
-| `session_7/7_2_autogen_forex_api.py` | `5_autogen/5_2_autogen_forex_api.py` |
-| `session_7/7_3_autogen_forex_api_text_message.py` | `5_autogen/5_3_autogen_forex_api_text_message.py` |
-| `session_7/7_4_autogen_synchronous_agents.py` | `5_autogen/5_5_autogen_synchronous_agents.py` |
-| `session_7/7_5_autogen_asynchronous_agents.py` | `5_autogen/5_6_autogen_asynchronous_agents.py` |
-| `session_7/7_6_autogen_structured_output.py` | `5_autogen/5_7_autogen_structured_output.py` |
-| `session_7/7_7_autogen_multimodal_message.py` | `5_autogen/5_4_autogen_multimodal_message.py` |
-| `session_7/7_8_autogen_round_robin_group_chat.py` | `5_autogen/5_8_autogen_round_robin_group_chat.py` |
-| `session_7/7_9_autogen_selector_group_chat.py` | `5_autogen/5_9_autogen_selector_group_chat.py` |
-| `session_7/7_10_autogen_magentic_group_chat.py` | `5_autogen/5_10_autogen_magentic_group_chat.py` |
-| `session_7/7_11_autogen_recession_claim.py` | `5_autogen/5_11_autogen_recession_claim.py` |
-| `session_7/7_12_autogen_graphflow.py` | `5_autogen/5_12_autogen_graphflow.py` |
-| `session_7/7_13_autogen_graphflow_parallel_join.py` | `5_autogen/5_13_autogen_graphflow_parallel_join.py` |
-| `session_7/7_14_autogen_memory.py` | `5_autogen/5_14_autogen_memory.py` |
+| `session_7/7_1_autogen_forex_api.py` | `5_autogen/5_2_autogen_forex_api.py` |
+| `session_7/7_2_autogen_forex_api_text_message.py` | `5_autogen/5_3_autogen_forex_api_text_message.py` |
+| `session_7/7_3_autogen_multimodal_message.py` | `5_autogen/5_4_autogen_multimodal_message.py` |
+| `session_7/7_4_autogen_asynchronous_agents.py` | `5_autogen/5_6_autogen_asynchronous_agents.py` |
+| `session_7/7_5_autogen_structured_output.py` | `5_autogen/5_7_autogen_structured_output.py` |
+| `session_7/7_6_autogen_round_robin_group_chat.py` | `5_autogen/5_8_autogen_round_robin_group_chat.py` |
+| `session_7/7_7_autogen_selector_group_chat.py` | `5_autogen/5_9_autogen_selector_group_chat.py` |
+| `session_7/7_8_autogen_magentic_group_chat.py` | `5_autogen/5_10_autogen_magentic_group_chat.py` |
+| `session_7/7_9_autogen_graphflow.py` | `5_autogen/5_12_autogen_graphflow.py` |
+| `session_7/7_10_autogen_graphflow_parallel_join.py` | `5_autogen/5_13_autogen_graphflow_parallel_join.py` |
+| `session_7/7_11_autogen_memory.py` | `5_autogen/5_14_autogen_memory.py` |
 
 ## Session 8: Agentic RAG and GraphRAG for Agents
 
-`8_2_support_ticketing_agent_hitl.py` is also imported by `8_3`, `8_4`, `8_7` and `8_8` for its FAQ vector search.
+`8_1_support_ticketing_agent_hitl.py` is also imported by `8_2` for its FAQ vector search.
 
 | File | Copied from |
 |---|---|
-| `session_8/8_1_rag_hallucination_eval.py` | `3_langgraph/3_1_rag_hallucination_eval.py` |
-| `session_8/8_2_support_ticketing_agent_hitl.py` | `15_real/support_ticketing_agent_hitl.py` |
-| `session_8/8_3_traditional_vs_agentic_rag.py` | `15_real/traditional_vs_agentic_rag.py` |
-| `session_8/8_4_traditional_vs_agentic_rag_serp.py` | `15_real/traditional_vs_agentic_rag_serp.py` |
-| `session_8/8_5_openai_agent_traditional_rag.py` | `2_openai_agents/2_11_openai_agent_traditional_rag.py` |
-| `session_8/8_6_openai_agent_agentic_rag.py` | `2_openai_agents/2_11_openai_agent_agentic_rag.py` |
-| `session_8/8_7_adaptive_retrieval_strategies.py` | `15_real/adaptive_retrieval_strategies.py` |
-| `session_8/8_8_adaptive_retrieval_strategies_serp.py` | `15_real/adaptive_retrieval_strategies_serp.py` |
-| `session_8/8_9_loan_eligibility_rag_reasoning.py` | `15_real/loan_eligibility_rag_reasoning.py` |
-| `session_8/8_10_cohere_rag_pipeline.py` | `15_real/cohere_rag_pipeline.py` |
-| `session_8/8_11_self_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_2_self_rag.py` |
-| `session_8/8_12_corrective_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_3_corrective_rag.py` |
-| `session_8/8_13_cohere_reranking.py` | `14_advanced/14_agentic_rag_graph_rag/14_4_cohere_reranking.py` |
-| `session_8/8_14_hybrid_search.py` | `14_advanced/04_rag/hybrid_search.py` |
-| `session_8/8_15_agentic_hybrid_search.py` | `14_advanced/14_agentic_rag_graph_rag/14_9_hybrid_search.py` |
-| `session_8/8_16_graph_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_7_graph_rag.py` |
-| `session_8/8_17_multi_hop_reasoning.py` | `14_advanced/14_agentic_rag_graph_rag/14_8_multi_hop_reasoning.py` |
-| `session_8/8_18_ragas_evaluation.py` | `14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py` |
-| `session_8/8_19_ragas_evaluation_customer_support.py` | `15_real/ragas_evaluation.py` |
+| `session_8/8_1_support_ticketing_agent_hitl.py` | `15_real/support_ticketing_agent_hitl.py` |
+| `session_8/8_2_traditional_vs_agentic_rag.py` | `15_real/traditional_vs_agentic_rag.py` |
+| `session_8/8_3_loan_eligibility_rag_reasoning.py` | `15_real/loan_eligibility_rag_reasoning.py` |
+| `session_8/8_4_self_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_2_self_rag.py` |
+| `session_8/8_5_corrective_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_3_corrective_rag.py` |
+| `session_8/8_6_cohere_reranking.py` | `14_advanced/14_agentic_rag_graph_rag/14_4_cohere_reranking.py` |
+| `session_8/8_7_hybrid_search.py` | `14_advanced/14_agentic_rag_graph_rag/14_9_hybrid_search.py` |
+| `session_8/8_8_graph_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_7_graph_rag.py` |
+| `session_8/8_9_multi_hop_reasoning.py` | `14_advanced/14_agentic_rag_graph_rag/14_8_multi_hop_reasoning.py` |
+| `session_8/8_10_ragas_evaluation.py` | `14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py` |
 
 ## Session 9: Deep Agents: Reflection, Planning and Long-Term Memory
 
 | File | Copied from |
 |---|---|
-| `session_9/9_1_openai_agent_pattern_reflection.py` | `2_openai_agents/2_0_4_openai_agent_pattern_reflection.py` |
-| `session_9/9_2_meal_plan_reflection.py` | `14_advanced/12_deep_agents/meal_plan_reflection.py` |
-| `session_9/9_3_study_plan_plan_execute.py` | `14_advanced/12_deep_agents/study_plan_plan_execute.py` |
-| `session_9/9_4_pathology_report_replanning.py` | `14_advanced/12_deep_agents/pathology_report_replanning.py` |
-| `session_9/9_5_agent_memory_short_term_langgraph.py` | `15_real/agent_memory_short_term_langgraph.py` |
-| `session_9/9_6_agent_memory_dynamic_session_id_langgraph.py` | `15_real/agent_memory_dynamic_session_id_langgraph.py` |
-| `session_9/9_7_agent_memory_short_to_long_term_langgraph.py` | `15_real/agent_memory_short_to_long_term_langgraph.py` |
-| `session_9/9_8_agent_memory_short_to_external_sqlite_langgraph.py` | `15_real/agent_memory_short_to_external_sqlite_langgraph.py` |
-| `session_9/9_9_agent_memory_semantic_langgraph.py` | `15_real/agent_memory_semantic_langgraph.py` |
-| `session_9/9_10_agent_memory_procedural_langgraph.py` | `15_real/agent_memory_procedural_langgraph.py` |
-| `session_9/9_11_episodic_memory_store.py` | `14_advanced/12_deep_agents/episodic_memory_store.py` |
-| `session_9/9_12_agent_memory_episodic_langgraph.py` | `15_real/agent_memory_episodic_langgraph.py` |
-| `session_9/9_13_memory_consolidation.py` | `14_advanced/12_deep_agents/memory_consolidation.py` |
-| `session_9/9_14_context_management_strategies.py` | `15_real/context_management_strategies.py` |
-| `session_9/9_15_self_improving_agent.py` | `14_advanced/12_deep_agents/self_improving_agent.py` |
-| `session_9/9_16_personal_memory_assistant.py` | `15_real/personal_memory_assistant.py` |
+| `session_9/9_1_meal_plan_reflection.py` | `14_advanced/12_deep_agents/meal_plan_reflection.py` |
+| `session_9/9_2_pathology_report_replanning.py` | `14_advanced/12_deep_agents/pathology_report_replanning.py` |
+| `session_9/9_3_agent_memory_short_term_langgraph.py` | `15_real/agent_memory_short_term_langgraph.py` |
+| `session_9/9_4_agent_memory_short_to_external_sqlite_langgraph.py` | `15_real/agent_memory_short_to_external_sqlite_langgraph.py` |
+| `session_9/9_5_agent_memory_semantic_langgraph.py` | `15_real/agent_memory_semantic_langgraph.py` |
+| `session_9/9_6_agent_memory_procedural_langgraph.py` | `15_real/agent_memory_procedural_langgraph.py` |
+| `session_9/9_7_episodic_memory_store.py` | `14_advanced/12_deep_agents/episodic_memory_store.py` |
+| `session_9/9_8_memory_consolidation.py` | `14_advanced/12_deep_agents/memory_consolidation.py` |
+| `session_9/9_9_context_management_strategies.py` | `15_real/context_management_strategies.py` |
+| `session_9/9_10_self_improving_agent.py` | `14_advanced/12_deep_agents/self_improving_agent.py` |

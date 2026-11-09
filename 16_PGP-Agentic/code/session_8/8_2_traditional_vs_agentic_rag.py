@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 sys.path.insert(0, os.path.dirname(__file__))
-_support_ticketing_agent_hitl = importlib.import_module("8_2_support_ticketing_agent_hitl")  # file names start with a digit
+_support_ticketing_agent_hitl = importlib.import_module("8_1_support_ticketing_agent_hitl")  # file names start with a digit
 retrieve = _support_ticketing_agent_hitl.retrieve  # reuse the same FAQ vector search for both approaches
 
 MODEL = "gpt-4o-mini"
@@ -20,7 +20,7 @@ tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 # =====================================================================
 # Traditional RAG vs Agentic RAG, answering questions against the SAME
-# FAQ knowledge base (support_ticketing_agent_hitl.py's ChromaDB index),
+# FAQ knowledge base (8_1_support_ticketing_agent_hitl.py's ChromaDB index),
 # so the comparison isolates the RETRIEVAL STRATEGY, not the data.
 #
 # Traditional RAG: retrieve once -> stuff into context -> generate.

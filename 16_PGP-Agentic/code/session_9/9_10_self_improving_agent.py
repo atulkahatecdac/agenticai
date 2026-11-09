@@ -21,15 +21,15 @@ sys.stdout.reconfigure(encoding="utf-8")
 # =====================================================================
 # Self-improving agent: an evaluation score doesn't just grade one
 # answer, it decides whether to persist a lesson that changes FUTURE
-# answers on different, unrelated queries. Unlike multi_turn_reflection.py
+# answers on different, unrelated queries. Unlike 9_1_meal_plan_reflection.py
 # (which loops within a single task until it scores well), nothing here
 # loops - each query runs the graph once, and improvement shows up
 # later, on a completely different query that benefits from a lesson an
 # earlier query's low score left behind in a real persistent store.
 #
 # The grader's ground truth is pulled from REAL rows of 15_real/
-# customer_support_qa_500.csv (the same dataset episodic_memory_store.py
-# and memory_consolidation.py use) instead of a hand-written policy sheet.
+# customer_support_qa_500.csv (the same dataset 9_7_episodic_memory_store.py
+# and 9_8_memory_consolidation.py use) instead of a hand-written policy sheet.
 # =====================================================================
 
 THRESHOLD = 7

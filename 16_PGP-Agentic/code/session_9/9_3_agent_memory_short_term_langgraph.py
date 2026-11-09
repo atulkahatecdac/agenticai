@@ -23,7 +23,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # It lets the agent recall what was just said within a thread, but it
 # is gone the moment a new thread_id starts - nothing here survives
 # across sessions unless something writes it to long-term storage
-# (see agent_memory_semantic_langgraph.py / _episodic_ / _procedural_).
+# (see 9_5 semantic, 9_6 procedural and 9_7 episodic).
 #
 # Scenario: an insurance claims assistant answering a follow-up
 # question within the same conversation, then starting a brand-new

@@ -1,5 +1,5 @@
 const S = "session_8/";
-const RAGAS = S + "8_18_ragas_evaluation.py, 8_19_ragas_evaluation_customer_support.py";
+const RAGAS = S + "8_10_ragas_evaluation.py";
 
 module.exports = {
   section: "Session 8 – Agentic RAG and GraphRAG",
@@ -31,7 +31,7 @@ module.exports = {
     {
       title: "How RAG Fails",
       subtitle: "Five failure modes to recognise before reaching for a fix",
-      demo: S + "8_1_rag_hallucination_eval.py",
+      demo: "Concept",
       blocks: [
         { type: "table", size: 9.5, widths: [1.45, 2.3, 2.35, 2.4], head: ["Failure", "What happens", "Common causes", "Example"], rows: [
           ["Missed retrieval", "The answer is in the knowledge base but isn't retrieved", "Poor query wording, weak embeddings, top-k too small", "Policy has the ATM withdrawal limit; unrelated card-security chunks come back"],
@@ -66,7 +66,7 @@ module.exports = {
     {
       title: "Traditional RAG vs Agentic RAG",
       subtitle: "A fixed pipeline vs an agent that plans its retrieval",
-      demo: S + "8_3_…_vs_agentic_rag.py, 8_4_…_serp.py, 8_5_…_traditional_rag.py vs 8_6_…_agentic_rag.py",
+      demo: S + "8_2_traditional_vs_agentic_rag.py",
       blocks: [
         { type: "compare", size: 11.5, cols: [
           { title: "Traditional RAG", color: "slate", items: ["Fixed retrieval pipeline", "Retrieves once", "One LLM call", "No planning; follows a predefined sequence", "Simple architecture", "Best for straightforward Q&A"] },
@@ -74,18 +74,18 @@ module.exports = {
         ] },
       ],
     },
-    { kind: "image", src: "traditional_vs_agentic_rag.png", alt: "Traditional RAG vs agentic RAG flow", demo: S + "8_3_traditional_vs_agentic_rag.py (FAQ index from 8_2_support_ticketing_agent_hitl.py)" },
+    { kind: "image", src: "traditional_vs_agentic_rag.png", alt: "Traditional RAG vs agentic RAG flow", demo: S + "8_2_traditional_vs_agentic_rag.py (FAQ index from 8_1_support_ticketing_agent_hitl.py)" },
     {
       title: "Adaptive Retrieval Strategies",
       subtitle: "An agentic system picks how to retrieve – including not retrieving at all",
-      demo: S + "8_7_adaptive_retrieval_strategies.py, 8_8_adaptive_retrieval_strategies_serp.py",
+      demo: S + "8_2_traditional_vs_agentic_rag.py",
       blocks: [
         { type: "tiles", cols: 3, items: [
           { icon: "FaForwardFast", title: "Skip retrieval", text: "Answer directly when existing knowledge is enough" },
           { icon: "FaMagnifyingGlass", title: "Single retrieval", text: "Retrieve once for simple factual questions" },
           { icon: "FaRotate", title: "Iterative retrieval", text: "Fetch more when the first pass isn't enough" },
           { icon: "FaPenToSquare", title: "Query reformulation", text: "Rewrite the question for better search" },
-          { icon: "FaLayerGroup", title: "Multi-source", text: "Combine the FAQ knowledge base, web search and a calculator" },
+          { icon: "FaLayerGroup", title: "Multi-source", text: "Combine the FAQ knowledge base and web search" },
           { icon: "FaScrewdriverWrench", title: "Tool-based", text: "Pick the right tool for the request" },
         ] },
       ],
@@ -93,7 +93,7 @@ module.exports = {
     {
       title: "Retrieval + Reasoning",
       subtitle: "Retrieval supplies the facts; reasoning uses them to solve the user's problem",
-      demo: S + "8_9_loan_eligibility_rag_reasoning.py",
+      demo: S + "8_3_loan_eligibility_rag_reasoning.py",
       blocks: [
         { type: "callout", eyebrow: "The question", text: "\"Can I get a ₹50 lakh home loan? My salary is ₹18 lakh a year, I already have a car loan, and my credit score is 760.\"" },
         { type: "compare", size: 11, cols: [
@@ -103,22 +103,9 @@ module.exports = {
       ],
     },
     {
-      title: "A Cohere RAG Pipeline",
-      subtitle: "Embed, rerank and generate – with grounding built into the chat endpoint",
-      demo: S + "8_10_cohere_rag_pipeline.py",
-      blocks: [
-        { type: "flow", items: [
-          { icon: "FaCubes", label: "embed()", caption: "Text → 1536-dim vectors (embed-v4.0)" },
-          { icon: "FaRankingStar", label: "rerank()", caption: "324 FAQs → the top 3 for the query (rerank-v3.5)" },
-          { icon: "FaComments", label: "chat()", caption: "Answer with the reranked FAQs passed as documents=" },
-        ] },
-        { type: "callout", eyebrow: "Notice", text: "\"How do I get my money back for an order?\" – reranking correctly surfaces the three refund FAQs. Cohere's chat endpoint grounds the answer itself; with OpenAI you build that prompt yourself." },
-      ],
-    },
-    {
       title: "Self-RAG: Don't Trust the First Draft",
       subtitle: "Retrieve → draft → critique the draft → regenerate if needed → answer",
-      demo: S + "8_11_self_rag.py",
+      demo: S + "8_4_self_rag.py",
       blocks: [
         { type: "flow", loop: "draft not supported → regenerate, at most 2 more times", items: [
           { icon: "FaUser", label: "Question", caption: "Covered after 3 years? Can I switch insurer?" },
@@ -133,7 +120,7 @@ module.exports = {
     {
       title: "Corrective RAG (CRAG)",
       subtitle: "When local knowledge fails, fall back to the web instead of guessing",
-      demo: S + "8_12_corrective_rag.py",
+      demo: S + "8_5_corrective_rag.py",
       blocks: [
         { type: "cols", ratio: [1.15, 1], cols: [
           [{ type: "tree", boxW: 1.5, labels: ["", "", "how many are relevant?", ""], rows: [["Question"], ["Retrieve from the vector DB"], [{ label: "Grade the documents", fill: "coral" }], [{ label: "All: KB only", fill: "teal" }, { label: "Some: KB + web", fill: "slate" }, { label: "None: web only", fill: "navy" }], ["Generate the answer"]] }],
@@ -147,7 +134,7 @@ module.exports = {
     {
       title: "Reranking Retrieved Chunks",
       subtitle: "The most similar chunk is not always the most relevant one",
-      demo: S + "8_13_cohere_reranking.py",
+      demo: S + "8_6_cohere_reranking.py",
       blocks: [
         { type: "chain", items: ["Query", "Vector search", "Top 10 chunks", "Reranker", "Best 3", "LLM"], highlight: [3] },
         { type: "table", size: 10.5, widths: [3.6, 1.1, 1.1], head: ["\"Documents for a cashless health insurance claim?\" (illustrative scores)", "Vector score", "Reranked"], rows: [
@@ -161,23 +148,21 @@ module.exports = {
     {
       title: "Hybrid Search",
       subtitle: "Combine methods so each one covers the other's blind spot",
-      demo: S + "8_14_hybrid_search.py, 8_15_agentic_hybrid_search.py",
+      demo: S + "8_7_hybrid_search.py",
       blocks: [
         { type: "cols", cols: [
           [
-            { type: "text", text: "**TF-IDF + embeddings (8_14)**", size: 12.5 },
             { type: "compare", size: 11, cols: [
-              { title: "Keyword", color: "navy", items: ["Exact words", "\"SIP investment plan\""] },
-              { title: "Semantic", color: "teal", items: ["Meaning", "\"put money away for old age\""] },
+              { title: "Keyword (BM25)", color: "navy", items: ["Exact words and acronyms", "\"What is the IRDAI mandated claim settlement timeline…?\""] },
+              { title: "Semantic (vectors)", color: "teal", items: ["Meaning, not wording", "\"If my mom already had a health condition…\""] },
             ] },
-            { type: "text", size: 10.5, color: "slate", text: "Two ways to combine: a weighted average, or Reciprocal Rank Fusion." },
           ],
           [
-            { type: "text", text: "**BM25 + dense vectors (8_15)**", size: 12.5 },
-            { type: "bullets", size: 10.5, items: [
-              "**Favours BM25:** \"What is the IRDAI mandated claim settlement timeline…?\" – an exact acronym",
-              "**Favours vectors:** \"If my mom already had a health condition…\" – avoids the policy's own wording",
-              "Reciprocal Rank Fusion lifts a document ranked highly by either retriever",
+            { type: "bullets", size: 11.5, items: [
+              "Each retriever ranks the policy chunks on its own",
+              "**Reciprocal Rank Fusion:** score = Σ 1 / (k + rank in each list)",
+              "A chunk ranked highly by either retriever rises to the top",
+              "The LLM answers from the fused top results",
             ] },
           ],
         ] },
@@ -186,7 +171,7 @@ module.exports = {
     {
       title: "GraphRAG: Connecting Facts Across Documents",
       subtitle: "Extract entities and relationships into a knowledge graph instead of treating chunks as isolated",
-      demo: S + "8_16_graph_rag.py",
+      demo: S + "8_8_graph_rag.py",
       split: [1.2, 1],
       left: [
         { type: "text", text: "**\"If I switch insurer through portability, do I keep credit for the waiting period already completed?\"**", size: 11.5 },
@@ -205,7 +190,7 @@ module.exports = {
     {
       title: "Multi-Hop Reasoning",
       subtitle: "Follow several facts to reach an answer no single chunk contains",
-      demo: S + "8_17_multi_hop_reasoning.py",
+      demo: S + "8_9_multi_hop_reasoning.py",
       blocks: [
         { type: "callout", eyebrow: "Question", text: "\"I'm on a Family Floater Gold plan and intimated the insurer 20 hours after an emergency admission. Will a cashless claim be accepted, who processes it, and how long will settlement take?\"" },
         { type: "flow", loop: "at most 4 hops", items: [
@@ -251,11 +236,11 @@ module.exports = {
       title: "Session 8 Summary",
       subtitle: "What you built today",
       built: [
-        { tag: "8_3", title: "Traditional vs agentic RAG", text: "The same question through both pipelines" },
-        { tag: "8_11", title: "Self-RAG and CRAG", text: "Grade the answer or the documents; regenerate or use the web" },
-        { tag: "8_13", title: "Reranking and hybrid search", text: "Cohere reranker; keyword + semantic with rank fusion" },
-        { tag: "8_16", title: "GraphRAG and multi-hop", text: "An insurance-policy knowledge graph; chained searches" },
-        { tag: "8_18", title: "RAGAS evaluation", text: "Four metrics on an insurance Q&A system" },
+        { tag: "8_2", title: "Traditional vs agentic RAG", text: "The same question through both pipelines" },
+        { tag: "8_4", title: "Self-RAG and CRAG", text: "Grade the answer or the documents; regenerate or use the web" },
+        { tag: "8_6", title: "Reranking and hybrid search", text: "Cohere reranker; BM25 + vectors with rank fusion" },
+        { tag: "8_8", title: "GraphRAG and multi-hop", text: "An insurance-policy knowledge graph; chained searches" },
+        { tag: "8_10", title: "RAGAS evaluation", text: "Four metrics on an insurance Q&A system" },
       ],
       takeaways: [
         "Name the failure mode before choosing a fix",

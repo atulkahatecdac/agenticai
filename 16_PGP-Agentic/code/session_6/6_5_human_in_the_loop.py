@@ -25,7 +25,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 #   - human-on-the-loop:     a human supervises/monitors but doesn't
 #                             block each action (e.g. a review dashboard)
 #   - human-out-of-the-loop: fully autonomous, no human checkpoint
-#                             (e.g. 13_1's snapshot summary - low stakes)
+#                             (e.g. 6_2's snapshot summary - low stakes)
 # A buy/sell recommendation has real consequences if wrong, so it gets
 # the strictest level here: human-in-the-loop.
 # =====================================================================

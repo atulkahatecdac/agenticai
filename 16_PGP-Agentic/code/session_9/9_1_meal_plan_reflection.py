@@ -9,8 +9,8 @@ from pydantic import BaseModel, Field
 load_dotenv(override=True)
 
 # =====================================================================
-# Meal plan generator: generate -> verify -> (revise or stop), the same
-# reflection shape as multi_turn_reflection.py in this folder, but the
+# Meal plan generator: generate -> verify -> (revise or stop), a classic
+# reflection loop, but the
 # "critique" here is grounded in REAL arithmetic, not just an LLM's
 # opinion. Calorie/macro TARGETS (Mifflin-St Jeor BMR x activity
 # multiplier, then macro splits adjusted for the stated health

@@ -341,47 +341,47 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 2. Building crews for real tasks
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 183–184 | CrewAI Examples; (image) | `session_6/6_2_crewai_context_and_memory.py`, `6_3_crewai_log_analyzer.py`, `6_4_crewai_cloud_bill.py`, `6_5_crewai_stock_analysis_flask.py` |
+| MAIN | 183–184 | CrewAI Examples; (image) | `session_6/6_2_crewai_context_and_memory.py` (example crews removed) |
 
 ### 3. Crew vs Flow, and conditional routing
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 220–224 | Crew and Flow; Crew vs Flow; Flow Building Blocks; Conditional Routing; How to Develop a Flow | `session_6/6_6_crew_vs_flow.py` |
+| ADV | 220–224 | Crew and Flow; Crew vs Flow; Flow Building Blocks; Conditional Routing; How to Develop a Flow | `session_6/6_3_crew_vs_flow.py` |
 
 ### 4. Hierarchical crews and manager agents
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 225 | Hierarchical Crews and Manager Agents | `session_6/6_7_hierarchical_crew.py` |
+| ADV | 225 | Hierarchical Crews and Manager Agents | `session_6/6_4_hierarchical_crew.py` |
 
 ### 5. Human-in-the-loop and controlled autonomy
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 226 | Human In The Loop (HITL) and Controlled Autonomy | `session_6/6_8_human_in_the_loop.py` |
+| ADV | 226 | Human In The Loop (HITL) and Controlled Autonomy | `session_6/6_5_human_in_the_loop.py` |
 
 ### 6. Memory and knowledge
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 227 | Memory and Knowledge | `session_6/6_9_memory_and_knowledge.py`, `6_10_crewai_With_Memory.py` vs `6_11_crewai_Without_Memory.py` |
+| ADV | 227 | Memory and Knowledge | (removed; memory is covered by `session_6/6_2_crewai_context_and_memory.py`) |
 
 ### 7. Structured outputs and agent-to-agent communication
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 228 | Structured Outputs and Pydantic + Reliable Agent Communication | `session_6/6_12_structured_outputs.py` |
+| ADV | 228 | Structured Outputs and Pydantic + Reliable Agent Communication | (removed) |
 
 ### 8. Guardrails, error handling and reliability
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 229 | Guardrails, Error Handling and Reliability | `session_6/6_13_guardrails_and_reliability.py` |
+| ADV | 229 | Guardrails, Error Handling and Reliability | `session_6/6_6_guardrails_and_reliability.py` |
 
 ### 9. Observability for crews
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 185 | Adding Observability Using LangSmith | `session_6/6_14_crewai_observability.py` |
+| MAIN | 185 | Adding Observability Using LangSmith | `session_6/6_7_crewai_observability.py` |
 
 ### 10. End-to-end crew application
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| — | — | (no dedicated slide) Customer-service crew with embeddings + Flask UI | `session_6/6_15_crewai_create_embeddings_customer_tickets.py`, then `6_16_crewai_customer_service_flask.py` |
+| — | — | (no dedicated slide) Customer-service crew with embeddings + Flask UI | (removed) |
 
 ---
 
@@ -400,42 +400,42 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 1. AutoGen overview
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 187–188 | AutoGen; Details / Code table | `session_7/7_1_autogen_basic.py` |
+| MAIN | 187–188 | AutoGen; Details / Code table | (removed – covered by `7_1_autogen_forex_api.py`) |
 
 ### 2. AssistantAgent and tools
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 189–190 | AssistantAgent; Step / Component / What Happens table | `session_7/7_2_autogen_forex_api.py`, `7_3_autogen_forex_api_text_message.py` |
+| MAIN | 189–190 | AssistantAgent; Step / Component / What Happens table | `session_7/7_1_autogen_forex_api.py`, `7_2_autogen_forex_api_text_message.py` |
 
 ### 3. Synchronous vs asynchronous agents
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 191 | Synchronous Versus Asynchronous Agents | `session_7/7_4_autogen_synchronous_agents.py`, `7_5_autogen_asynchronous_agents.py` |
+| MAIN | 191 | Synchronous Versus Asynchronous Agents | `session_7/7_3_autogen_multimodal_message.py` (sequential), `7_4_autogen_asynchronous_agents.py` |
 
 ### 4. Structured output
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 192 | Structured Output | `session_7/7_6_autogen_structured_output.py` |
+| MAIN | 192 | Structured Output | `session_7/7_5_autogen_structured_output.py` |
 
 ### 5. Multimodal messages
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| — | — | (no dedicated slide) | `session_7/7_7_autogen_multimodal_message.py` |
+| — | — | (no dedicated slide) | `session_7/7_3_autogen_multimodal_message.py` |
 
 ### 6. Teams / group chats
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 193 | Teams | `session_7/7_8_autogen_round_robin_group_chat.py`, `7_9_autogen_selector_group_chat.py`, `7_10_autogen_magentic_group_chat.py`, `7_11_autogen_recession_claim.py` |
+| MAIN | 193 | Teams | `session_7/7_6_autogen_round_robin_group_chat.py`, `7_7_autogen_selector_group_chat.py`, `7_8_autogen_magentic_group_chat.py` (recession-claim demo removed) |
 
 ### 7. GraphFlow
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 194 | AutoGen GraphFlow (Similar to LangGraph) | `session_7/7_12_autogen_graphflow.py`, `7_13_autogen_graphflow_parallel_join.py` |
+| MAIN | 194 | AutoGen GraphFlow (Similar to LangGraph) | `session_7/7_9_autogen_graphflow.py`, `7_10_autogen_graphflow_parallel_join.py` |
 
 ### 8. Memory
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 195 | Memory | `session_7/7_14_autogen_memory.py` |
+| MAIN | 195 | Memory | `session_7/7_11_autogen_memory.py` |
 
 ---
 
@@ -456,54 +456,54 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 1. RAG failure modes and advanced approaches
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 231–233 | RAG Failure Modes; Various Approaches for Advanced RAG; (image) | `session_8/8_1_rag_hallucination_eval.py` |
+| ADV | 231–233 | RAG Failure Modes; Various Approaches for Advanced RAG; (image) | (concept only – HHEM demo removed) |
 
 ### 2. Traditional RAG vs agentic RAG
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 85–86 | Traditional vs Agentic RAG; (image) | `session_8/8_3_traditional_vs_agentic_rag.py`, `8_4_traditional_vs_agentic_rag_serp.py`, `8_5_openai_agent_traditional_rag.py` vs `8_6_openai_agent_agentic_rag.py` |
-| REAL | 87 | Common Adaptive Strategies | `session_8/8_7_adaptive_retrieval_strategies.py`, `8_8_adaptive_retrieval_strategies_serp.py` |
+| REAL | 85–86 | Traditional vs Agentic RAG; (image) | `session_8/8_2_traditional_vs_agentic_rag.py` (FAQ index from `8_1_support_ticketing_agent_hitl.py`) |
+| REAL | 87 | Common Adaptive Strategies | `session_8/8_2_traditional_vs_agentic_rag.py` (adaptive-strategy demos removed) |
 
 ### 3. Retrieval + reasoning
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 89–90 | Retrieval + Reasoning; Example | `session_8/8_9_loan_eligibility_rag_reasoning.py`, `8_10_cohere_rag_pipeline.py` |
+| REAL | 89–90 | Retrieval + Reasoning; Example | `session_8/8_3_loan_eligibility_rag_reasoning.py` |
 
 ### 4. Self-RAG
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 242 | Self-RAG | `session_8/8_11_self_rag.py` |
+| ADV | 242 | Self-RAG | `session_8/8_4_self_rag.py` |
 
 ### 5. Corrective RAG (CRAG)
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 243 | Corrective RAG (CRAG) | `session_8/8_12_corrective_rag.py` |
+| ADV | 243 | Corrective RAG (CRAG) | `session_8/8_5_corrective_rag.py` |
 
 ### 6. Re-ranking retrieved chunks
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 244 | Re-ranking with Cohere and Cross-encoder Models | `session_8/8_13_cohere_reranking.py` |
+| ADV | 244 | Re-ranking with Cohere and Cross-encoder Models | `session_8/8_6_cohere_reranking.py` |
 
 ### 7. Hybrid search
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 124 | Hybrid Search | `session_8/8_14_hybrid_search.py` |
-| ADV | 249 | Hybrid Search (agentic RAG) | `session_8/8_15_agentic_hybrid_search.py` |
+| ADV | 124 | Hybrid Search | (removed – covered by `8_7_hybrid_search.py`) |
+| ADV | 249 | Hybrid Search (agentic RAG) | `session_8/8_7_hybrid_search.py` |
 
 ### 8. GraphRAG
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 247 | GraphRAG | `session_8/8_16_graph_rag.py` |
+| ADV | 247 | GraphRAG | `session_8/8_8_graph_rag.py` |
 
 ### 9. Multi-hop reasoning
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 248 | Multi-Hop Reasoning | `session_8/8_17_multi_hop_reasoning.py` |
+| ADV | 248 | Multi-Hop Reasoning | `session_8/8_9_multi_hop_reasoning.py` |
 
 ### 10. Evaluating RAG with RAGAS
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 234–241 | RAGAS; Metrics; Faithfulness; Answer Relevance; Context Precision; Context Recall | `session_8/8_18_ragas_evaluation.py`, `8_19_ragas_evaluation_customer_support.py` |
+| ADV | 234–241 | RAGAS; Metrics; Faithfulness; Answer Relevance; Context Precision; Context Recall | `session_8/8_10_ragas_evaluation.py` |
 
 ---
 
@@ -530,50 +530,50 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 2. Self-reflection loops
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 207 | Self-reflection Loops | `session_9/9_1_openai_agent_pattern_reflection.py` |
+| ADV | 207 | Self-reflection Loops | (removed – covered by `9_1_meal_plan_reflection.py`) |
 
 ### 3. Multi-turn reflection with a quality threshold
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 208 | Multi-Turn Reflection | `session_9/9_2_meal_plan_reflection.py` |
+| ADV | 208 | Multi-Turn Reflection | `session_9/9_1_meal_plan_reflection.py` |
 
 ### 4. Plan-and-Execute
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 209 | Plan-and-Execute | `session_9/9_3_study_plan_plan_execute.py` |
+| ADV | 209 | Plan-and-Execute | `session_9/9_2_pathology_report_replanning.py` (study-plan demo removed) |
 
 ### 5. Replanning
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 210 | Replanning | `session_9/9_4_pathology_report_replanning.py` |
+| ADV | 210 | Replanning | `session_9/9_2_pathology_report_replanning.py` |
 
 ### 6. Long-term memory types
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 96–97 | Memory Types; Memory Examples | `session_9/9_5_agent_memory_short_term_langgraph.py`, then `9_6`, `9_7`, `9_8` (dynamic session ID; short to long term; short to external SQLite) |
-| ADV | 212 | Long Term Memory Types | `session_9/9_9_agent_memory_semantic_langgraph.py`, `9_10_agent_memory_procedural_langgraph.py` |
+| REAL | 96–97 | Memory Types; Memory Examples | `session_9/9_3_agent_memory_short_term_langgraph.py`, then `9_4` (short to external SQLite) |
+| ADV | 212 | Long Term Memory Types | `session_9/9_5_agent_memory_semantic_langgraph.py`, `9_6_agent_memory_procedural_langgraph.py` |
 
 ### 7. Episodic memory
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 213 | Episodic Memory | `session_9/9_11_episodic_memory_store.py`, `9_12_agent_memory_episodic_langgraph.py` |
+| ADV | 213 | Episodic Memory | `session_9/9_7_episodic_memory_store.py` |
 
 ### 8. Memory consolidation
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 214 | Memory Consolidation | `session_9/9_13_memory_consolidation.py` |
+| ADV | 214 | Memory Consolidation | `session_9/9_8_memory_consolidation.py` |
 
 ### 9. Context propagation and trimming
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 100–101 | Context Propagation and Trim Strategies; Context Trimming Strategies | `session_9/9_14_context_management_strategies.py` |
+| REAL | 100–101 | Context Propagation and Trim Strategies; Context Trimming Strategies | `session_9/9_9_context_management_strategies.py` |
 
 ### 10. Self-improvement from failures
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 216 | Agent Self-Improvement Using Semantic Self-Generation from Failures | `session_9/9_15_self_improving_agent.py` |
+| ADV | 216 | Agent Self-Improvement Using Semantic Self-Generation from Failures | `session_9/9_10_self_improving_agent.py` |
 
 ### 11. Unified architecture: reflection + planning + memory
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 217 | Combining Reflection, Planning, and Memory into One Unified Agent Architecture | `session_9/9_16_personal_memory_assistant.py` |
+| ADV | 217 | Combining Reflection, Planning, and Memory into One Unified Agent Architecture | (concept only – voice-assistant demo removed) |
