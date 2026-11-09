@@ -59,7 +59,7 @@ and either one column of blocks or two columns (`left` / `right`, widths set wit
 {
   title: "Writing a Tool",
   subtitle: "A normal Python function plus a decorator",
-  demo: "06_langchain_agents/tool_calling.py",   // or "Concept" for a discussion slide
+  demo: "06_langchain_agents/06_1_tool_calling.py",   // or "Concept" for a discussion slide
   split: [1.2, 1],
   left:  [{ type: "code", caption: "tool.py", code: "@tool\ndef ..." }],
   right: [{ type: "icons", items: [{ icon: "FaTag", title: "@tool", text: "..." }] }],

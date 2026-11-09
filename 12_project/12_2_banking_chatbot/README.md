@@ -20,7 +20,7 @@ problem (how do I open an account, what's the loan process, lost-card policy...)
 which structured tools can't answer and shouldn't try to. So this plan inserts a
 dedicated RAG-backed FAQ specialist (step 5 below, ChromaDB via `langchain_chroma`)
 that the coordinator can route to alongside the tool-calling specialists.
-`14_advanced/07_langgraph/message_graph_bank_faq.py` already builds exactly this
+`14_advanced/07_langgraph/07_5_message_graph_bank_faq.py` already builds exactly this
 against `3_langgraph/Dataset_Banking_chatbot.csv` — step 5 follows that pattern
 directly. Kept at step 5 rather than pulled into steps 3/4: those steps exist to
 demonstrate the "one unscoped agent" and "specialist split" problems specifically
@@ -63,12 +63,12 @@ demo prompts against the new code (regression check) before moving on.
 
 5. **`12_2_5_rag_faq_agent/`** — Add a fourth specialist: a RAG-backed FAQ/Knowledge
    agent over `3_langgraph/Dataset_Banking_chatbot.csv` (Chroma + HuggingFace
-   embeddings), following `14_advanced/07_langgraph/message_graph_bank_faq.py`.
+   embeddings), following `14_advanced/07_langgraph/07_5_message_graph_bank_faq.py`.
    Demo: "How do I report a lost debit card?" is answered from the FAQ corpus, not
    hallucinated. **The missing piece the original deck-only plan skipped.** This
    step also replaces step 4's manual specialist picker with an internal router
    (structured-output classification, following
-   `14_advanced/07_langgraph/conditional_routing_specialists.py`) that picks ONE
+   `14_advanced/07_langgraph/07_4_conditional_routing_specialists.py`) that picks ONE
    specialist per turn automatically, in one shared chat — no sidebar, no
    dropdown. A cross-domain request still only gets one specialist's partial
    answer; splitting a request across *multiple* specialists is step 6's job.
@@ -87,7 +87,7 @@ demo prompts against the new code (regression check) before moving on.
    (a) identity/token propagation from a mock IdP through the coordinator to every
    specialist, blocking cross-account access; (b) a LangGraph checkpointer-backed
    session store (`SqliteSaver`, following `3_langgraph/3_4_langgraph_memory.py` and
-   `14_advanced/08_langgraph_cycles_HIL_persistence/sqlite_checkpointing_crash_recovery.py`)
+   `14_advanced/08_langgraph_cycles_HIL_persistence/08_3_sqlite_checkpointing_crash_recovery.py`)
    so the agent stops forgetting prior turns. *(slides 10-11)*
 
 9. **`12_2_9_pii_redaction/`** — A regex/pattern-based redaction layer intercepting
@@ -98,7 +98,7 @@ demo prompts against the new code (regression check) before moving on.
 10. **`12_2_10_eval_and_observability/`** — A baseline eval suite (the deck's four
     canonical prompts: balance / last-5-transactions / balance+transactions /
     address-change, checked for correct routing + tool selection) plus LangSmith
-    tracing, following `14_advanced/09_langsmith/trace_langgraph_agent_end_to_end.py`.
+    tracing, following `14_advanced/09_langsmith/09_2_trace_langgraph_agent_end_to_end.py`.
     Demo failure case: a stale-cache balance discrepancy, found via trace.
     *(slides 13-14)*
 

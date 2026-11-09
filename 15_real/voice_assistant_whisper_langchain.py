@@ -15,7 +15,7 @@ from langchain_core._api.deprecation import LangChainDeprecationWarning, LangCha
 
 # langchain_core re-enables its own deprecation warnings on import, which runs
 # AFTER our filters above and so overrides them - reapply now (same fix as
-# 14_advanced/05_langchain/persistent_chatbot.py).
+# 14_advanced/05_langchain/05_4_persistent_chatbot.py).
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
 
@@ -66,7 +66,7 @@ chain = prompt | llm
 
 # In-memory history per session_id, cleared when the process exits. A real,
 # persistent voice assistant would swap this for SQLChatMessageHistory - same
-# pattern as 14_advanced/05_langchain/persistent_chatbot.py.
+# pattern as 14_advanced/05_langchain/05_4_persistent_chatbot.py.
 _histories: dict[str, InMemoryChatMessageHistory] = {}
 
 

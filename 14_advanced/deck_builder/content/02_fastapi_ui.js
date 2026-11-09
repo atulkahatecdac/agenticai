@@ -251,7 +251,7 @@ if st.button("Ask"):
     {
       title: "A Streamlit Chat with History",
       subtitle: "session_state survives the re-runs, so the conversation stays on screen",
-      demo: "03_llm_examples/ollama_chatbot_streamlit.py",
+      demo: "03_llm_examples/03_5_ollama_chatbot_streamlit.py",
       split: [1.3, 1],
       left: [
         { type: "code", caption: "app.py", code:

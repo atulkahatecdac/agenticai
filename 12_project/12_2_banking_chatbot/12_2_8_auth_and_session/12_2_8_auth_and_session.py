@@ -238,7 +238,7 @@ class ChatState(TypedDict):
 
 
 def make_specialist_agent(tools: list):
-    """Factory mirroring 14_advanced/07_langgraph/conditional_routing_specialists.py's
+    """Factory mirroring 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py's
     make_specialist(). Async agent node - MCP tools only support async invocation,
     and ToolNode picks the sync-or-async tool-call path based on whether the graph
     itself is invoked via .invoke() or .ainvoke()."""
@@ -261,7 +261,7 @@ def make_specialist_agent(tools: list):
 
 # ---------------------------------------------------------------------
 # FAQ specialist: retrieve -> generate, following
-# 14_advanced/07_langgraph/message_graph_bank_faq.py. Unchanged since
+# 14_advanced/07_langgraph/07_5_message_graph_bank_faq.py. Unchanged since
 # step 5 - no MCP tools, no per-customer scoping needed (it never
 # touches account data).
 # ---------------------------------------------------------------------

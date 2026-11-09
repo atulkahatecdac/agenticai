@@ -1,0 +1,5 @@
+# Only what the UI needs - no LangChain, no OpenAI SDK: the frontend never
+# talks to the LLM, so its image stays small. Versions match the root
+# requirements.txt pins.
+streamlit==1.63.0
+requests==2.34.2

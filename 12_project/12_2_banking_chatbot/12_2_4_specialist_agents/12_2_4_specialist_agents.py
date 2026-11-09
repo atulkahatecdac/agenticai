@@ -138,7 +138,7 @@ class ChatState(TypedDict):
 
 
 def make_specialist_agent(tools: list):
-    """Factory mirroring 14_advanced/07_langgraph/conditional_routing_specialists.py's
+    """Factory mirroring 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py's
     make_specialist(): every specialist shares the same underlying LLM and the same
     agent/tools loop - what makes each one a "specialist" is purely which tools it's
     bound to and what its system prompt says it may do, nothing structural."""

@@ -18,7 +18,7 @@ Step 5's router could only pick **one** specialist per turn, so a cross-domain
 question ("balance AND last 5 transactions") only ever got a partial answer. This
 step extends that into a proper coordinator using LangGraph's `Send` API for
 genuine parallel fan-out/fan-in, following
-`14_advanced/08_langgraph_cycles_HIL_persistence/parallel_trip_planner_send_api.py`:
+`14_advanced/08_langgraph_cycles_HIL_persistence/08_5_parallel_trip_planner_send_api.py`:
 
 ```
 START -> classify_intent -> (Send fan-out, 1-4 in parallel) -> run_specialist -> synthesize -> END

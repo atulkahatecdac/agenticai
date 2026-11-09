@@ -9,7 +9,7 @@
 
 Step 3's one agent with six tools is split into three specialists, each its own
 compiled LangGraph app built by a shared factory (`make_specialist_agent(tools)`,
-mirroring `14_advanced/07_langgraph/conditional_routing_specialists.py`'s
+mirroring `14_advanced/07_langgraph/07_4_conditional_routing_specialists.py`'s
 `make_specialist()`):
 
 - **Accounts Agent** — `get_account_balance` only.

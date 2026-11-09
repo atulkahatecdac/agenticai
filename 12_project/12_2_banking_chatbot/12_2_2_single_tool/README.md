@@ -17,7 +17,7 @@
 ## Architecture change
 
 Standard LangGraph tool-calling loop, following
-`14_advanced/09_langsmith/trace_langgraph_agent_end_to_end.py`:
+`14_advanced/09_langsmith/09_2_trace_langgraph_agent_end_to_end.py`:
 
 ```
 START -> agent -> (conditional: tool_calls?) -> tools -> agent -> END

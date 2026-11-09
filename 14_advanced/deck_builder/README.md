@@ -24,6 +24,6 @@ Aim for `0 warning(s)`, then check the slides visually with `tools/deck_builder/
 | `content/01_python_setup.js` … `19_capstone.js` | One file per module, named by module number. Each starts with an opener (goals and agenda) and ends with a summary. |
 | `assets/` | The infographics only this deck uses (palette PNGs). Shared ones are in `tools/deck_builder/assets/`. |
 
-DEMO paths are relative to `14_advanced/`, e.g. `07_langgraph/greeter_graph.py`. Modules 10 and 11 (MCP) have no
+DEMO paths are relative to `14_advanced/`, e.g. `07_langgraph/07_1_greeter_graph.py`. Modules 10 and 11 (MCP) have no
 folder here: their demos live in `6_mcp/`, written as `../6_mcp/…`. The PDFs next to the deck (brochure and
 course outline) are not generated.

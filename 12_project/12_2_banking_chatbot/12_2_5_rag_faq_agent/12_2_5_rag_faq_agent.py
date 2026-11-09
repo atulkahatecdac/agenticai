@@ -34,13 +34,13 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # question a naive agent would otherwise hallucinate). This is the
 # missing piece the original deck skipped. Structurally this specialist
 # is NOT a tool-calling agent like the other three - it follows
-# 14_advanced/07_langgraph/message_graph_bank_faq.py's retrieve -> generate
+# 14_advanced/07_langgraph/07_5_message_graph_bank_faq.py's retrieve -> generate
 # shape instead, over 3_langgraph/Dataset_Banking_chatbot.csv via Chroma
 # + local HuggingFace embeddings (no extra API calls).
 #
 # This step also removes step 4's manual specialist picker: a small
 # router (structured-output classification, following
-# 14_advanced/07_langgraph/conditional_routing_specialists.py) now picks
+# 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py) now picks
 # ONE specialist per turn automatically. That's a first slice of what
 # the deck calls the "coordinator" (slide 8's steps 01-02: parse intent,
 # identify the specialist) - what's still missing, and what step 6 adds,
@@ -171,7 +171,7 @@ class ChatState(TypedDict):
 
 
 def make_specialist_agent(tools: list):
-    """Factory mirroring 14_advanced/07_langgraph/conditional_routing_specialists.py's
+    """Factory mirroring 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py's
     make_specialist(): every specialist shares the same underlying LLM and the same
     agent/tools loop - what makes each one a "specialist" is purely which tools it's
     bound to and what its system prompt says it may do, nothing structural."""
@@ -194,7 +194,7 @@ def make_specialist_agent(tools: list):
 
 # ---------------------------------------------------------------------
 # FAQ specialist: retrieve -> generate, following
-# 14_advanced/07_langgraph/message_graph_bank_faq.py. The Chroma
+# 14_advanced/07_langgraph/07_5_message_graph_bank_faq.py. The Chroma
 # vectorstore is expensive to build (loads a local embedding model and
 # embeds ~150 FAQ rows), and Streamlit reruns this whole script on every
 # interaction - st.cache_resource builds it once per app process and
@@ -254,7 +254,7 @@ SPECIALISTS = {
 
 # ---------------------------------------------------------------------
 # Router: picks ONE specialist per turn, following
-# 14_advanced/07_langgraph/conditional_routing_specialists.py.
+# 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py.
 # ---------------------------------------------------------------------
 ROUTES = {
     "accounts": "Accounts Agent",
@@ -286,7 +286,7 @@ router_chain = router_prompt | llm.with_structured_output(Routing)
 
 def route(question: str) -> str:
     # with_structured_output's return type isn't fully resolved by static
-    # analysis here (same as 14_advanced/07_langgraph/conditional_routing_specialists.py) -
+    # analysis here (same as 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py) -
     # harmless at runtime, since we always pass a Pydantic class, never a dict schema.
     result = router_chain.invoke({"question": question})
     return ROUTES[result.specialist]  # type: ignore[union-attr]

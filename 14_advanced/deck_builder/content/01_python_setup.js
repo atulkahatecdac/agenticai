@@ -1,4 +1,4 @@
-const ASYNC = "01_basic_test/02_sync_vs_async_llm_calls_google.py";
+const ASYNC = "01_basic_test/01_2_sync_vs_async_llm_calls_google.py";
 
 module.exports = {
   section: "Module 01 – Python & AI Dev Environment",
@@ -188,7 +188,7 @@ Ctrl+Shift+P → Python: Select Interpreter
     {
       title: "Hello, Agentic AI",
       subtitle: "Your first LangChain call – to a local model, no API key needed",
-      demo: "01_basic_test/01_hello_agentic_ai.py",
+      demo: "01_basic_test/01_1_hello_agentic_ai.py",
       split: [1, 1.3],
       left: [
         { type: "code", caption: "Once: install Ollama and get the model", code:
@@ -196,10 +196,10 @@ Ctrl+Shift+P → Python: Select Interpreter
 brew install ollama            # macOS
 ollama pull qwen3:8b` },
         { type: "code", caption: "Run it", code:
-`python 14_advanced/01_basic_test/01_hello_agentic_ai.py` },
+`python 14_advanced/01_basic_test/01_1_hello_agentic_ai.py` },
       ],
       right: [
-        { type: "code", caption: "01_hello_agentic_ai.py", code:
+        { type: "code", caption: "01_1_hello_agentic_ai.py", code:
 `from langchain_ollama import ChatOllama
 
 llm = ChatOllama(model="qwen3:8b", reasoning=False)
@@ -215,7 +215,7 @@ print(response.content)` },
     {
       title: "Same Code, Any Model",
       subtitle: "LangChain hides the provider: change the model line, keep everything else",
-      demo: "01_basic_test/: 01 (Ollama), 02 (Google), 03 (OpenAI)",
+      demo: "01_basic_test/: 01_1 (Ollama), 01_2 (Google), 01_3 (OpenAI)",
       blocks: [
         { type: "table", size: 10.5, widths: [1.3, 2.0, 5.0], head: ["Provider", "Package", "The only line that changes"], rows: [
           ["Local – Ollama", "`langchain-ollama`", "`llm = ChatOllama(model=\"qwen3:8b\")`"],
@@ -230,7 +230,7 @@ print(response.content)` },
     {
       title: "Reading Text from an Image",
       subtitle: "One message with text and an image – the model reads Hindi, French and Japanese, then translates",
-      demo: "01_basic_test/03_read_image_and_audio_openai.py",
+      demo: "01_basic_test/01_3_read_image_and_audio_openai.py",
       split: [1, 1.1],
       left: [
         { type: "image", src: "multilingual_text.png", alt: "The same two sentences about agentic AI in Hindi, French and Japanese" },
@@ -255,7 +255,7 @@ print(vision_llm.invoke([image_message]).content)` },
     {
       title: "Reading the Same Text from Audio",
       subtitle: "Same pattern, different content block: an audio model transcribes and translates each clip",
-      demo: "01_basic_test/03_read_image_and_audio_openai.py  ·  hindi.mp3, french.mp3, japanese.mp3",
+      demo: "01_basic_test/01_3_read_image_and_audio_openai.py  ·  hindi.mp3, french.mp3, japanese.mp3",
       split: [1.25, 1],
       left: [
         { type: "code", caption: "Part 2: the audio", code:

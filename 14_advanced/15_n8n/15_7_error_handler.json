@@ -1,0 +1,226 @@
+{
+  "name": "15_7 Error Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_7 Error Handler\n**Setup**\n1. Pick Google Sheets and Gmail credentials; change the admin address (admin@example.com).\n2. Create a tab **Error Log** with headers: time, workflow, node, message, execution_url.\n3. In 15_6: Settings → Error workflow → this workflow.\n4. Test: `docker stop mysql`, submit the 15_6 form, then `docker start mysql`.",
+        "width": 480,
+        "height": 270,
+        "color": 5
+      },
+      "id": "39cfa4fc-a629-44af-8fab-5a3c4ac00c9c",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -340
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "43cb0f6f-95be-45ce-9f7e-29d13a6ca982",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cdd5a331-2066-4173-bbfc-48beace53221",
+              "name": "time",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "b303613c-0d72-4010-842a-d39c6121ff5e",
+              "name": "workflow",
+              "value": "={{ $json.workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "c58263be-adc0-4cdb-8d08-83f6ab89315d",
+              "name": "node",
+              "value": "={{ $json.execution.lastNodeExecuted }}",
+              "type": "string"
+            },
+            {
+              "id": "29b0357a-e7a0-49de-8a05-75166a5c7e15",
+              "name": "message",
+              "value": "={{ $json.execution.error.message }}",
+              "type": "string"
+            },
+            {
+              "id": "db41bc4d-02ac-43f9-b3a5-b830528ba2e0",
+              "name": "execution_url",
+              "value": "={{ $json.execution.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "e1979ade-5d2f-461d-8dda-18eb1b74f18c",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time": "={{ $json.time }}",
+            "workflow": "={{ $json.workflow }}",
+            "node": "={{ $json.node }}",
+            "message": "={{ $json.message }}",
+            "execution_url": "={{ $json.execution_url }}"
+          },
+          "schema": [
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflow",
+              "displayName": "workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "node",
+              "displayName": "node",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_url",
+              "displayName": "execution_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "21d0109d-4d3e-4c55-a441-fd7e24e8fc4c",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "admin@example.com",
+        "subject": "=[n8n ERROR] {{ $('Edit Fields').item.json.workflow }}",
+        "emailType": "html",
+        "message": "=<p><b>Workflow:</b> {{ $('Edit Fields').item.json.workflow }}<br><b>Failed node:</b> {{ $('Edit Fields').item.json.node }}<br><b>Error:</b> {{ $('Edit Fields').item.json.message }}</p><p><a href=\"{{ $('Edit Fields').item.json.execution_url }}\">Open the failed execution</a></p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "9d3e22e6-4b00-4912-a580-5c66beab4c4f",
+      "name": "Alert Admin",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        0
+      ],
+      "webhookId": "058f8548-d895-48a4-886a-4808f0585515"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

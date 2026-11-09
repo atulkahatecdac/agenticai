@@ -1,4 +1,5 @@
 const M = "18_Dockerizing/";
+const FS = M + "4_streamlit_fastapi_fullstack/";
 
 module.exports = {
   section: "Module 18 – Dockerizing and Deploying",
@@ -11,7 +12,8 @@ module.exports = {
       goals: [
         { icon: "FaDocker", title: "Understand images and containers", text: "layers and the build cache" },
         { icon: "FaFileCode", title: "Write a good Dockerfile", text: "multi-stage, non-root, with a health check" },
-        { icon: "FaLayerGroup", title: "Compose multi-container stacks", text: "API + MySQL; API + worker + Redis + ChromaDB" },
+        { icon: "FaLayerGroup", title: "Compose multi-container stacks", text: "API + MySQL; a queue; a Streamlit + FastAPI full stack" },
+        { icon: "FaAws", title: "Run it on AWS", text: "the same compose stack on an EC2 instance" },
         { icon: "FaCodeBranch", title: "Release without downtime", text: "blue/green and canary deployments" },
       ],
       agenda: [
@@ -20,6 +22,8 @@ module.exports = {
         "Multi-stage builds",
         "Docker Compose: API + MySQL",
         "A full agent stack with a worker queue",
+        "A full-stack app: Streamlit + FastAPI",
+        "Running it on AWS (EC2)",
         "Blue/green deployment",
         "Canary deployment",
       ],
@@ -135,6 +139,111 @@ select * from summaries;` },
       ],
     },
     {
+      title: "A Full-Stack App: Streamlit + FastAPI",
+      subtitle: "Two images, one compose file – only the UI is published to the outside world",
+      demo: M + "4_streamlit_fastapi_fullstack/  ·  docker compose up -d --build  →  localhost:8501",
+      split: [1, 1.05],
+      left: [
+        { type: "flow", items: [
+          { icon: "FaUser", label: "Browser", caption: "localhost:8501" },
+          { icon: "FaDesktop", label: "frontend", caption: "Streamlit UI", color: "teal" },
+          { icon: "FaServer", label: "backend", caption: "FastAPI /ask", color: "coral" },
+          { icon: "FaMicrochip", label: "OpenAI", caption: "gpt-4o-mini" },
+        ] },
+        { type: "bullets", size: 11, items: [
+          "**Service names are host names:** the UI calls `http://backend:8000` – inside its container, `localhost` is the UI itself",
+          "**Publish only what users need:** no `ports:` on the backend; the API key lives only there",
+          "**Start in order:** the UI waits until the backend's `/health` passes",
+        ] },
+      ],
+      right: [
+        { type: "code", caption: "docker-compose.yml (condensed)", code:
+`services:
+  backend:
+    build: ./backend
+    env_file: [.env]          # OPENAI_API_KEY
+    # no ports: - internal only
+
+  frontend:
+    build: ./frontend
+    ports: ["8501:8501"]
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy` },
+      ],
+    },
+    {
+      title: "Run It on AWS: Launch an EC2 Instance",
+      subtitle: "The simplest path – one virtual machine running the same docker compose command",
+      demo: FS + "README.md  →  Run it on AWS (EC2)",
+      split: [1.15, 1],
+      left: [
+        { type: "table", size: 10.5, widths: [1.5, 3.1], head: ["Setting", "Value"], rows: [
+          ["AMI", "Ubuntu Server 24.04 LTS"],
+          ["Instance type", "t3.small – 2 GB RAM runs both containers"],
+          ["Key pair", "Create one; download the .pem file"],
+          ["Security group", "SSH 22 and TCP 8501 – both from My IP"],
+          ["Storage", "20 GB gp3"],
+        ] },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "EC2 console → Launch instance", text: "Use the settings on the left" },
+          { title: "Do not open port 8000", text: "The backend stays private, exactly as on your laptop" },
+          { title: "Note the public IP", text: "It changes on stop/start – use an Elastic IP to keep it" },
+        ] },
+        { type: "callout", eyebrow: "Cost", text: "Stop or terminate the instance when you are done – a running VM is billed by the second." },
+      ],
+    },
+    {
+      title: "Run It on AWS: Deploy with Compose",
+      subtitle: "Install Docker, clone the repo, add the key, start the stack",
+      demo: FS + "  ·  http://<public-ip>:8501",
+      split: [1.3, 1],
+      left: [
+        { type: "code", caption: "On the instance (ssh -i my-key.pem ubuntu@<public-ip>)", code:
+`# 1. Docker Engine + buildx + compose plugin
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker ubuntu   # then log out and in
+
+# 2. Code and secret
+git clone https://github.com/atulkahatecdac/agenticai.git
+cd agenticai/14_advanced/18_Dockerizing
+cd 4_streamlit_fastapi_fullstack
+cp .env.example .env && nano .env   # OPENAI_API_KEY
+chmod 600 .env
+
+# 3. Start
+docker compose up -d --build
+docker compose ps        # both "healthy"` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Open http://<public-ip>:8501", text: "The same UI as on your laptop" },
+          { title: "Survives reboots", text: "`restart: unless-stopped` + Docker starts on boot" },
+          { title: "Update", text: "`git pull && docker compose up -d --build`" },
+          { title: "Clean up", text: "`docker compose down`, then stop or terminate the instance" },
+        ] },
+      ],
+    },
+    {
+      title: "From Demo to Production on AWS",
+      subtitle: "Same containers – what changes when real users depend on them",
+      demo: "Concept",
+      blocks: [
+        { type: "table", size: 10.5, widths: [1.4, 2.6, 3.6], head: ["Concern", "EC2 demo", "Production"], rows: [
+          ["Secrets", ".env file on the VM", "AWS Secrets Manager or SSM Parameter Store, injected at start"],
+          ["Images", "Built on the VM", "Built in CI, pushed to Amazon ECR"],
+          ["Running", "One VM, docker compose", "ECS on Fargate – one service per container – or App Runner"],
+          ["HTTPS", "Plain HTTP on 8501", "Application Load Balancer + ACM certificate, port 443 only"],
+          ["Address", "Public IP", "Elastic IP or a Route 53 domain"],
+          ["Updates", "git pull, rebuild", "Blue/green or canary releases – next"],
+        ] },
+      ],
+    },
+    {
       title: "Blue/Green Deployment",
       subtitle: "Run the old and new versions side by side, then switch traffic all at once",
       demo: "Concept",
@@ -186,6 +295,7 @@ select * from summaries;` },
         { tag: "1", title: "One container", text: "FastAPI + LangChain, multi-stage, non-root" },
         { tag: "2", title: "Two containers", text: "API + MySQL history with Compose" },
         { tag: "3", title: "Four containers", text: "API, worker, Redis queue, ChromaDB" },
+        { tag: "4", title: "A full stack on AWS", text: "Streamlit + FastAPI with Compose, on EC2" },
         { tag: "ship", title: "Safe releases", text: "Blue/green and canary strategies" },
       ],
       takeaways: [

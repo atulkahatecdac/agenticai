@@ -15,7 +15,7 @@ from langchain_core._api.deprecation import LangChainDeprecationWarning, LangCha
 
 # langchain_core re-enables its own deprecation warnings on import, which runs
 # AFTER our filters above and so overrides them - reapply now (same fix as
-# 14_advanced/05_langchain/persistent_chatbot.py).
+# 14_advanced/05_langchain/05_4_persistent_chatbot.py).
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
 
@@ -26,7 +26,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 # A simple long-term-memory assistant, LangChain only (no LangGraph),
 # using RAG as the actual memory mechanism.
 #
-# Contrast with 14_advanced/05_langchain/persistent_chatbot.py: that
+# Contrast with 14_advanced/05_langchain/05_4_persistent_chatbot.py: that
 # file persists the FULL raw message log (SQLChatMessageHistory) and
 # replays all of it into the prompt every turn - fine for one ongoing
 # chat, doesn't scale, and isn't RAG. Here, every past exchange is
@@ -67,7 +67,7 @@ def format_memories(docs) -> str:
     return "\n".join(f"- {d.page_content}" for d in docs) if docs else "(none found)"
 
 
-# Same LCEL shape as 14_advanced/05_langchain/rag_pipeline.py:
+# Same LCEL shape as 14_advanced/05_langchain/05_7_rag_pipeline.py:
 # {"context": retriever | format_docs, "question": RunnablePassthrough()} | prompt | llm
 chain = (
     {"memories": retriever | format_memories, "question": RunnablePassthrough()}

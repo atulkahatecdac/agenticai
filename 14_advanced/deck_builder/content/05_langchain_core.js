@@ -24,6 +24,7 @@ module.exports = {
         "Retriever types, with a worked example",
         "Callbacks",
         "Combining several retrievers",
+        "Hands-on: Q&A bot over PDFs",
       ],
     },
     {
@@ -93,14 +94,14 @@ add.invoke("Hello")  # Hello!` },
         ] },
       ],
     },
-    { kind: "image", src: "prompt_template_types.png", alt: "Three types of prompt templates in LangChain", demo: M + "prompt_templates.py, " + M + "prompt_templates_openai.py" },
-    { kind: "image", src: "output_parsers.png", alt: "LangChain output parsers", demo: M + "output_parsers.py, " + M + "output_parsers_openai.py" },
+    { kind: "image", src: "prompt_template_types.png", alt: "Three types of prompt templates in LangChain", demo: M + "05_1_prompt_templates.py  (PROVIDER = \"google\" or \"openai\")" },
+    { kind: "image", src: "output_parsers.png", alt: "LangChain output parsers", demo: M + "05_2_output_parsers.py  (PROVIDER = \"google\" or \"openai\")" },
 
     // ---------------------------------------------------------------- memory
     {
       title: "Conversation Memory Types",
       subtitle: "Six turns: a laptop purchase, returns, a dead battery, delivery, a replacement, support",
-      demo: M + "memory_types.py",
+      demo: M + "05_3_memory_types.py",
       blocks: [
         { type: "cards", size: 10.5, items: [
           { icon: "FaListUl", title: "Buffer memory", tag: "Stores everything", lines: ["Sends the entire conversation – all six turns – to the LLM every time", "**Simple**, but grows without limit"] },
@@ -112,7 +113,7 @@ add.invoke("Hello")  # Hello!` },
     {
       title: "Persistent Memory",
       subtitle: "Session memory lives only while the app runs; persistent memory survives restarts",
-      demo: M + "persistent_chatbot.py",
+      demo: M + "05_4_persistent_chatbot.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaGear", label: "System instruction", caption: "Who the assistant is" },
@@ -132,7 +133,7 @@ add.invoke("Hello")  # Hello!` },
     {
       title: "Document Loaders and Text Splitters",
       subtitle: "Turn files into Document objects, then into chunks small enough to embed",
-      demo: M + "document_loaders.py, " + M + "text_splitters.py",
+      demo: M + "05_5_document_loaders.py, " + M + "05_6_text_splitters.py",
       blocks: [
         { type: "cards", size: 10.5, codeSize: 8.5, items: [
           { icon: "FaFileImport", title: "Document loaders", lines: ["Read a source and return Document objects (text + metadata)", "One format = one loader: PyPDFLoader, WebBaseLoader, CSVLoader, NotionDirectoryLoader …", "PyPDFLoader returns **one Document per page**"],
@@ -145,7 +146,7 @@ documents = loader.load()` },
     {
       title: "The RAG Pipeline, End to End",
       subtitle: "Index once, then answer many questions",
-      demo: M + "rag_pipeline.py, " + M + "rag_pipeline_ollama.py",
+      demo: M + "05_7_rag_pipeline.py  (LOCAL = True runs it all on Ollama)",
       blocks: [
         { type: "text", text: "**Indexing** – done once, or when documents change", size: 11.5, color: "teal" },
         { type: "flow", gapBefore: 0.1, items: [
@@ -168,7 +169,7 @@ documents = loader.load()` },
     {
       title: "Retrievers",
       subtitle: "The bridge between the vector database and the LLM – only the relevant chunks reach the prompt",
-      demo: M + "retrievers.py",
+      demo: M + "05_8_retrievers.py",
       blocks: [
         { type: "table", size: 10, widths: [2.0, 5.2], head: ["Retriever", "What it does"], rows: [
           ["VectorStoreRetriever", "Embeds the query and returns the most similar chunks – the default"],
@@ -184,7 +185,7 @@ documents = loader.load()` },
     {
       title: "Retrievers, Worked Through",
       subtitle: "\"What is the work-from-home policy for employees with children?\" – what each one returns",
-      demo: M + "retrievers.py",
+      demo: M + "05_8_retrievers.py",
       blocks: [
         { type: "table", size: 9.5, widths: [1.9, 5.3], head: ["Retriever", "What it finally hands to the LLM"], rows: [
           ["VectorStoreRetriever", "Chunks that mention work-from-home, remote work, employees with children"],
@@ -200,10 +201,10 @@ documents = loader.load()` },
     {
       title: "Callbacks",
       subtitle: "Hooks that fire on every event – see what was sent, retrieved, called and how long it took",
-      demo: M + "callbacks.py",
+      demo: M + "05_9_callbacks.py",
       split: [1.25, 1],
       left: [
-        { type: "code", caption: "callbacks.py – a custom handler", code:
+        { type: "code", caption: "05_9_callbacks.py – a custom handler", code:
 `class LifecycleLogger(BaseCallbackHandler):
     def on_chain_start(self, serialized, inputs, **kw):
         print(f"[chain started] input={inputs}")
@@ -234,13 +235,13 @@ chain.invoke({"question": "What is a p-value?"},
     {
       title: "One Retriever over Many Sources",
       subtitle: "Company knowledge lives in PDFs, wikis and databases – search them all with one call",
-      demo: M + "combining_retrievers.py",
+      demo: M + "05_10_combining_retrievers.py",
       split: [1, 1.2],
       left: [
         { type: "tree", boxW: 1.3, size: 10, rows: [["Question"], [{ label: "EnsembleRetriever", fill: "navy" }], ["Policy PDF", "Wiki (Notion)", "Limits DB"], [{ label: "One fused list (RRF)", fill: "teal" }]] },
       ],
       right: [
-        { type: "code", caption: "combining_retrievers.py (condensed)", code:
+        { type: "code", caption: "05_10_combining_retrievers.py (condensed)", code:
 `policy_pages = PyPDFLoader(pdf_path).load()
 wiki_docs = NotionDirectoryLoader(wiki_path).load()
 
@@ -256,6 +257,25 @@ ensemble_retriever = EnsembleRetriever(
       ],
     },
     {
+      title: "Hands-on: Q&A Bot over PDFs",
+      subtitle: "A LangServe app that answers questions about an insurance PDF",
+      demo: M + "05_11_langchain_qa_bot.py",
+      left: [
+        { type: "steps", items: [
+          { title: "Run the bot", text: "`05_11_langchain_qa_bot.py` (Chroma by default)" },
+          { title: "Open the playground", text: "`http://localhost:8000/ask/playground/`" },
+          { title: "Ask about the policy", text: "Answers come only from the retrieved chunks" },
+          { title: "Swap in FAISS", text: "Set `VECTOR_STORE = \"faiss\"` – same app, different store" },
+        ] },
+      ],
+      right: [
+        { type: "compare", size: 11, cols: [
+          { title: "Chroma", color: "navy", items: ["Manages a directory of files for us", "Persists automatically"] },
+          { title: "FAISS", color: "teal", items: ["A single .index file + .pkl of documents", "`save_local` / `load_local`"] },
+        ] },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 05 Summary",
       subtitle: "What you built",
@@ -264,6 +284,7 @@ ensemble_retriever = EnsembleRetriever(
         { tag: "memory", title: "Memory", text: "Buffer, summary, vector-store; a persistent chatbot" },
         { tag: "RAG", title: "A RAG pipeline", text: "Load → split → embed → store → retrieve → generate" },
         { tag: "multi", title: "Many sources, one retriever", text: "PDF + wiki + SQL fused with RRF" },
+        { tag: "app", title: "A PDF Q&A bot", text: "LangServe over Chroma or FAISS" },
       ],
       takeaways: [
         "In modern LangChain, everything is a Runnable joined with |",

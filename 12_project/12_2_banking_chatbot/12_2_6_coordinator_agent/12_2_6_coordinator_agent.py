@@ -35,7 +35,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # router to dispatch to MULTIPLE specialists in parallel when a request
 # needs it, then synthesizes their replies into one coherent answer -
 # following the fan-out/fan-in Send API pattern from
-# 14_advanced/08_langgraph_cycles_HIL_persistence/parallel_trip_planner_send_api.py.
+# 14_advanced/08_langgraph_cycles_HIL_persistence/08_5_parallel_trip_planner_send_api.py.
 # This is the first architecture that actually handles a mixed banking
 # query end-to-end in a single turn (slide 8).
 # =====================================================================
@@ -217,7 +217,7 @@ class ChatState(TypedDict):
 
 
 def make_specialist_agent(tools: list):
-    """Factory mirroring 14_advanced/07_langgraph/conditional_routing_specialists.py's
+    """Factory mirroring 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py's
     make_specialist(): every specialist shares the same underlying LLM and the same
     agent/tools loop - what makes each one a "specialist" is purely which tools it's
     bound to and what its system prompt says it may do, nothing structural."""
@@ -240,7 +240,7 @@ def make_specialist_agent(tools: list):
 
 # ---------------------------------------------------------------------
 # FAQ specialist: retrieve -> generate, following
-# 14_advanced/07_langgraph/message_graph_bank_faq.py.
+# 14_advanced/07_langgraph/07_5_message_graph_bank_faq.py.
 # ---------------------------------------------------------------------
 FAQ_SIMILARITY_THRESHOLD = 0.3
 

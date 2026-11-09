@@ -45,18 +45,18 @@ session and numbered `<session>_<sequence>_<name>.py` in the order the session u
 |---|---|
 | `session_2/2_1_langchain_lcel.py` | `3_langgraph/3_0_langchain_lcel.py` |
 | `session_2/2_2_langchain_lcel_ollama.py` | `3_langgraph/3_0_langchain_lcel_ollama.py` |
-| `session_2/2_3_prompt_templates.py` | `14_advanced/05_langchain/prompt_templates.py` |
-| `session_2/2_4_output_parsers.py` | `14_advanced/05_langchain/output_parsers.py` |
-| `session_2/2_5_memory_types.py` | `14_advanced/05_langchain/memory_types.py` |
-| `session_2/2_6_persistent_chatbot.py` | `14_advanced/05_langchain/persistent_chatbot.py` |
+| `session_2/2_3_prompt_templates.py` | `14_advanced/05_langchain/05_1_prompt_templates.py` |
+| `session_2/2_4_output_parsers.py` | `14_advanced/05_langchain/05_2_output_parsers.py` |
+| `session_2/2_5_memory_types.py` | `14_advanced/05_langchain/05_3_memory_types.py` |
+| `session_2/2_6_persistent_chatbot.py` | `14_advanced/05_langchain/05_4_persistent_chatbot.py` |
 | `session_2/2_7_chroma_db_basic.py` | `9_general/rag/rag_1_chroma_db_basic.py` |
 | `session_2/2_8_rag_cosine_euclidean.py` | `9_general/rag/rag_cosine_euclidean_1.py` |
 | `session_2/2_9_chroma_db_adding_metadata.py` | `9_general/rag/rag_4_chroma_db_adding_metadata.py` |
-| `session_2/2_10_faiss_search.py` | `14_advanced/04_rag/faiss_search.py` |
-| `session_2/2_11_document_loaders.py` | `14_advanced/05_langchain/document_loaders.py` |
-| `session_2/2_12_text_splitters.py` | `14_advanced/05_langchain/text_splitters.py` |
-| `session_2/2_13_rag_pipeline.py` | `14_advanced/05_langchain/rag_pipeline.py` |
-| `session_2/2_14_retrievers.py` | `14_advanced/05_langchain/retrievers.py` |
+| `session_2/2_10_faiss_search.py` | `14_advanced/04_rag/04_1_faiss_search.py` |
+| `session_2/2_11_document_loaders.py` | `14_advanced/05_langchain/05_5_document_loaders.py` |
+| `session_2/2_12_text_splitters.py` | `14_advanced/05_langchain/05_6_text_splitters.py` |
+| `session_2/2_13_rag_pipeline.py` | `14_advanced/05_langchain/05_7_rag_pipeline.py` |
+| `session_2/2_14_retrievers.py` | `14_advanced/05_langchain/05_8_retrievers.py` |
 | `session_2/2_15_langchain_qand_a_bot_chroma.py` | `15_real/langchain_qand_a_bot_chroma.py` |
 | `session_2/2_16_langchain_qanda_bot_faiss.py` | `C:\code\agenticai_realpage\module_2\2_langchain_qanda_bot_faiss.py` (separate repo) |
 
@@ -66,14 +66,14 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 
 | File | Copied from |
 |---|---|
-| `session_3/3_1_prompting_techniques.py` | `14_advanced/03_llm_examples/prompting_techniques.py` |
-| `session_3/3_2_tool_calling.py` | `14_advanced/06_langchain_agents/tool_calling.py` |
-| `session_3/3_3_tool_calling_pydantic.py` | `14_advanced/06_langchain_agents/tool_calling_pydantic.py` |
-| `session_3/3_4_create_sales_db.py` | `14_advanced/03_llm_examples/create_sales_db.py` |
-| `session_3/3_5_sql_database_toolkit_agent.py` | `14_advanced/06_langchain_agents/sql_database_toolkit_agent.py` |
-| `session_3/3_6_sales_db_agent.py` | `14_advanced/03_llm_examples/sales_db_agent.py` |
-| `session_3/3_7_chaining_tool_outputs.py` | `14_advanced/06_langchain_agents/chaining_tool_outputs.py` |
-| `session_3/3_8_chaining_tool_outputs_flask.py` | `14_advanced/06_langchain_agents/chaining_tool_outputs_flask.py` |
+| `session_3/3_1_prompting_techniques.py` | `14_advanced/03_llm_examples/03_6_prompting_techniques.py` |
+| `session_3/3_2_tool_calling.py` | `14_advanced/06_langchain_agents/06_1_tool_calling.py` |
+| `session_3/3_3_tool_calling_pydantic.py` | `14_advanced/06_langchain_agents/06_2_tool_calling_pydantic.py` |
+| `session_3/3_4_create_sales_db.py` | `14_advanced/03_llm_examples/03_8_create_sales_db.py` |
+| `session_3/3_5_sql_database_toolkit_agent.py` | `14_advanced/06_langchain_agents/06_3_sql_database_toolkit_agent.py` |
+| `session_3/3_6_sales_db_agent.py` | `14_advanced/03_llm_examples/03_9_sales_db_agent.py` |
+| `session_3/3_7_chaining_tool_outputs.py` | `14_advanced/06_langchain_agents/06_4_chaining_tool_outputs.py` |
+| `session_3/3_8_chaining_tool_outputs_flask.py` | `14_advanced/06_langchain_agents/06_5_chaining_tool_outputs_flask.py` |
 | `session_3/3_9_research_agent_tools.py` | `15_real/research_agent_tools.py` |
 | `session_3/3_10_research_agent_tools_serp.py` | `15_real/research_agent_tools_serp.py` |
 
@@ -84,11 +84,11 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 | File | Copied from |
 |---|---|
 | `session_4/4_1_langgraph_basic.py` | `3_langgraph/3_1_langgraph_basic.py` |
-| `session_4/4_2_greeter_graph.py` | `14_advanced/07_langgraph/greeter_graph.py` |
-| `session_4/4_3_streaming_stock_recommendation.py` | `14_advanced/07_langgraph/streaming_stock_recommendation.py` |
+| `session_4/4_2_greeter_graph.py` | `14_advanced/07_langgraph/07_1_greeter_graph.py` |
+| `session_4/4_3_streaming_stock_recommendation.py` | `14_advanced/07_langgraph/07_6_streaming_stock_recommendation.py` |
 | `session_4/langgraph.json` | `14_advanced/07_langgraph/langgraph.json` |
-| `session_4/4_4_stock_price_graph.py` | `14_advanced/07_langgraph/stock_price_graph.py` |
-| `session_4/4_5_stock_news_sentiment_graph.py` | `14_advanced/07_langgraph/stock_news_sentiment_graph.py` |
+| `session_4/4_4_stock_price_graph.py` | `14_advanced/07_langgraph/07_2_stock_price_graph.py` |
+| `session_4/4_5_stock_news_sentiment_graph.py` | `14_advanced/07_langgraph/07_3_stock_news_sentiment_graph.py` |
 | `session_4/4_6_langgraph_news_summarizer.py` | `3_langgraph/3_2_langgraph_news_summarizer.py` |
 | `session_4/4_7_langgraph_news_summarizer_ollama_version.py` | `3_langgraph/3_2_1_langgraph_news_summarizer_ollama_version.py` |
 | `session_4/4_8_langgraph_news_summarizer_gemini_version.py` | `3_langgraph/3_2_2_langgraph_news_summarizer_gemini_version.py` |
@@ -102,11 +102,11 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 | File | Copied from |
 |---|---|
 | `session_5/5_1_langgraph_looping_agents.py` | `3_langgraph/3_12_langgraph_looping_agents.py.py` |
-| `session_5/5_2_bank_transfer_retry_loop.py` | new for this course (replaces a copy of `14_advanced/08_langgraph_cycles_HIL_persistence/order_processing_state_machine.py`) |
-| `session_5/5_3_human_approval_gate.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/human_approval_gate.py` |
+| `session_5/5_2_bank_transfer_retry_loop.py` | new for this course (replaces a copy of `14_advanced/08_langgraph_cycles_HIL_persistence/08_1_order_processing_state_machine.py`) |
+| `session_5/5_3_human_approval_gate.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_2_human_approval_gate.py` |
 | `session_5/5_4_langgraph_memory.py` | `3_langgraph/3_4_langgraph_memory.py` |
-| `session_5/5_5_sqlite_checkpointing_crash_recovery.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/sqlite_checkpointing_crash_recovery.py` |
-| `session_5/5_6_medical_diagnosis_subgraphs.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/medical_diagnosis_subgraphs.py` |
+| `session_5/5_5_sqlite_checkpointing_crash_recovery.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_3_sqlite_checkpointing_crash_recovery.py` |
+| `session_5/5_6_medical_diagnosis_subgraphs.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_7_medical_diagnosis_subgraphs.py` |
 | `session_5/5_7_langgraph_bank_ntfy_email_flask.py` | `3_langgraph/3_9_langgraph_bank_ntfy_email_flask.py` |
 | `session_5/5_8_langgraph_create_guardrails.py` | `3_langgraph/3_10_1_langgraph_create_guardrails.py` |
 | `session_5/5_9_langgraph_guardrails_bank_flask.py` | `3_langgraph/3_10_3_langgraph_guardrails_bank_flask.py` |
@@ -116,13 +116,13 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 
 | File | Copied from |
 |---|---|
-| `session_6/6_1_crewai_basics.py` | new: one agent, one task, local `qwen3:8b` via Ollama (no original) |
-| `session_6/6_2_crewai_context_and_memory.py` | `14_advanced/13_crew_ai/13_1_crewai_basics.py`, plus explicit `context` and cross-run `memory` (diverges from the original) |
-| `session_6/6_3_crew_vs_flow.py` | `14_advanced/13_crew_ai/13_2_crew_vs_flow.py` |
-| `session_6/6_4_hierarchical_crew.py` | `14_advanced/13_crew_ai/13_3_hierarchical_crew.py` |
-| `session_6/6_5_human_in_the_loop.py` | `14_advanced/13_crew_ai/13_4_human_in_the_loop.py` |
-| `session_6/6_6_guardrails_and_reliability.py` | `14_advanced/13_crew_ai/13_7_guardrails_and_reliability.py` |
-| `session_6/6_7_crewai_observability.py` | `4_crewai/4_5_crewai_observability.py` |
+| `session_6/6_1_crewai_basics.py` | `14_advanced/13_crew_ai/13_1_crewai_basics.py` (one agent, one task, local `qwen3:8b` via Ollama) |
+| `session_6/6_2_crewai_context_and_memory.py` | `14_advanced/13_crew_ai/13_2_crewai_context_and_memory.py` |
+| `session_6/6_3_crew_vs_flow.py` | `14_advanced/13_crew_ai/13_3_crew_vs_flow.py` |
+| `session_6/6_4_hierarchical_crew.py` | `14_advanced/13_crew_ai/13_4_hierarchical_crew.py` |
+| `session_6/6_5_human_in_the_loop.py` | `14_advanced/13_crew_ai/13_5_human_in_the_loop.py` |
+| `session_6/6_6_guardrails_and_reliability.py` | `14_advanced/13_crew_ai/13_8_guardrails_and_reliability.py` |
+| `session_6/6_7_crewai_observability.py` | `4_crewai/4_5_crewai_observability.py` (also `14_advanced/13_crew_ai/13_9_crewai_observability.py`) |
 
 ## Session 7: Multi-Agent Systems with Microsoft AutoGen
 
@@ -161,13 +161,13 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 
 | File | Copied from |
 |---|---|
-| `session_9/9_1_meal_plan_reflection.py` | `14_advanced/12_deep_agents/meal_plan_reflection.py` |
-| `session_9/9_2_pathology_report_replanning.py` | `14_advanced/12_deep_agents/pathology_report_replanning.py` |
+| `session_9/9_1_meal_plan_reflection.py` | `14_advanced/12_deep_agents/12_1_meal_plan_reflection.py` |
+| `session_9/9_2_pathology_report_replanning.py` | `14_advanced/12_deep_agents/12_3_pathology_report_replanning.py` |
 | `session_9/9_3_agent_memory_short_term_langgraph.py` | `15_real/agent_memory_short_term_langgraph.py` |
 | `session_9/9_4_agent_memory_short_to_external_sqlite_langgraph.py` | `15_real/agent_memory_short_to_external_sqlite_langgraph.py` |
 | `session_9/9_5_agent_memory_semantic_langgraph.py` | `15_real/agent_memory_semantic_langgraph.py` |
 | `session_9/9_6_agent_memory_procedural_langgraph.py` | `15_real/agent_memory_procedural_langgraph.py` |
-| `session_9/9_7_episodic_memory_store.py` | `14_advanced/12_deep_agents/episodic_memory_store.py` |
-| `session_9/9_8_memory_consolidation.py` | `14_advanced/12_deep_agents/memory_consolidation.py` |
+| `session_9/9_7_episodic_memory_store.py` | `14_advanced/12_deep_agents/12_4_episodic_memory_store.py` |
+| `session_9/9_8_memory_consolidation.py` | `14_advanced/12_deep_agents/12_5_memory_consolidation.py` |
 | `session_9/9_9_context_management_strategies.py` | `15_real/context_management_strategies.py` |
-| `session_9/9_10_self_improving_agent.py` | `14_advanced/12_deep_agents/self_improving_agent.py` |
+| `session_9/9_10_self_improving_agent.py` | `14_advanced/12_deep_agents/12_6_self_improving_agent.py` |

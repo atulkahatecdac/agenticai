@@ -84,10 +84,10 @@ module.exports = {
     {
       title: "Building a Graph",
       subtitle: "StateGraph is the blueprint: add nodes, connect edges, compile, invoke",
-      demo: M + "greeter_graph.py",
+      demo: M + "07_1_greeter_graph.py",
       split: [1.3, 1],
       left: [
-        { type: "code", caption: "greeter_graph.py (condensed)", code:
+        { type: "code", caption: "07_1_greeter_graph.py (condensed)", code:
 `class GreeterState(TypedDict):
     message: str
     mood: str
@@ -115,7 +115,7 @@ app = graph.compile()` },
     {
       title: "Conditional Edges: Choosing the Next Node",
       subtitle: "Follow a path based on the current state instead of one fixed route",
-      demo: M + "stock_news_sentiment_graph.py, conditional_routing_specialists.py",
+      demo: M + "07_3_stock_news_sentiment_graph.py, 07_4_conditional_routing_specialists.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaCircleDot", label: "Node", caption: "Updates the state" },
@@ -127,13 +127,13 @@ app = graph.compile()` },
           { icon: "FaWallet", title: "Enough balance?", text: "Transfer or decline" },
           { icon: "FaUserLock", title: "Customer authenticated?", text: "Continue or ask again" },
         ] },
-        { type: "text", size: 11, color: "slate", text: "Compare `stock_price_graph.py` (unconditional edges) with `stock_news_sentiment_graph.py` (branches on news sentiment); `conditional_routing_specialists.py` routes questions to specialist nodes." },
+        { type: "text", size: 11, color: "slate", text: "Compare `07_2_stock_price_graph.py` (unconditional edges) with `07_3_stock_news_sentiment_graph.py` (branches on news sentiment); `07_4_conditional_routing_specialists.py` routes questions to specialist nodes." },
       ],
     },
     {
       title: "A Conditional Graph: Stock News Sentiment",
       subtitle: "Fetch the news, classify its sentiment, then write a different summary for each outcome",
-      demo: M + "stock_news_sentiment_graph.py",
+      demo: M + "07_3_stock_news_sentiment_graph.py",
       split: [1, 1.1],
       left: [
         { type: "tree", boxW: 1.75, size: 10.5, labels: ["", "", "negative · positive"], rows: [["normalize_symbol"], ["fetch_news"], [{ label: "classify_sentiment", fill: "coral" }], ["alternatives_summary", "invest_summary"]] },
@@ -150,7 +150,7 @@ app = graph.compile()` },
     {
       title: "Message Graphs",
       subtitle: "When the conversation itself is the state",
-      demo: M + "message_graph_bank_faq.py",
+      demo: M + "07_5_message_graph_bank_faq.py",
       split: [1, 1],
       left: [
         { type: "text", text: "Instead of separate fields such as question, answer and context, the state is a list of **messages**. Each node reads the history and appends to it." },
@@ -170,7 +170,7 @@ app = graph.compile()` },
     {
       title: "Streaming and LangGraph Studio",
       subtitle: "See progress while the graph runs, and see the graph itself while you build it",
-      demo: M + "streaming_stock_recommendation.py  ·  " + M + "langgraph.json",
+      demo: M + "07_6_streaming_stock_recommendation.py  ·  " + M + "langgraph.json",
       blocks: [
         { type: "cols", cols: [
           [

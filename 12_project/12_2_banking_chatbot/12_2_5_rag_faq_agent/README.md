@@ -14,7 +14,7 @@ Two changes land together in this step:
 cover structured, per-customer data — there's no way to answer "how do I open an
 account?" or "what's your lost-card policy?", and a tool-calling agent shouldn't
 try to guess at those. This specialist is built differently from the other three —
-it follows `14_advanced/07_langgraph/message_graph_bank_faq.py`'s shape, not the
+it follows `14_advanced/07_langgraph/07_5_message_graph_bank_faq.py`'s shape, not the
 agent/tools loop:
 
 ```
@@ -33,7 +33,7 @@ reruns the whole script on every interaction, so it's wrapped in
 
 **2. Internal routing, replacing step 4's manual selectbox.** A small router
 (structured-output classification into `accounts` / `transaction` / `service` /
-`faq`, following `14_advanced/07_langgraph/conditional_routing_specialists.py`)
+`faq`, following `14_advanced/07_langgraph/07_4_conditional_routing_specialists.py`)
 now picks the specialist for each turn automatically — the user just chats, in
 one shared window, no picker. This is a first slice of what the deck calls the
 "coordinator" (slide 8's steps 01-02: parse intent, identify the specialist).

@@ -174,7 +174,7 @@ class ChatState(TypedDict):
 
 
 def make_specialist_agent(tools: list):
-    """Factory mirroring 14_advanced/07_langgraph/conditional_routing_specialists.py's
+    """Factory mirroring 14_advanced/07_langgraph/07_4_conditional_routing_specialists.py's
     make_specialist(): every specialist shares the same underlying LLM and the same
     agent/tools loop - what makes each one a "specialist" is purely which tools it's
     bound to and what its system prompt says it may do, nothing structural. The
@@ -201,7 +201,7 @@ def make_specialist_agent(tools: list):
 
 # ---------------------------------------------------------------------
 # FAQ specialist: retrieve -> generate, following
-# 14_advanced/07_langgraph/message_graph_bank_faq.py. Unchanged from
+# 14_advanced/07_langgraph/07_5_message_graph_bank_faq.py. Unchanged from
 # step 6 - no MCP tools involved, plain sync nodes. LangGraph runs sync
 # nodes fine even when the compiled graph is invoked via .ainvoke()
 # (used uniformly for every specialist in run_specialist below), so

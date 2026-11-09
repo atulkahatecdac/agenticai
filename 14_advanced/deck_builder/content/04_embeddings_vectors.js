@@ -58,7 +58,7 @@ module.exports = {
     {
       title: "Popular Embedding Models",
       subtitle: "More dimensions can capture more nuance – at the cost of storage and speed",
-      demo: M + "faiss_search.py (all-MiniLM-L6-v2), faiss_search_ollama.py (nomic-embed-text)",
+      demo: M + "04_1_faiss_search.py (all-MiniLM-L6-v2), 04_2_faiss_search_ollama.py (nomic-embed-text)",
       blocks: [
         { type: "table", size: 10.5, widths: [2.2, 2.0, 3.4, 1.1], head: ["Model", "Provider", "Key features", "Dimensions"], rows: [
           ["text-embedding-3-small", "OpenAI", "Fast and cost-effective; search and clustering", "1536"],
@@ -74,12 +74,12 @@ module.exports = {
     },
 
     // ---------------------------------------------------------------- ChromaDB
-    { kind: "image", src: "chromadb_qa_vectors.png", alt: "How ChromaDB stores Q&A: questions as vectors, answers as text", demo: M + "chromadb_search.py" },
-    { kind: "image", src: "chromadb_similarity_metrics.png", alt: "How ChromaDB uses similarity in search", demo: M + "chromadb_search.py" },
+    { kind: "image", src: "chromadb_qa_vectors.png", alt: "How ChromaDB stores Q&A: questions as vectors, answers as text", demo: M + "04_4_chromadb_search.py" },
+    { kind: "image", src: "chromadb_similarity_metrics.png", alt: "How ChromaDB uses similarity in search", demo: M + "04_4_chromadb_search.py" },
     {
       title: "ChromaDB: CRUD and Metadata Filters",
       subtitle: "A local, persistent vector database – documents, embeddings and metadata together",
-      demo: M + "chromadb_crud.py, " + M + "chromadb_search.py",
+      demo: M + "04_3_chromadb_crud.py, " + M + "04_4_chromadb_search.py",
       left: [
         { type: "code", caption: "Create", code:
 `client = chromadb.PersistentClient(path="./chroma_db")
@@ -126,11 +126,11 @@ col.delete(ids=["2"])` },
     },
 
     // ---------------------------------------------------------------- FAISS
-    { kind: "image", src: "chromadb_vs_faiss.png", alt: "ChromaDB vs FAISS – what's the difference?", demo: M + "faiss_search.py" },
+    { kind: "image", src: "chromadb_vs_faiss.png", alt: "ChromaDB vs FAISS – what's the difference?", demo: M + "04_1_faiss_search.py" },
     {
       title: "FAISS: Search Without Comparing Everything",
       subtitle: "Facebook AI Similarity Search – Meta's library for fast similarity search over dense vectors",
-      demo: M + "faiss_search.py, " + M + "faiss_search_ollama.py",
+      demo: M + "04_1_faiss_search.py, " + M + "04_2_faiss_search_ollama.py",
       blocks: [
         { type: "text", text: "One million documents, and the user asks **\"What is machine learning?\"**" },
         { type: "compare", size: 11.5, cols: [
@@ -139,11 +139,11 @@ col.delete(ids=["2"])` },
         ] },
       ],
     },
-    { kind: "image", src: "faiss_index_types.png", alt: "FAISS index types compared: Flat, IVF, HNSW", demo: M + "faiss_search.py" },
+    { kind: "image", src: "faiss_index_types.png", alt: "FAISS index types compared: Flat, IVF, HNSW", demo: M + "04_1_faiss_search.py" },
     {
       title: "Choosing a FAISS Index",
       subtitle: "Different applications need different trade-offs between accuracy, speed and memory",
-      demo: M + "faiss_search.py",
+      demo: M + "04_1_faiss_search.py",
       blocks: [
         { type: "table", size: 10.5, widths: [1.7, 2.1, 2.1, 2.1], head: ["", "Flat L2", "IVF (inverted file)", "HNSW (graph)"], rows: [
           ["Search", "Exact", "Approximate", "Approximate"],
@@ -156,7 +156,7 @@ col.delete(ids=["2"])` },
         ] },
       ],
     },
-    { kind: "image", src: "embeddings_create_store_retrieve.png", alt: "How embeddings work: create, store, retrieve, look up", demo: M + "faiss_search.py" },
+    { kind: "image", src: "embeddings_create_store_retrieve.png", alt: "How embeddings work: create, store, retrieve, look up", demo: M + "04_1_faiss_search.py" },
     {
       title: "Similarity Metrics",
       subtitle: "Nearest-neighbour retrieval ranks stored vectors by how close they are to the query vector",
@@ -179,7 +179,7 @@ col.delete(ids=["2"])` },
     {
       title: "Chunking: Why and How",
       subtitle: "We cannot send whole documents to the LLM – and we should not want to",
-      demo: "05_langchain/text_splitters.py",
+      demo: "05_langchain/05_6_text_splitters.py",
       split: [1, 1.5],
       left: [
         { type: "icons", d: 0.36, size: 11, items: [
@@ -225,7 +225,7 @@ col.delete(ids=["2"])` },
     {
       title: "Hybrid Search",
       subtitle: "Keyword search and semantic search fail in different places – use both",
-      demo: M + "hybrid_search.py",
+      demo: M + "04_5_hybrid_search.py",
       blocks: [
         { type: "compare", size: 11, cols: [
           { title: "Keyword search", color: "navy", items: ["Finds exact words", "Error codes, names, acronyms (\"ELSS\")"] },
@@ -239,11 +239,11 @@ col.delete(ids=["2"])` },
         ] },
       ],
     },
-    { kind: "image", src: "hybrid_search_rrf_weighted.png", alt: "Hybrid search: two ways to combine results – RRF and weighted average", demo: M + "hybrid_search.py" },
+    { kind: "image", src: "hybrid_search_rrf_weighted.png", alt: "Hybrid search: two ways to combine results – RRF and weighted average", demo: M + "04_5_hybrid_search.py" },
     {
-      title: "Inside hybrid_search.py",
+      title: "Inside 04_5_hybrid_search.py",
       subtitle: "100 short documents (finance, sports, tech …) searched three ways, side by side",
-      demo: M + "hybrid_search.py",
+      demo: M + "04_5_hybrid_search.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaFileCsv", label: "Load", caption: "documents.csv" },
@@ -263,7 +263,7 @@ col.delete(ids=["2"])` },
     {
       title: "Seeing Embeddings with UMAP",
       subtitle: "Project hundreds of dimensions down to 2D while keeping neighbours close – spot clusters, overlaps and outliers",
-      demo: M + "umap_visualization.py",
+      demo: M + "04_6_umap_visualization.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaFileLines", label: "Documents", caption: "\"I want to invest in mutual funds.\"" },

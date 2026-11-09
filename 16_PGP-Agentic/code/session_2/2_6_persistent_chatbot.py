@@ -36,8 +36,8 @@ chain = prompt | llm
 
 # All sessions share one SQLite DB, in a "message_store" table keyed by
 # session_id - so the conversation survives even after this script exits
-# and is rerun later, unlike the in-memory ConversationBufferMemory/etc.
-# from memory_types.py.
+# and is rerun later, unlike the in-memory histories
+# in 2_5_memory_types.py.
 def get_session_history(session_id: str) -> SQLChatMessageHistory:
     return SQLChatMessageHistory(session_id=session_id, connection=f"sqlite:///{DB_PATH}")
 

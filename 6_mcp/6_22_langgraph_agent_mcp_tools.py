@@ -22,9 +22,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 # 6_21_langchain_agent_mcp_tools.py. The same MultiServerMCPClient.
 # get_tools() call converts each MCP server's tools into ordinary
 # LangChain BaseTool objects; here they're handed to langgraph.prebuilt.
-# create_react_agent instead of an AgentExecutor. The prebuilt ReAct
+# create_react_agent instead of our own bind_tools loop. The prebuilt ReAct
 # agent loops calling tools and reasoning until it has a final answer,
-# with no separate prompt template or agent_scratchpad to wire up.
+# with no loop code of our own to write.
 # =====================================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

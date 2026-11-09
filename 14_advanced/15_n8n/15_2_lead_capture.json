@@ -1,0 +1,387 @@
+{
+  "name": "15_2 Lead Capture & Qualification",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_2 Lead Capture\n**Setup**\n1. Load `15_schema.sql`.\n2. **MySQL**: create a MySQL credential — host `host.docker.internal`, port 3306, db `bizdb`, user `n8n`, password `n8npass`.\n3. Pick your Gmail credential in the three **Welcome** nodes.",
+        "width": 460,
+        "height": 260,
+        "color": 5
+      },
+      "id": "e3f957ed-d872-4ac5-9c0a-014bb72293a1",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Talk to Our Sales Team",
+        "formDescription": "Tell us a little about your needs.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true,
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Company",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Budget",
+              "requiredField": true,
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Under 1 lakh"
+                  },
+                  {
+                    "option": "1-5 lakh"
+                  },
+                  {
+                    "option": "Above 5 lakh"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Source",
+              "requiredField": true,
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Website"
+                  },
+                  {
+                    "option": "Referral"
+                  },
+                  {
+                    "option": "Event"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "path": "lead",
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Thanks! Check your inbox for a welcome email."
+            }
+          }
+        }
+      },
+      "id": "eab9ccdc-57a8-415b-a2cf-9b83ea342689",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "07ad7a3d-1694-4592-8398-76f14cbe2d34"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0366263c-e3a4-47f1-bc72-8e5d96efac53",
+              "name": "name",
+              "value": "={{ $json.Name.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "adafc5bf-77ec-41b6-a280-67728504b53a",
+              "name": "email",
+              "value": "={{ $json.Email.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "cebf4a4d-72f7-4ad5-8b2f-bb0780ba590c",
+              "name": "company",
+              "value": "={{ $json.Company }}",
+              "type": "string"
+            },
+            {
+              "id": "0d821e9b-c7ea-4dc5-b432-fec0a9a7f523",
+              "name": "budget",
+              "value": "={{ $json.Budget }}",
+              "type": "string"
+            },
+            {
+              "id": "75d933ab-134f-499d-8625-011c5d717b55",
+              "name": "source",
+              "value": "={{ $json.Source }}",
+              "type": "string"
+            },
+            {
+              "id": "5a0d2a02-957f-486d-b7bd-85ff740da973",
+              "name": "segment",
+              "value": "={{ $json.Budget == 'Above 5 lakh' ? 'hot' : $json.Budget == '1-5 lakh' ? 'warm' : 'cold' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "9de9023c-bc2c-4602-81ae-dd1e194b1410",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "662fdb5d-7c06-4a07-97ab-927e3c5ce08c",
+      "name": "MySQL",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b9d65b18-8605-4fb2-ba90-6b9314ee88c9",
+                    "leftValue": "={{ $('Edit Fields').item.json.segment }}",
+                    "rightValue": "hot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Hot"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "247ae934-2928-4f42-bbc7-0e760eadd088",
+                    "leftValue": "={{ $('Edit Fields').item.json.segment }}",
+                    "rightValue": "warm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Warm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bb41ee99-9690-4fc6-9e89-eacf42bfebb5",
+                    "leftValue": "={{ $('Edit Fields').item.json.segment }}",
+                    "rightValue": "cold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cold"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a8af389e-0969-4af7-99b4-3eda573a45e7",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.email }}",
+        "subject": "=Thanks for your interest, {{ $('Edit Fields').item.json.name }}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $('Edit Fields').item.json.name }},</p><p>Thank you for contacting us.</p><p>Our sales head will call you today to understand your requirements.</p><p>Regards,<br>Sales Team</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d6f3ec2d-4b4b-433b-92a7-4a8fe0215791",
+      "name": "Welcome Hot",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -180
+      ],
+      "webhookId": "e923d0e5-d492-465c-b9c3-9603b00d80b7"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.email }}",
+        "subject": "=Thanks for your interest, {{ $('Edit Fields').item.json.name }}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $('Edit Fields').item.json.name }},</p><p>Thank you for contacting us.</p><p>Here is our brochure: https://example.com/brochure.pdf. We will follow up this week.</p><p>Regards,<br>Sales Team</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d975eb19-ede9-4c9a-aef2-98555f33c27f",
+      "name": "Welcome Warm",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        0
+      ],
+      "webhookId": "1041b02c-c0ac-4791-a62c-84d3542fafd1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.email }}",
+        "subject": "=Thanks for your interest, {{ $('Edit Fields').item.json.name }}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $('Edit Fields').item.json.name }},</p><p>Thank you for contacting us.</p><p>You are now subscribed to our monthly newsletter with tips and offers.</p><p>Regards,<br>Sales Team</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "19bd8515-15ab-460f-b08f-ea94ef602ac1",
+      "name": "Welcome Cold",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        180
+      ],
+      "webhookId": "2185fced-6205-494f-a100-49b679423091"
+    }
+  ],
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Welcome Hot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Welcome Warm",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Welcome Cold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "MySQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

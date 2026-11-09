@@ -1,0 +1,595 @@
+{
+  "name": "15_6 AI Support Desk",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_6 AI Support Desk\n**Setup**\n1. Load `15_schema.sql`; import and **activate** the Customer Lookup API helper.\n2. Pick credentials: OpenAI, MySQL, Gmail, Google Sheets.\n3. Create a tab **Ticket Log** with headers: time, ticket_id, category, priority, reply_sent.\n4. Change the support lead address in **Alert Support Lead** (support-team@example.com).\n5. After importing 15_7: Workflow **Settings → Error workflow → 15_7**.",
+        "width": 520,
+        "height": 300,
+        "color": 5
+      },
+      "id": "3321a7c3-94b3-4717-b22b-c0a806dca9b1",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -440
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Contact Support",
+        "formDescription": "We usually reply within a few hours.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true,
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Order number",
+              "requiredField": false,
+              "placeholder": "Optional"
+            },
+            {
+              "fieldLabel": "Message",
+              "requiredField": true,
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {
+          "path": "support",
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Thanks! We have received your request and will email you shortly."
+            }
+          }
+        }
+      },
+      "id": "40921b2f-7561-41d1-8dd9-8a141840e5d3",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "3faf2dd3-bcef-4fb3-b2ad-3dfcb63550aa"
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:5678/webhook/customer",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.Email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c6650e05-a20d-4e31-b06e-ad3a545eb990",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer name: {{ $('Form Trigger').item.json.Name }}\nCustomer tier: {{ $json.tier }}\nOrder number: {{ $('Form Trigger').item.json['Order number'] || 'not given' }}\n\nMessage:\n{{ $('Form Trigger').item.json.Message }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are the support triage assistant for an online electronics store. Read the customer's message and return: category (one of Billing, Technical, Delivery, General); priority (Low, Medium or High; High = money lost, service down, or a very upset customer); summary (max 12 words); reply (polite, max 80 words, greet the customer by first name, do not promise refunds, amounts or dates)."
+            }
+          ]
+        }
+      },
+      "id": "01c8c695-57dd-436d-9747-7250bed9303f",
+      "name": "Classify & Draft Reply",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "ee3c68ab-2862-4567-aa3b-fe81c5ef0f83",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"category\": \"Billing\",\n  \"priority\": \"High\",\n  \"summary\": \"Charged twice for September plan\",\n  \"reply\": \"Dear Asha, ...\"\n}"
+      },
+      "id": "789977a9-32dd-4a77-a0eb-51166278c58c",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "baceb3a8-5171-4338-a67e-39c5dc825507",
+              "name": "ticket_id",
+              "value": "=SR-{{ $now.toFormat('yyMMdd') }}-{{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "a881f393-d33a-47f1-b230-255ffe9d4054",
+              "name": "name",
+              "value": "={{ $('Form Trigger').item.json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "cc7336b6-3db7-4bfb-92e7-12c657690712",
+              "name": "email",
+              "value": "={{ $('Form Trigger').item.json.Email.toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "89a60206-f7b8-4e17-956f-82dcce333bd5",
+              "name": "issue",
+              "value": "={{ $('Form Trigger').item.json.Message }}",
+              "type": "string"
+            },
+            {
+              "id": "1f6135f0-35f5-45dc-b759-91c8777cb316",
+              "name": "tier",
+              "value": "={{ $('HTTP Request').item.json.tier }}",
+              "type": "string"
+            },
+            {
+              "id": "faac39bd-24ba-4b4d-a25d-97692a4ba389",
+              "name": "category",
+              "value": "={{ $json.output.category }}",
+              "type": "string"
+            },
+            {
+              "id": "260daae6-2419-4cdb-8e9a-5026af592cfc",
+              "name": "priority",
+              "value": "={{ $json.output.priority }}",
+              "type": "string"
+            },
+            {
+              "id": "a2c6f9fc-9622-4170-86c5-63248f6be575",
+              "name": "summary",
+              "value": "={{ $json.output.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "38e4c51e-0adc-4d87-87ed-1c8c058cd6f0",
+              "name": "reply",
+              "value": "={{ $json.output.reply }}",
+              "type": "string"
+            },
+            {
+              "id": "20413e3d-f3b1-41f8-8d39-e5508f9b2f5a",
+              "name": "sla_hours",
+              "value": "={{ $('HTTP Request').item.json.tier == 'Gold' ? 4 : 24 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "a8fbd627-c326-4d8f-aeb5-22b92e14d270",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "tickets",
+          "mode": "name"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "ticket_id",
+              "value": "={{ $json.ticket_id }}"
+            },
+            {
+              "column": "name",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "column": "email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "column": "issue",
+              "value": "={{ $json.issue }}"
+            },
+            {
+              "column": "category",
+              "value": "={{ $json.category }}"
+            },
+            {
+              "column": "priority",
+              "value": "={{ $json.priority }}"
+            },
+            {
+              "column": "sla_hours",
+              "value": "={{ $json.sla_hours }}"
+            },
+            {
+              "column": "summary",
+              "value": "={{ $json.summary }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea614d74-f742-40d6-89d2-9145c7fb0a6d",
+      "name": "MySQL",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1040,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5100461c-2ac9-4ff0-a7db-5dec3b6444df",
+              "leftValue": "={{ $('Edit Fields').item.json.priority }}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "f9d122d4-79fe-47a4-850c-b819a8d86355",
+      "name": "High Priority?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=[{{ $('Edit Fields').item.json.ticket_id }}] We've received your request",
+        "emailType": "text",
+        "message": "={{ $('Edit Fields').item.json.reply }}\n\nYour ticket ID is {{ $('Edit Fields').item.json.ticket_id }}. We will respond within {{ $('Edit Fields').item.json.sla_hours }} hours.\n\nSupport Team",
+        "options": {
+          "sendTo": "={{ $('Edit Fields').item.json.email }}"
+        }
+      },
+      "id": "8c405f5c-983b-4208-aa51-6c5eb00f41a5",
+      "name": "Draft Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        -120
+      ],
+      "webhookId": "318e9451-fe37-4823-b181-850b53ea0096"
+    },
+    {
+      "parameters": {
+        "sendTo": "support-team@example.com",
+        "subject": "=[HIGH] {{ $('Edit Fields').item.json.ticket_id }} - {{ $('Edit Fields').item.json.category }} ({{ $('Edit Fields').item.json.tier }})",
+        "emailType": "html",
+        "message": "=<p><b>{{ $('Edit Fields').item.json.summary }}</b></p><p>Customer: {{ $('Edit Fields').item.json.name }} ({{ $('Edit Fields').item.json.email }}), tier {{ $('Edit Fields').item.json.tier }}, SLA {{ $('Edit Fields').item.json.sla_hours }} h</p><p>An AI-drafted reply is waiting in Gmail Drafts — review and send it.</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7a1fe1b0-2647-44ab-b624-673cca5aad90",
+      "name": "Alert Support Lead",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        -120
+      ],
+      "webhookId": "6a939226-e337-4049-afdd-47ed78c1342d"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.email }}",
+        "subject": "=[{{ $('Edit Fields').item.json.ticket_id }}] We've received your request",
+        "emailType": "text",
+        "message": "={{ $('Edit Fields').item.json.reply }}\n\nYour ticket ID is {{ $('Edit Fields').item.json.ticket_id }}. We will respond within {{ $('Edit Fields').item.json.sla_hours }} hours.\n\nSupport Team",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "fa4745fa-8731-4c26-b060-42de236e83bb",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        120
+      ],
+      "webhookId": "514d6fac-23e8-467f-b6a7-4b79d620e9b5"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Ticket Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+            "ticket_id": "={{ $('Edit Fields').item.json.ticket_id }}",
+            "category": "={{ $('Edit Fields').item.json.category }}",
+            "priority": "={{ $('Edit Fields').item.json.priority }}",
+            "reply_sent": "={{ $('Edit Fields').item.json.priority == 'High' ? 'draft' : 'sent' }}"
+          },
+          "schema": [
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_sent",
+              "displayName": "reply_sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3e9a9785-92d1-4313-83c3-0e79959482db",
+      "name": "Log Ticket",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2000,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify & Draft Reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Classify & Draft Reply",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Classify & Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify & Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "MySQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL": {
+      "main": [
+        [
+          {
+            "node": "High Priority?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Priority?": {
+      "main": [
+        [
+          {
+            "node": "Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Alert Support Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Support Lead": {
+      "main": [
+        [
+          {
+            "node": "Log Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply": {
+      "main": [
+        [
+          {
+            "node": "Log Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

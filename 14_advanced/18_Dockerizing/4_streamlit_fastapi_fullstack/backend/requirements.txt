@@ -1,0 +1,12 @@
+# Deliberately scoped to ONLY what this one app needs - not the repo's root
+# requirements.txt, which covers 15+ unrelated frameworks/directories. A
+# production image should install the smallest dependency set that runs the
+# app: smaller image, faster builds, smaller attack surface. Versions match
+# the root requirements.txt pins so behavior is consistent with the rest of
+# the course if you copy code between the two.
+fastapi==0.139.0
+uvicorn[standard]==0.50.0  # [standard] pulls in uvloop/httptools - meaningfully faster than the bare ASGI server for production
+langchain-core==0.3.86
+langchain-openai==0.3.35
+pydantic==2.13.4
+python-dotenv==1.2.2

@@ -1,0 +1,18 @@
+Send these four emails to the Gmail inbox that WF1 (Email Triage) watches.
+Expected label is shown after each one.
+
+1) Subject: Quote for 50 licences
+   Body:    Hi, can I get a quote for 50 licences of your training platform for our Pune office?
+   Expected: AI/Sales
+
+2) Subject: App crashes on upload
+   Body:    The app crashes every time I upload a file larger than 10 MB. Please help.
+   Expected: AI/Support
+
+3) Subject: Charged twice
+   Body:    I was charged twice for September. Please refund the extra payment.
+   Expected: AI/Billing
+
+4) Subject: You WON!!!
+   Body:    Congratulations, you WON a free iPhone, click here to claim now!!!
+   Expected: AI/Spam

@@ -18,7 +18,7 @@ from langchain_core._api.deprecation import LangChainDeprecationWarning, LangCha
 
 # langchain_core re-enables its own deprecation warnings on import, which runs
 # AFTER our filters above and so overrides them - reapply now (same fix as
-# 14_advanced/05_langchain/persistent_chatbot.py).
+# 14_advanced/05_langchain/05_4_persistent_chatbot.py).
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
 
@@ -26,7 +26,7 @@ load_dotenv(override=True)
 
 # .env's LANGSMITH_PROJECT is shared with other exercises in this repo (a
 # CrewAI market-research demo) - use a dedicated project here, same reasoning
-# as 14_advanced/05_langchain/langsmith_tracing.py, so traces don't mix.
+# as 14_advanced/09_langsmith/09_1_langsmith_tracing.py, so traces don't mix.
 os.environ["LANGSMITH_PROJECT"] = "agenticai-15-real-support-rag"
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -46,7 +46,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 #     process is traced automatically. tracing_v2_enabled() below is only
 #     used to grab each run's URL afterward to prove it landed there - not
 #     to turn tracing on (it's already on). Same distinction drawn in
-#     14_advanced/05_langchain/langsmith_tracing.py's part 1.
+#     14_advanced/09_langsmith/09_1_langsmith_tracing.py's part 1.
 #
 # LangSmith also builds the retriever-then-LLM tree automatically, the
 # same way Langfuse's CallbackHandler does - open a run in the LangSmith
@@ -85,7 +85,7 @@ prompt = ChatPromptTemplate.from_messages([
 llm = ChatOpenAI(model=MODEL, temperature=0)
 
 # Same LCEL shape as langfuse_langchain_rag_tracing.py, langchain_long_term_memory_rag.py,
-# and 14_advanced/05_langchain/rag_pipeline.py:
+# and 14_advanced/05_langchain/05_7_rag_pipeline.py:
 # {"context": retriever | format_docs, "question": RunnablePassthrough()} | prompt | llm
 chain = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}

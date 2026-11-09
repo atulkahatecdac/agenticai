@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - .env  # copy .env.example to .env first and fill in OPENAI_API_KEY
+    # No `ports:` - the API is reachable only from inside this compose network
+    # (by the frontend, as http://backend:8000). Uncomment to try /docs from
+    # your browser while developing:
+    # ports:
+    #   - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8501:8501"  # the only port published to your machine
+    environment:
+      # "backend" is the service name above, resolved by Docker's internal DNS.
+      # NOT localhost: inside this container, localhost is the frontend itself.
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy  # start the UI only once the API answers /health
+    restart: unless-stopped

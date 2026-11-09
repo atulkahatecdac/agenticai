@@ -62,7 +62,7 @@ module.exports = {
     {
       title: "Multi-Turn Reflection",
       subtitle: "Iterate until a quality threshold is met – with an upper limit on rounds",
-      demo: M + "meal_plan_reflection.py",
+      demo: M + "12_1_meal_plan_reflection.py",
       blocks: [
         { type: "chain", items: ["Generate", "Critique: 6 / 10", "Revise", "Critique: 7.5 / 10", "Revise", "Critique: 9 / 10", "STOP"], highlight: [6] },
         { type: "tiles", cols: 5, size: 10, titleSize: 11, items: [
@@ -78,7 +78,7 @@ module.exports = {
     {
       title: "Plan-and-Execute",
       subtitle: "Planning decides what to do (strategy); execution does it (action)",
-      demo: M + "study_plan_plan_execute.py",
+      demo: M + "12_2_study_plan_plan_execute.py",
       split: [1.2, 1],
       left: [
         { type: "text", text: "**\"Research three competitors, compare their pricing, identify their strengths, and recommend one.\"**", size: 11.5 },
@@ -98,7 +98,7 @@ module.exports = {
     {
       title: "Replanning",
       subtitle: "Update the plan when new information arrives – during execution the agent may discover that…",
-      demo: M + "pathology_report_replanning.py",
+      demo: M + "12_3_pathology_report_replanning.py",
       blocks: [
         { type: "tiles", cols: 4, size: 10.5, items: [
           { icon: "FaBan", title: "A resource is unavailable" },
@@ -148,7 +148,7 @@ module.exports = {
     {
       title: "Episodic Memory in Practice",
       subtitle: "Store specific past episodes outside the model and recall them when a similar case arrives",
-      demo: M + "episodic_memory_store.py",
+      demo: M + "12_4_episodic_memory_store.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaDatabase", label: "Seed", caption: "324 past support tickets, one text blob each" },
@@ -164,7 +164,7 @@ module.exports = {
     {
       title: "Memory Consolidation",
       subtitle: "Summarise and compress old episodes before they pile up",
-      demo: M + "memory_consolidation.py",
+      demo: M + "12_5_memory_consolidation.py",
       blocks: [
         { type: "compare", size: 11, cols: [
           { title: "Without consolidation", color: "slate", items: ["Day 1 → episode 1 … day 100 → episode 100", "Large, redundant, expensive to search", "Hard to reason over"] },
@@ -196,7 +196,7 @@ module.exports = {
     {
       title: "Self-Improvement from Failures",
       subtitle: "Learn corrected facts from mistakes – good answers leave no trace, mistakes leave a lesson",
-      demo: M + "self_improving_agent.py",
+      demo: M + "12_6_self_improving_agent.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaMagnifyingGlass", label: "recall_lessons", caption: "Any past lessons relevant to this query?" },

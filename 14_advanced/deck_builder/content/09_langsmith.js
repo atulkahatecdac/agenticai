@@ -28,7 +28,7 @@ module.exports = {
     {
       title: "LangSmith",
       subtitle: "LangChain's platform for monitoring, debugging, testing and evaluating LLM applications",
-      demo: M + "trace_langgraph_agent_end_to_end.py",
+      demo: M + "09_1_langsmith_tracing.py, 09_2_trace_langgraph_agent_end_to_end.py",
       split: [1.1, 1],
       left: [
         { type: "flow", items: [
@@ -55,7 +55,7 @@ LANGSMITH_PROJECT="my-project"` },
     {
       title: "Evaluation Datasets",
       subtitle: "A fixed set of test cases you run every version of the app against",
-      demo: M + "creating_evaluation_datasets.py",
+      demo: M + "09_3_creating_evaluation_datasets.py",
       split: [1, 1.15],
       left: [
         { type: "icons", d: 0.38, size: 11, items: [
@@ -65,7 +65,7 @@ LANGSMITH_PROJECT="my-project"` },
         ] },
       ],
       right: [
-        { type: "code", caption: "creating_evaluation_datasets.py (condensed)", code:
+        { type: "code", caption: "09_3_creating_evaluation_datasets.py (condensed)", code:
 `client.create_dataset(DATASET_NAME)
 client.create_examples(dataset_name=DATASET_NAME,
                        examples=EXAMPLES)
@@ -83,7 +83,7 @@ evaluate(predict, data=DATASET_NAME,
     {
       title: "LLM-as-a-Judge",
       subtitle: "Use a second LLM to grade answers at scale – the approach behind LangSmith, RAGAS, DeepEval and OpenAI Evals",
-      demo: M + "langsmith_llm_as_judge.py",
+      demo: M + "09_4_langsmith_llm_as_judge.py",
       split: [1, 1.2],
       left: [
         { type: "chain", size: 10, items: ["Question", "App LLM", "Answer", "Judge LLM", "Score + feedback"], highlight: [3] },
@@ -91,7 +91,7 @@ evaluate(predict, data=DATASET_NAME,
         { type: "callout", eyebrow: "Tip", text: "Ask for structured output – a verdict plus a one-line reason – so scores are machine-readable." },
       ],
       right: [
-        { type: "code", caption: "langsmith_llm_as_judge.py (condensed)", code:
+        { type: "code", caption: "09_4_langsmith_llm_as_judge.py (condensed)", code:
 `def llm_judge(run, example):
     prompt = f"""Review a support bot's answer
 against company policy. Wording may differ;
@@ -122,7 +122,7 @@ Bot's answer: {run.outputs['answer']}"""
     {
       title: "Prompt Regression Testing",
       subtitle: "Did the new prompt do better, worse or the same as the old one – on the same dataset?",
-      demo: M + "prompt_regression_testing.py",
+      demo: M + "09_5_prompt_regression_testing.py",
       split: [1, 1.1],
       left: [
         { type: "bullets", size: 11.5, items: [
@@ -145,7 +145,7 @@ Bot's answer: {run.outputs['answer']}"""
     {
       title: "A/B Testing Agent Behaviours",
       subtitle: "Compare two whole versions of an agent under the same conditions – not just two prompts",
-      demo: M + "ab_testing.py",
+      demo: M + "09_6_ab_testing.py",
       split: [1, 1.1],
       left: [
         { type: "text", text: "**What you might compare**", size: 12 },
@@ -158,7 +158,7 @@ Bot's answer: {run.outputs['answer']}"""
         ] },
       ],
       right: [
-        { type: "code", caption: "ab_testing.py – two experiments, one dataset", code:
+        { type: "code", caption: "09_6_ab_testing.py – two experiments, one dataset", code:
 `results_a = evaluate(predict_a, data=DATASET_NAME,
     experiment_prefix="ab-variant-a-concise")
 results_b = evaluate(predict_b, data=DATASET_NAME,

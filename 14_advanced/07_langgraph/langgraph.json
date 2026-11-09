@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "stock_news": "./stock_news_sentiment_graph.py:app"
+    "stock_news": "./07_3_stock_news_sentiment_graph.py:app"
   },
   "env": ".env"
 }

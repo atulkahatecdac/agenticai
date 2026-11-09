@@ -1,0 +1,305 @@
+{
+  "name": "15_1 Service Request Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_1 Service Request Intake\n**Setup**\n1. Create a Google Sheet with a tab named **Tickets**; paste the header row from `tickets_header.csv` into row 1.\n2. Open **Save to Tickets Sheet** → pick your Google Sheets credential and the spreadsheet.\n3. Click **Execute workflow**, open the Test URL, submit a request.",
+        "width": 460,
+        "height": 260,
+        "color": 5
+      },
+      "id": "e7a7ae91-0d80-472b-8d3d-b5e3e308f8a8",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Raise a Service Request",
+        "formDescription": "Tell us what went wrong and we will get back to you.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true,
+              "placeholder": "Your full name"
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true,
+              "fieldType": "email",
+              "placeholder": "you@example.com"
+            },
+            {
+              "fieldLabel": "Category",
+              "requiredField": true,
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Billing"
+                  },
+                  {
+                    "option": "Technical"
+                  },
+                  {
+                    "option": "General"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Priority",
+              "requiredField": true,
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Low"
+                  },
+                  {
+                    "option": "Medium"
+                  },
+                  {
+                    "option": "High"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Description",
+              "requiredField": true,
+              "fieldType": "textarea",
+              "placeholder": "Describe the problem"
+            }
+          ]
+        },
+        "options": {
+          "path": "raise-request"
+        }
+      },
+      "id": "d10dcc24-bc39-4ead-ab9a-8f8bbbe24dd3",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "09cc29b5-4d52-4ca4-a824-c0685d5963b7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "217cb588-cf9e-431a-9b64-8b4be492bde6",
+              "name": "ticket_id",
+              "value": "=SR-{{ $now.toFormat('yyMMdd') }}-{{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "adaff971-1ac3-4e4b-92dd-52640542bc4b",
+              "name": "created_at",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+              "type": "string"
+            },
+            {
+              "id": "5b5107a7-d2e5-4aff-b079-49de5b803c91",
+              "name": "status",
+              "value": "Open",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "98781781-a96d-4597-b9e5-11afcb911cc8",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tickets",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket_id": "={{ $json.ticket_id }}",
+            "created_at": "={{ $json.created_at }}",
+            "name": "={{ $json.Name }}",
+            "email": "={{ $json.Email }}",
+            "category": "={{ $json.Category }}",
+            "priority": "={{ $json.Priority }}",
+            "description": "={{ $json.Description }}",
+            "status": "={{ $json.status }}"
+          },
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b681d222-bac0-4e07-a57f-506529db57af",
+      "name": "Save to Tickets Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Request received",
+        "completionMessage": "=Your ticket ID is {{ $('Edit Fields').item.json.ticket_id }}. Please keep it for follow-up.",
+        "options": {}
+      },
+      "id": "21ef57c0-d857-4114-9ec6-4ec38e77add1",
+      "name": "Confirmation Page",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        720,
+        0
+      ],
+      "webhookId": "a5c3617f-d614-4b44-b943-439cfaa9456e"
+    }
+  ],
+  "connections": {
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Save to Tickets Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Tickets Sheet": {
+      "main": [
+        [
+          {
+            "node": "Confirmation Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

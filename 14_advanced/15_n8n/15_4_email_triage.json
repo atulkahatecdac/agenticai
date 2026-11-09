@@ -1,0 +1,383 @@
+{
+  "name": "15_4 Email Triage",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_4 Email Triage\n**Setup**\n1. In Gmail create labels AI/Sales, AI/Support, AI/Billing, AI/Spam.\n2. Pick credentials: Gmail (all Gmail nodes), OpenAI, Google Sheets.\n3. In each **Label …** node choose the matching label.\n4. Create a tab **Email Log** with headers: time, from, subject, category.",
+        "width": 480,
+        "height": 280,
+        "color": 5
+      },
+      "id": "fac7a7a0-4c84-43b2-926a-e71c44c6e076",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": true,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ],
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "52fa1303-953d-47f8-b940-731c14601f20",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "inputText": "=Subject: {{ $json.Subject }}\nBody: {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Sales",
+              "description": "Questions about buying: quotes, pricing, licences, demos, bulk orders"
+            },
+            {
+              "category": "Support",
+              "description": "Problems using the product: errors, crashes, how-to questions, bugs"
+            },
+            {
+              "category": "Billing",
+              "description": "Payments, invoices, refunds, double charges, subscription changes"
+            },
+            {
+              "category": "Spam",
+              "description": "Unsolicited promotions, prizes, phishing, anything not from a real customer"
+            }
+          ]
+        },
+        "options": {
+          "fallback": "other"
+        }
+      },
+      "id": "bc022533-aef0-4dd4-950f-014e13ccb3e6",
+      "name": "Text Classifier",
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "188e5d2c-91a2-4345-96b2-a4489b470845",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": []
+      },
+      "id": "002e1dc0-fc5d-4109-80e5-0a7c2bdbdc39",
+      "name": "Label Sales",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -330
+      ],
+      "webhookId": "54bdbaa6-5ceb-4c23-927b-8d39b565cd56"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": []
+      },
+      "id": "6af49129-ea37-4310-b864-394f52d39f24",
+      "name": "Label Support",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -170
+      ],
+      "webhookId": "912a4fd6-69b9-4041-9b1a-7aa404f6b95a"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": []
+      },
+      "id": "24c124c7-badb-4939-b370-3da0196265d4",
+      "name": "Label Billing",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -10
+      ],
+      "webhookId": "f84c752d-8a2c-499b-b018-cb8eb53c54b0"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": []
+      },
+      "id": "b29f1923-8218-4b64-8c05-d2f76bdd99b9",
+      "name": "Label Spam",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        150
+      ],
+      "webhookId": "38717b9b-9c43-435f-a15d-22d7a679d17a"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Email Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+            "from": "={{ $('Gmail Trigger').item.json.From }}",
+            "subject": "={{ $('Gmail Trigger').item.json.Subject }}",
+            "category": "={{ $prevNode.name.startsWith('Label ') ? $prevNode.name.replace('Label ', '') : 'Other' }}"
+          },
+          "schema": [
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "19b41871-f4a0-4c0d-971f-ca78060bb568",
+      "name": "Log to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        860,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "id": "28303085-b7bb-4dd4-9392-c5e005b29f76",
+      "name": "Mark as Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        0
+      ],
+      "webhookId": "6acc0bf5-26e6-4584-8503-00ae839866c3"
+    }
+  ],
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Label Sales",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Billing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Spam",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Sales": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Support": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Billing": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Spam": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

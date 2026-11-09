@@ -85,7 +85,7 @@ module.exports = {
     {
       title: "The OpenAI API",
       subtitle: "Send a prompt over HTTPS, get generated text back – authenticated by an API key, billed per token",
-      demo: M + "openai_exaple.py",
+      demo: M + "03_1_openai_example.py, 03_12_image_ocr.py (vision)",
       split: [1, 1.1],
       left: [
         { type: "chain", size: 10, items: ["Python", "HTTPS", "OpenAI API", "Response"], highlight: [2] },
@@ -111,10 +111,10 @@ module.exports = {
     {
       title: "The Anthropic API",
       subtitle: "The Messages API – with the system prompt as its own top-level parameter",
-      demo: M + "claude_example.py",
+      demo: M + "03_2_claude_example.py",
       split: [1.1, 1],
       left: [
-        { type: "code", caption: "claude_example.py", code:
+        { type: "code", caption: "03_2_claude_example.py", code:
 `from anthropic import Anthropic
 from dotenv import load_dotenv
 
@@ -159,7 +159,7 @@ print(response.content[0].text)` },
     {
       title: "Local Models with Ollama",
       subtitle: "Run open-weight LLMs on your own machine – no internet needed once a model is downloaded",
-      demo: M + "ollama_example.py, ollama_chatbot.py, ollama_chatbot_streamlit.py",
+      demo: M + "03_3_ollama_example.py, 03_4_ollama_chatbot.py, 03_5_ollama_chatbot_streamlit.py",
       split: [1.05, 1],
       left: [
         { type: "code", caption: "ollama.com → install, then", code:
@@ -190,7 +190,7 @@ ollama rm qwen3:8b       # delete one` },
     {
       title: "System Prompts for Domain-Expert Personas",
       subtitle: "Set the role, expertise, rules and style before any user interaction",
-      demo: M + "prompting_techniques.py",
+      demo: M + "03_6_prompting_techniques.py",
       split: [1, 1.25],
       left: [
         { type: "table", size: 10.5, widths: [1.3, 2.6], head: ["Component", "Purpose"], rows: [
@@ -224,7 +224,7 @@ in internal medicine. Always:
     {
       title: "Zero-Shot, One-Shot and Few-Shot Prompting",
       subtitle: "Show the model examples of what you want – or none at all",
-      demo: M + "prompting_techniques.py",
+      demo: M + "03_6_prompting_techniques.py",
       blocks: [
         { type: "cards", size: 10.5, codeSize: 8.5, items: [
           { n: 0, title: "Zero-shot", tag: "Instruction only", lines: ["**Best for:** QA, summaries, translation, simple classification", "**Watch out:** inconsistent on complex tasks"],
@@ -247,7 +247,7 @@ Arrived on time… → ?` },
     {
       title: "Chain-of-Thought (CoT) Prompting",
       subtitle: "Ask the model to reason step by step before it answers – for logic, planning and multi-step maths",
-      demo: M + "prompting_techniques.py",
+      demo: M + "03_6_prompting_techniques.py",
       blocks: [
         { type: "text", text: "**Prompt:** A customer has a budget of $1,200 and needs a laptop for programming, machine learning and occasional gaming. Recommend the best option." },
         { type: "compare", size: 11, cols: [
@@ -265,11 +265,11 @@ Arrived on time… → ?` },
         ] },
       ],
     },
-    { kind: "image", src: "tree_of_thought.png", alt: "Tree-of-Thought: explore several reasoning paths, evaluate them, keep the best", demo: M + "prompting_techniques.py" },
+    { kind: "image", src: "tree_of_thought.png", alt: "Tree-of-Thought: explore several reasoning paths, evaluate them, keep the best", demo: M + "03_6_prompting_techniques.py" },
     {
       title: "ReAct Prompting",
       subtitle: "Reason + Act: alternate thinking with tool calls, and use each result to decide the next step",
-      demo: M + "prompting_techniques.py",
+      demo: M + "03_6_prompting_techniques.py",
       split: [1, 1.35],
       left: [
         { type: "text", text: "**User:** I have ₹10 lakh to invest for 10 years. Equity mutual fund, fixed deposit or balanced fund?" },
@@ -292,10 +292,10 @@ Arrived on time… → ?` },
     {
       title: "Structured Output",
       subtitle: "Make the model return a predefined shape that code can rely on – not free text to parse",
-      demo: M + "structured_output_investment_advisor.py",
+      demo: M + "03_7_structured_output_investment_advisor.py",
       split: [1.25, 1],
       left: [
-        { type: "code", caption: "structured_output_investment_advisor.py (condensed)", code:
+        { type: "code", caption: "03_7_structured_output_investment_advisor.py (condensed)", code:
 `class InvestmentRecommendation(BaseModel):
     risk_profile: Literal["Low", "Medium", "High"]
     recommended_product: str
@@ -323,11 +323,11 @@ rec = response.output_parsed   # a validated object` },
     {
       title: "Tool Calling with the Agents SDK",
       subtitle: "The LLM decides when to call a function and with what arguments; the SDK runs it",
-      demo: M + "create_sales_db.py → " + M + "sales_db_agent.py",
+      demo: M + "03_8_create_sales_db.py → " + M + "03_9_sales_db_agent.py",
       split: [1.2, 1],
       left: [
         { type: "chain", size: 10, items: ["Query", "Pick tool", "Args", "Run", "Answer"], highlight: [1, 2] },
-        { type: "code", caption: "sales_db_agent.py (condensed)", code:
+        { type: "code", caption: "03_9_sales_db_agent.py (condensed)", code:
 `@function_tool
 def run_sql(query: str) -> str:
     """Execute a read-only SQL query on the sales database."""
@@ -355,10 +355,10 @@ Runner.run_sync(agent, "Which products generated "
     {
       title: "Measuring Tokens with tiktoken",
       subtitle: "Count tokens before you send a request – to estimate cost, stay within limits and cut latency",
-      demo: M + "tiktoken_tokenization_example.py, tiktoken_tokenization_hindi_example.py",
+      demo: M + "03_10_tiktoken_tokenization_example.py, 03_11_tiktoken_tokenization_hindi_example.py",
       split: [1.15, 1],
       left: [
-        { type: "code", caption: "tiktoken_tokenization_example.py", code:
+        { type: "code", caption: "03_10_tiktoken_tokenization_example.py", code:
 `import tiktoken
 
 encoding = tiktoken.encoding_for_model("gpt-4o-mini")

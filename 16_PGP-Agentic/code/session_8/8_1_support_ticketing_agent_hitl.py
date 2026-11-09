@@ -27,7 +27,7 @@ sys.stdout.reconfigure(encoding="utf-8")  # LLM output can include non-cp1252 ch
 # payload back to the caller. A human then approves/edits/escalates via
 # real console input(), and the graph resumes with
 # app.invoke(Command(resume=...), config). Same pattern as
-# 14_advanced/08_langgraph_cycles_HIL_persistence/human_approval_gate.py.
+# 14_advanced/08_langgraph_cycles_HIL_persistence/08_2_human_approval_gate.py.
 # =====================================================================
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), "customer_support_qa_500.csv")

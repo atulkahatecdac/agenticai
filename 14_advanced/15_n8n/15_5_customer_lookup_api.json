@@ -1,0 +1,103 @@
+{
+  "name": "15_5 Customer Lookup API",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Customer Lookup API (helper)\nImport, pick your MySQL credential, then **activate** it.\nTest: `Invoke-RestMethod 'http://localhost:5678/webhook/customer?email=asha@example.com'`\nUnknown emails return tier **Standard**.",
+        "width": 460,
+        "height": 200,
+        "color": 5
+      },
+      "id": "0761c2c4-44e5-46f2-a986-a9f4e43e60cc",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "customer",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "bd71854a-a1a1-4b7f-8719-c4d8ecd8895c",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "602300a9-6ff9-491c-9b48-3f7c7ff210e3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT customer_id, tier FROM customers WHERE email = $1",
+        "options": {
+          "queryReplacement": "={{ ($json.query.email || '').toLowerCase() }}"
+        }
+      },
+      "id": "72552c61-459f-429c-bded-e2903b5b5dd1",
+      "name": "Find Customer",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        240,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"tier\": $json.tier || \"Standard\", \"customer_id\": $json.customer_id || null } }}",
+        "options": {}
+      },
+      "id": "36483bf2-cdaa-4005-8052-3a64be20e6fe",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Find Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Customer": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

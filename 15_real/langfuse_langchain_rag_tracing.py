@@ -17,7 +17,7 @@ from langchain_core._api.deprecation import LangChainDeprecationWarning, LangCha
 
 # langchain_core re-enables its own deprecation warnings on import, which runs
 # AFTER our filters above and so overrides them - reapply now (same fix as
-# 14_advanced/05_langchain/persistent_chatbot.py).
+# 14_advanced/05_langchain/05_4_persistent_chatbot.py).
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 warnings.filterwarnings("ignore", category=LangChainPendingDeprecationWarning)
 
@@ -83,7 +83,7 @@ prompt = ChatPromptTemplate.from_messages([
 llm = ChatOpenAI(model=MODEL, temperature=0)
 
 # Same LCEL shape as langchain_long_term_memory_rag.py and
-# 14_advanced/05_langchain/rag_pipeline.py:
+# 14_advanced/05_langchain/05_7_rag_pipeline.py:
 # {"context": retriever | format_docs, "question": RunnablePassthrough()} | prompt | llm
 chain = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}

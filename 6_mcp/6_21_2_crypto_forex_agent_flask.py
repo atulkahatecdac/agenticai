@@ -10,43 +10,19 @@ warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 import asyncio
+import importlib
 import os
 import sys
 
-from dotenv import load_dotenv
 from flask import Flask, render_template_string, request
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import create_tool_calling_agent, AgentExecutor
-from langchain_mcp_adapters.client import MultiServerMCPClient
 
-load_dotenv(override=True)
-sys.stdout.reconfigure(encoding="utf-8")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Reuse the MCP client and the agent loop from 6_21 (file names start with a digit).
+_agent = importlib.import_module("6_21_langchain_agent_mcp_tools")
+client = _agent.client
+run_agent = _agent.run_agent
 
 app = Flask(__name__)
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-client = MultiServerMCPClient({
-    "crypto": {
-        "transport": "stdio",
-        "command": sys.executable,
-        "args": [os.path.join(BASE_DIR, "6_3_crypto_mcp_server.py")],
-    },
-    "forex": {
-        "transport": "stdio",
-        "command": sys.executable,
-        "args": [os.path.join(BASE_DIR, "6_5_forex_mcp_server.py")],
-    },
-})
-
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant with access to tools."),
-    ("human", "{input}"),
-    MessagesPlaceholder("agent_scratchpad"),
-])
 
 # CoinGecko ids (what get_cryptocurrency_price expects), paired with a
 # friendly label for the dropdown.
@@ -80,15 +56,12 @@ TARGET_CURRENCIES = [
 
 async def ask_agent(crypto: str, target_currency: str) -> str:
     tools = await client.get_tools()
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=6)
 
     question = (
         f"What is the current price of {crypto} in USD, "
         f"and how much is that in {target_currency}?"
     )
-    result = await agent_executor.ainvoke({"input": question})
-    return result["output"]
+    return await run_agent(question, tools)
 
 
 HTML = """

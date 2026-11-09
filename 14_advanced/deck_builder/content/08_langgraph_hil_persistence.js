@@ -26,7 +26,7 @@ module.exports = {
     {
       title: "Cycles: An Order-Processing State Machine",
       subtitle: "A graph that can return to a node it already ran – here, to retry a payment",
-      demo: M + "order_processing_state_machine.py",
+      demo: M + "08_1_order_processing_state_machine.py",
       split: [1.1, 1],
       left: [
         { type: "table", size: 10, widths: [1.5, 1.2, 1.7], head: ["From", "Label", "To"], rows: [
@@ -52,7 +52,7 @@ module.exports = {
     {
       title: "Creating the Loop",
       subtitle: "The routing function reads the state and returns a label; the map turns labels into nodes",
-      demo: M + "order_processing_state_machine.py",
+      demo: M + "08_1_order_processing_state_machine.py",
       split: [1, 1.1],
       left: [
         { type: "code", caption: "Routing after payment", code:
@@ -80,7 +80,7 @@ module.exports = {
     {
       title: "Human-in-the-Loop",
       subtitle: "Pause the graph at a risky step so a person can approve, edit or reject before it continues",
-      demo: M + "human_approval_gate.py",
+      demo: M + "08_2_human_approval_gate.py",
       split: [1.15, 1],
       left: [
         { type: "flow", items: [
@@ -104,7 +104,7 @@ module.exports = {
     {
       title: "Checkpointers",
       subtitle: "Save the graph's state so execution can continue later instead of starting over",
-      demo: M + "sqlite_checkpointing_crash_recovery.py",
+      demo: M + "08_3_sqlite_checkpointing_crash_recovery.py",
       blocks: [
         { type: "tiles", cols: 3, items: [
           { icon: "FaDatabase", title: "Graph state", text: "All current field values" },
@@ -123,7 +123,7 @@ module.exports = {
     {
       title: "Crash Recovery with a SQLite Checkpointer",
       subtitle: "A bank transfer that crashes half-way, then resumes exactly where it stopped",
-      demo: M + "sqlite_checkpointing_crash_recovery.py",
+      demo: M + "08_3_sqlite_checkpointing_crash_recovery.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaPlay", label: "START", caption: "thread_id = \"transfer-1\"" },
@@ -154,7 +154,7 @@ module.exports = {
     {
       title: "Production Persistence with Redis",
       subtitle: "A .sqlite file belongs to one machine; a scaled-out app needs a shared checkpoint store",
-      demo: M + "redis_checkpointing_production.py  (needs Redis on REDIS_URL)",
+      demo: M + "08_4_redis_checkpointing_production.py  (needs Redis)",
       split: [1, 1.1],
       left: [
         { type: "compare", size: 10.5, cols: [
@@ -163,7 +163,7 @@ module.exports = {
         ] },
       ],
       right: [
-        { type: "code", caption: "redis_checkpointing_production.py (condensed)", code:
+        { type: "code", caption: "08_4_redis_checkpointing_production.py (condensed)", code:
 `from langgraph.checkpoint.redis import RedisSaver
 
 TTL = {"default_ttl": 60, "refresh_on_read": True}
@@ -186,7 +186,7 @@ with RedisSaver.from_conn_string(REDIS_URL, ttl=TTL) as cp:
     {
       title: "Parallel Work with the Send API",
       subtitle: "Run the same node many times at once, each copy with its own input",
-      demo: M + "parallel_trip_planner_send_api.py",
+      demo: M + "08_5_parallel_trip_planner_send_api.py",
       split: [1, 1.15],
       left: [
         { type: "tree", boxW: 1.05, size: 9.5, boxH: 0.36, rows: [["Choose a country"], ["Find 4 cities"], ["Flights", "City 1", "City 2", "City 3", "City 4"], [{ label: "Final summary", fill: "teal" }]] },
@@ -213,7 +213,7 @@ graph.add_conditional_edges("determine_cities",
     {
       title: "Subgraphs",
       subtitle: "A graph inside a graph – split one huge workflow into smaller, reusable pieces",
-      demo: M + "simple_subgraph_example.py, medical_diagnosis_subgraphs.py",
+      demo: M + "08_6_simple_subgraph_example.py, 08_7_medical_diagnosis_subgr…",
       blocks: [
         { type: "chain", items: ["medical_history (subgraph)", "lab_analysis (subgraph)", "analyze_xray", "diagnosis", "prescription"], highlight: [0, 1] },
         { type: "text", size: 11, color: "slate", text: "Each subgraph has its own state and nodes – e.g. lab_analysis runs load_lab_results → flag_abnormal_results → summarize_labs – and is called from one node of the main graph." },

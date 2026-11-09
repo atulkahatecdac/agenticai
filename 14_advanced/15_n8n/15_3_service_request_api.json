@@ -1,0 +1,248 @@
+{
+  "name": "15_3 Service Request API",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_3 Your Own API\n**Setup**: pick your MySQL credential in **MySQL**.\n**Test** (PowerShell) — see README for the full command:\n`Invoke-RestMethod -Method Post -Uri http://localhost:5678/webhook-test/service-request ...`",
+        "width": 480,
+        "height": 200,
+        "color": 5
+      },
+      "id": "468880b7-c768-4a01-8f45-86d2850d7234",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "service-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1eb5a347-145b-45db-b303-8505aed6dd3c",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "d4a7856d-bd93-44ae-a726-3e69f484f155"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f9d99c86-43f2-4e06-b6e7-03506bfa89fe",
+              "leftValue": "={{ $json.body.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f42cbc79-4ea7-4b5f-a1e4-6e2d92fccf18",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c95e76fe-394b-4b53-aeae-0118975b3267",
+              "leftValue": "={{ $json.body.issue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "805d4425-df58-408d-9bcc-9334796af6b0",
+      "name": "Valid Request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d55fbe61-aa9a-422f-9539-60dcb974769f",
+              "name": "ticket_id",
+              "value": "=SR-{{ $now.toFormat('yyMMdd') }}-{{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "e3395070-1908-4184-8d95-1cdab54baf2b",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "a974fd77-8e17-4fad-abba-f7fe3e33b797",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "3c47eae9-f2e7-4d6b-afa0-0c76dc77c750",
+              "name": "issue",
+              "value": "={{ $json.body.issue }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "7a132599-8474-4227-909a-8da681891e63",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "tickets",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "7c65a61c-43c4-4cc2-a2a6-5e7043bb48c5",
+      "name": "MySQL",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        720,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"created\", \"ticket_id\": $('Edit Fields').item.json.ticket_id } }}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "id": "e9894ebc-caf7-4313-9b97-e816184dbfe2",
+      "name": "Respond 201",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"name, email and issue are required\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "5775aa63-d3cf-4f6b-8176-5df904c6f056",
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Valid Request?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Request?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "MySQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MySQL": {
+      "main": [
+        [
+          {
+            "node": "Respond 201",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
