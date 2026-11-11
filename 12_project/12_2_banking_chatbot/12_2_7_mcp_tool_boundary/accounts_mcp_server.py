@@ -11,7 +11,7 @@ from mcp.server.fastmcp import FastMCP  # noqa: E402
 # Accounts MCP server - the Balance Enquiry tool implementation, moved
 # out of the agent process entirely. Runs as its own stdio subprocess,
 # started/stopped by whatever MultiServerMCPClient config points at it
-# (see 12_2_7_mcp_tool_boundary.py). Following 6_mcp/6_3_crypto_mcp_server.py's
+# (see 12_2_7_mcp_tool_boundary.py). Following 6_mcp/6_12_crypto_mcp_server.py's
 # FastMCP shape - a plain function decorated with @mcp.tool(), same
 # docstring-as-schema convention as every @tool-decorated function in
 # steps 3-6, just running in a separate process now.

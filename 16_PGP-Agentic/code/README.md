@@ -52,7 +52,7 @@ session and numbered `<session>_<sequence>_<name>.py` in the order the session u
 | `session_2/2_7_chroma_db_basic.py` | `9_general/rag/rag_1_chroma_db_basic.py` |
 | `session_2/2_8_rag_cosine_euclidean.py` | `9_general/rag/rag_cosine_euclidean_1.py` |
 | `session_2/2_9_chroma_db_adding_metadata.py` | `9_general/rag/rag_4_chroma_db_adding_metadata.py` |
-| `session_2/2_10_faiss_search.py` | `14_advanced/04_rag/04_1_faiss_search.py` |
+| `session_2/2_10_faiss_search.py` | `14_advanced/04_rag/04_5_faiss_search.py` (the copy predates that script's switch to the help-desk FAQ data) |
 | `session_2/2_11_document_loaders.py` | `14_advanced/05_langchain/05_5_document_loaders.py` |
 | `session_2/2_12_text_splitters.py` | `14_advanced/05_langchain/05_6_text_splitters.py` |
 | `session_2/2_13_rag_pipeline.py` | `14_advanced/05_langchain/05_7_rag_pipeline.py` |

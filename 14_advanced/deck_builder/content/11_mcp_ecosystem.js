@@ -1,4 +1,4 @@
-const MCP = "../6_mcp/";
+const MCP = "11_mcp_advanced/";
 
 module.exports = {
   section: "Module 11 – MCP Ecosystem Integrations",
@@ -11,16 +11,17 @@ module.exports = {
       goals: [
         { icon: "FaCubes", title: "Know where servers come from", text: "official, community and enterprise" },
         { icon: "FaDatabase", title: "Use ready-made servers", text: "SQLite, filesystem, GitHub, Playwright" },
-        { icon: "FaDiagramProject", title: "Give MCP tools to agents", text: "LangChain and LangGraph via MultiServerMCPClient" },
+        { icon: "FaDiagramProject", title: "Give MCP tools to agents", text: "LangChain, LangGraph and CrewAI" },
         { icon: "FaServer", title: "Plan for production", text: "server layout, gateways, auth, monitoring" },
       ],
       agenda: [
         "Official, community and enterprise servers",
         "SQLite MCP server",
         "Filesystem MCP server",
-        "GitHub MCP server and tokens",
+        "GitHub MCP server: tokens and Claude Desktop",
         "Playwright MCP server",
         "MCP with LangChain and LangGraph",
+        "MCP with CrewAI",
         "A two-server report pipeline",
         "MCP in production",
       ],
@@ -40,7 +41,7 @@ module.exports = {
     {
       title: "SQLite MCP Server",
       subtitle: "A local, standard bridge between AI clients and a SQLite database",
-      demo: MCP + "6_13_sqlite_resource_mcp_client.py",
+      demo: MCP + "11_1_sqlite_resource_mcp_client.py",
       split: [1, 1.15],
       left: [
         { type: "steps", size: 10.5, items: [
@@ -62,7 +63,7 @@ module.exports = {
     {
       title: "Filesystem MCP Server",
       subtitle: "Safe, scoped access to local files – no custom file-handling code in the client",
-      demo: MCP + "6_14_filesystem_mcp_client.py",
+      demo: MCP + "11_2_filesystem_mcp_client.py",
       split: [1, 1.1],
       left: [
         { type: "icons", d: 0.38, size: 11, items: [
@@ -79,7 +80,7 @@ module.exports = {
     {
       title: "GitHub MCP Server",
       subtitle: "Runs in Docker; two fine-grained tokens keep the read-only and write demos apart",
-      demo: MCP + "6_15_github_mcp_readonly_client.py, 6_16_github_mcp_write_client.py",
+      demo: MCP + "11_3_github_mcp_readonly_client.py, 11_4_github_mcp_write_client.py",
       split: [1, 1.1],
       left: [
         { type: "code", caption: ".env", code:
@@ -105,13 +106,44 @@ GITHUB_DEMO_REPO=mcp-demo-sandbox` },
       ],
     },
     {
+      title: "Managing a Repository from Claude Desktop",
+      subtitle: "The same Docker image, registered in Claude Desktop – then you manage the repo in plain English",
+      demo: "Claude Desktop  ·  config pattern from " + MCP + "11_3_github_mcp_readonly_client.py",
+      split: [1.2, 1],
+      left: [
+        { type: "code", caption: "claude_desktop_config.json", code:
+`{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm",
+               "-e", "GITHUB_PERSONAL_ACCESS_TOKEN",
+               "ghcr.io/github/github-mcp-server",
+               "stdio", "--toolsets=repos,issues"],
+      "env": {"GITHUB_PERSONAL_ACCESS_TOKEN":
+              "github_pat_..."}
+    }
+  }
+}` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, gap: 0.08, items: [
+          { title: "Use the write token", text: "Scoped to the sandbox repo only" },
+          { title: "Restart Claude Desktop", text: "The GitHub tools appear in the tools menu" },
+          { title: "\"List the open issues in mcp-demo-sandbox\"", text: "Claude calls list_issues" },
+          { title: "\"Add CHANGELOG.md, then open an issue\"", text: "Claude asks before each write tool" },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "Add \"--read-only\" to the args for a browse-only setup." },
+      ],
+    },
+    {
       title: "Playwright MCP Server",
       subtitle: "Browser automation as tools: open pages, click, fill forms, navigate, read what's on screen",
-      demo: MCP + "6_17_playwright_mcp_gold_price_client.py, 6_18_playwright_mcp_login_demo_client.py",
+      demo: MCP + "11_5_playwright_mcp_gold_price_client.py, 11_6_playwright_mcp_login_demo_client.py",
       blocks: [
         { type: "compare", size: 11, cols: [
-          { title: "6_17 – gold price", color: "navy", items: ["`browser_navigate` to goldprice.org", "`browser_wait_for`, then `browser_find` with a price pattern", "The price exists only as rendered page content – no API"] },
-          { title: "6_18 – login demo", color: "teal", items: ["`browser_fill_form` on a public QA practice site", "`browser_click` to log in", "`browser_find` checks for success or the error message"] },
+          { title: "11_5 – gold price", color: "navy", items: ["`browser_navigate` to goldprice.org", "`browser_wait_for`, then `browser_find` with a price pattern", "The price exists only as rendered page content – no API"] },
+          { title: "11_6 – login demo", color: "teal", items: ["`browser_fill_form` on a public QA practice site", "`browser_click` to log in", "`browser_find` checks for success or the error message"] },
         ] },
         { type: "callout", eyebrow: "Why it matters", text: "Microsoft's official @playwright/mcp server (run with npx). Here the client calls the tools directly; give the same tools to an agent and it can use web UIs like a person." },
       ],
@@ -119,17 +151,17 @@ GITHUB_DEMO_REPO=mcp-demo-sandbox` },
     {
       title: "MCP Tools in LangChain and LangGraph",
       subtitle: "MultiServerMCPClient turns every server's tools into ordinary LangChain tools",
-      demo: MCP + "6_21_langchain_agent_mcp_tools.py, 6_21_2_…_flask.py, 6_22_langgraph_agent_mcp_tools.py",
+      demo: MCP + "11_7_langchain_…_tools.py, 11_7_2_…_flask.py, 11_8_langgraph_agent_mcp_tools.py",
       split: [1.25, 1],
       left: [
-        { type: "code", caption: "6_22_langgraph_agent_mcp_tools.py (condensed)", code:
+        { type: "code", caption: "11_8_langgraph_agent_mcp_tools.py (condensed)", code:
 `client = MultiServerMCPClient({
     "crypto": {"transport": "stdio",
                "command": sys.executable,
-               "args": [".../6_3_crypto_mcp_server.py"]},
+               "args": [".../crypto_mcp_server.py"]},
     "forex":  {"transport": "stdio",
                "command": sys.executable,
-               "args": [".../6_5_forex_mcp_server.py"]},
+               "args": [".../forex_mcp_server.py"]},
 })
 
 tools = await client.get_tools()
@@ -142,14 +174,46 @@ await agent.ainvoke({"messages": [{"role": "user",
           { title: "Two servers, one agent", text: "Crypto prices and exchange rates" },
           { title: "get_tools()", text: "Discovers and wraps every tool" },
           { title: "The agent chains them", text: "ETH in USD → USD to INR" },
-          { title: "Same tools, two runtimes", text: "6_21 runs its own bind_tools loop; 6_22 a LangGraph ReAct agent; 6_21_2 adds a Flask UI" },
+          { title: "Same tools, two runtimes", text: "11_7 runs its own bind_tools loop; 11_8 a LangGraph ReAct agent; 11_7_2 adds a Flask UI" },
         ] },
+      ],
+    },
+    {
+      title: "MCP Tools in CrewAI",
+      subtitle: "The same two servers, wrapped as CrewAI tools by a small hand-written bridge",
+      demo: MCP + "11_9_crewai_mcp_tools.py",
+      split: [1.25, 1],
+      left: [
+        { type: "code", caption: "11_9_crewai_mcp_tools.py (condensed)", code:
+`def mcp_tool_to_crewai(script, mcp_tool) -> BaseTool:
+    class MCPTool(BaseTool):
+        name: str = mcp_tool.name
+        description: str = mcp_tool.description
+        args_schema = schema_to_model(mcp_tool.inputSchema)
+
+        def _run(self, **kwargs) -> str:
+            return asyncio.run(
+                call_mcp_tool(script, mcp_tool.name, kwargs))
+    return MCPTool()
+
+analyst = Agent(role="Crypto Price Analyst",
+                tools=load_tools(),   # all MCP tools
+                llm="gpt-4o-mini", ...)
+Crew(agents=[analyst], tasks=[task]).kickoff()` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "list_tools() on each server", text: "Crypto prices and exchange rates" },
+          { title: "One BaseTool per MCP tool", text: "Name, description and an args schema built from the JSON input schema" },
+          { title: "_run() → call_tool()", text: "CrewAI calls tools synchronously, so the async MCP call runs in asyncio.run()" },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "crewai-tools[mcp] ships the same bridge as MCPServerAdapter." },
       ],
     },
     {
       title: "A Two-Server Report Pipeline",
       subtitle: "Query a database through one MCP server, write the report through another – no LLM needed",
-      demo: MCP + "6_19_sqlite_to_filesystem_report_pipeline.py",
+      demo: MCP + "11_10_sqlite_to_filesystem_report_pipeline.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaFileCsv", label: "Superstore CSV", caption: "A sample of real Kaggle orders, cleaned with pandas" },
@@ -181,16 +245,17 @@ await agent.ainvoke({"messages": [{"role": "user",
       title: "Module 11 Summary",
       subtitle: "What you built",
       built: [
-        { tag: "6_13", title: "Database and files", text: "SQLite and filesystem servers from a client" },
-        { tag: "6_15", title: "GitHub", text: "Read-only and write access with scoped tokens" },
-        { tag: "6_17", title: "A browser", text: "Playwright reading prices and logging in" },
-        { tag: "6_22", title: "Agents with MCP tools", text: "Crypto + forex servers in one ReAct agent" },
+        { tag: "11_1", title: "Database and files", text: "SQLite and filesystem servers from a client" },
+        { tag: "11_3", title: "GitHub", text: "Read-only and write access with scoped tokens" },
+        { tag: "11_5", title: "A browser", text: "Playwright reading prices and logging in" },
+        { tag: "11_8", title: "Agents with MCP tools", text: "Crypto + forex servers in one ReAct agent" },
+        { tag: "11_9", title: "A crew with MCP tools", text: "The same servers as CrewAI tools" },
       ],
       takeaways: [
         "Reuse official and community servers first",
         "Scope access: allowed roots, fine-grained tokens",
         "The client composes servers; servers stay independent",
-        "MCP tools plug into LangChain and LangGraph unchanged",
+        "MCP tools plug into LangChain, LangGraph and CrewAI",
         "Production needs gateways, auth and monitoring",
       ],
       next: "Module 12: Deep Agents – Reflection, Planning and Memory",

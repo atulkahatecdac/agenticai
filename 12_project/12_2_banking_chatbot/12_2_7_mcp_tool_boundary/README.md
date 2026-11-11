@@ -4,7 +4,7 @@
 
 - `accounts_mcp_server.py`, `transaction_mcp_server.py`, `service_mcp_server.py`
   (new) — one FastMCP stdio server per domain, following
-  `6_mcp/6_3_crypto_mcp_server.py`'s shape. Together they hold the same seven
+  `6_mcp/6_12_crypto_mcp_server.py`'s shape. Together they hold the same seven
   `@tool` functions that used to live directly in step 6's file, unchanged
   except for where they run.
 - `12_2_7_mcp_tool_boundary.py` (new) — the coordinator + specialists, with the
@@ -13,7 +13,7 @@
 
 ## Architecture change
 
-Following `6_mcp/6_22_langgraph_agent_mcp_tools.py`'s `MultiServerMCPClient`
+Following `6_mcp/6_15_langgraph_agent_mcp_tools.py`'s `MultiServerMCPClient`
 pattern: Accounts, Transaction, and Service's tool implementations move out of
 the agent process into three separate stdio subprocesses. The agent no longer
 defines what a tool *does* — it just asks the MCP client what tools each server

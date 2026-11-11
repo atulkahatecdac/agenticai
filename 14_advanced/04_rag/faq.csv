@@ -1,0 +1,49 @@
+id,category,question,answer
+1,shipping,When will my order arrive?,Orders arrive in 3-5 business days. You get a tracking link by email.
+2,payments,What payment methods do you accept?,"Credit/debit cards, UPI, net banking and cash on delivery."
+3,returns,How do I return a product?,Start a return from My Orders within 7 days of delivery.
+4,shipping,Can I change my delivery address?,"Yes, until the order is shipped - edit it in My Orders."
+5,shipping,How can I track my package?,"Use the tracking link in your shipping email, or open My Orders."
+6,shipping,Do you deliver on weekends?,"We deliver on Saturdays in most cities; there is no Sunday delivery."
+7,shipping,Is express delivery available?,Express delivery in 1-2 days is available in metro cities for a small fee.
+8,shipping,Do you ship internationally?,"No, we currently deliver only within India."
+9,shipping,What are the delivery charges?,"Delivery is free on orders above Rs 499; below that it costs Rs 40."
+10,shipping,My package shows delivered but I did not receive it,"Check with neighbours and building security, then report it in My Orders within 48 hours."
+11,payments,Is cash on delivery (COD) available?,COD is available on orders up to Rs 10000 in most pin codes.
+12,payments,Can I pay in EMIs?,No-cost EMI is available on credit cards for orders above Rs 3000.
+13,payments,My payment failed but money was deducted,Failed payments are refunded automatically to the source within 5-7 business days.
+14,payments,Is it safe to save my card?,Cards are saved as secure tokens; we never store the full card number.
+15,payments,Can I get a GST invoice?,Add your GSTIN at checkout and download the GST invoice from My Orders.
+16,payments,Why was my card declined?,"Check the card limit and the OTP, or try another payment method."
+17,payments,Do you accept gift cards?,"Yes, enter the gift card code on the payment page."
+18,payments,Can I split a payment across two methods?,"You can combine a gift card or wallet balance with one other payment method."
+19,returns,When will I get my refund?,Refunds reach your original payment method 5-7 business days after the pickup.
+20,returns,Can I exchange for a different size?,"Choose Exchange instead of Return in My Orders; one exchange per item is free."
+21,returns,Which items cannot be returned?,"Innerwear, personal care items and opened software cannot be returned."
+22,returns,I received a damaged product,Report it within 48 hours with photos and we send a free replacement.
+23,returns,I received the wrong item,Report it in My Orders; we collect it and send the right item free of charge.
+24,returns,Do I pay for return shipping?,"No, pickup for returns is always free."
+25,returns,How is a COD refund paid?,COD refunds go to your bank account by NEFT or to your store wallet.
+26,returns,Can I return an item I bought on sale?,"Yes, sale items follow the same 7-day return window."
+27,orders,How do I cancel my order?,Cancel from My Orders before it ships and you get a full refund.
+28,orders,Can I add items to an order I already placed?,"No, place a new order instead; orders above Rs 499 still ship free."
+29,orders,Why was my order cancelled?,Orders are cancelled if the payment fails or the item goes out of stock; any payment is refunded.
+30,orders,Can I order without creating an account?,"Yes, use guest checkout with your phone number."
+31,orders,How do I place a bulk order?,Use the Bulk Orders form on the Help page and we call you back within a day.
+32,orders,When will an out-of-stock item be back?,Tap Notify Me on the product page and we email you when it is back.
+33,orders,Can I choose a delivery date?,Large appliances let you pick a delivery slot at checkout.
+34,orders,How do I know my order is confirmed?,You get a confirmation SMS and email within minutes of paying.
+35,account,How do I reset my password?,Tap Forgot Password on the login page and follow the link we email you.
+36,account,I am not receiving the OTP,"Check your phone number, wait 60 seconds and tap Resend OTP."
+37,account,How do I change my phone number?,Go to Account > Profile and verify the new number with an OTP.
+38,account,How do I delete my account?,Raise a request under Account > Privacy; deletion completes within 30 days.
+39,account,How do I contact customer support?,"Chat with us 24/7 from the Help page, or call our toll-free number."
+40,account,How do I stop promotional emails?,"Use the Unsubscribe link in any email, or switch them off in Account > Notifications."
+41,warranty,Do products come with a warranty?,"Electronics carry the manufacturer's warranty, usually one year."
+42,warranty,How do I claim a warranty?,Contact the brand's service centre with the invoice from My Orders.
+43,warranty,Can I buy an extended warranty?,"Yes, add an extended warranty at checkout for eligible electronics."
+44,warranty,Are your products genuine?,All products come directly from brands or their authorised sellers.
+45,offers,How do I apply a coupon code?,Enter the coupon on the payment page before you pay.
+46,offers,Why is my coupon not working?,"Check the minimum order value, the expiry date and the eligible categories."
+47,offers,Do you match prices from other shops?,"No, but the Offers page lists current bank and card discounts."
+48,offers,How does the loyalty programme work?,Earn 1 point for every Rs 100 you spend; 100 points give Rs 50 off.

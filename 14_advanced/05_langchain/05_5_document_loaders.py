@@ -50,9 +50,9 @@ show("2. WebBaseLoader", web_docs)
 # 3. CSV Loader
 # One Document per ROW, with each column rendered as "column: value" text
 # and the row's column values also kept in metadata.
-# Reuses the documents.csv already used by the 04_rag demos.
+# documents.csv sits next to this script: 100 short texts (finance, sports, tech ...).
 # -----------------------------
-csv_path = os.path.join(BASE_DIR, "..", "04_rag", "documents.csv")
+csv_path = os.path.join(BASE_DIR, "documents.csv")
 csv_docs = CSVLoader(csv_path).load()
 show("3. CSVLoader", csv_docs)
 

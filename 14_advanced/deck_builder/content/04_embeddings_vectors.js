@@ -19,7 +19,7 @@ module.exports = {
         "Embeddings and embedding models",
         "ChromaDB: storage, similarity, CRUD and filters",
         "Vector databases compared; FAISS and its indexes",
-        "Similarity metrics and benchmarks",
+        "Similarity metrics",
         "Chunking strategies",
         "Two-stage retrieval and reranking",
         "Hybrid search: weighted average and RRF",
@@ -51,14 +51,102 @@ module.exports = {
         { type: "callout", style: "dark", text: "RAG = Retrieve the internal facts → Augment the prompt with them → Generate an answer that combines both" },
       ],
     },
-    { kind: "image", src: "what_happens_in_rag.png", alt: "What happens in RAG", demo: "Concept" },
-    { kind: "image", src: "rag_retriever.png", alt: "How the retriever works", demo: "Concept" },
-    { kind: "image", src: "embeddings.png", alt: "Embeddings: turning text into vectors", demo: "Concept" },
-    { kind: "image", src: "vector_similarity.png", alt: "Vector similarity: finding meaningful matches", demo: "Concept" },
+    // ------------------------------------------- Embeddings -> ChromaDB, one e-commerce FAQ example
+    // Numbers on these four slides are real: ChromaDB 1.1.1 defaults (all-MiniLM-L6-v2, HNSW, squared L2).
+    {
+      title: "What Is a Vector Embedding?",
+      subtitle: "A list of numbers that captures what a sentence means – shown on an online shop's help-desk FAQ",
+      demo: M + "04_1_chromadb_faq_store.py",
+      blocks: [
+        { type: "flow", d: 0.6, items: [
+          { icon: "FaComment", label: "A customer question", caption: "\"When will my order arrive?\"" },
+          { icon: "FaMicrochip", label: "Embedding model", caption: "all-MiniLM-L6-v2 – ChromaDB's default" },
+          { icon: "FaListOl", label: "A vector", caption: "384 numbers: [-0.06, -0.04, 0.03, …]" },
+        ] },
+        { type: "table", size: 10.5, widths: [3.2, 2.6, 1.6], head: ["FAQ question", "Its vector (first 3 of 384)", "Topic"], rows: [
+          ["When will my order arrive?", "[-0.06, -0.04, 0.03, …]", "shipping"],
+          ["What payment methods do you accept?", "[0.02, 0.04, 0.02, …]", "payments"],
+          ["How do I return a product?", "[-0.00, 0.00, 0.02, …]", "returns"],
+        ] },
+        { type: "callout", eyebrow: "The key idea", text: "Similar meaning → nearby vectors. \"Where is my parcel?\" shares almost no words with \"When will my order arrive?\" – but their vectors sit close together." },
+      ],
+    },
+    {
+      title: "Storing the FAQ in ChromaDB",
+      subtitle: "Each record keeps the question, its vector and the answer – only the question is embedded",
+      demo: M + "04_1_chromadb_faq_store.py",
+      blocks: [
+        { type: "table", size: 10, widths: [0.5, 2.6, 1.9, 3.6], head: ["id", "document (embedded)", "embedding", "metadata (stored as is)"], rows: [
+          ["1", "When will my order arrive?", "[-0.06, -0.04, …]", "answer: \"Orders arrive in 3–5 business days…\"  ·  category: shipping"],
+          ["2", "What payment methods do you accept?", "[0.02, 0.04, …]", "answer: \"Cards, UPI, net banking, cash on delivery\"  ·  category: payments"],
+          ["3", "How do I return a product?", "[-0.00, 0.00, …]", "answer: \"Start a return within 7 days of delivery\"  ·  category: returns"],
+        ] },
+        { type: "cols", ratio: [1.35, 1], cols: [
+          [
+            { type: "code", code:
+`faq = client.create_collection("faq")
+faq.add(
+    ids=["1", "2", "3"],
+    documents=["When will my order arrive?", ...],
+    metadatas=[{"answer": "Orders arrive in 3-5 ...",
+                "category": "shipping"}, ...],
+)` },
+          ],
+          [
+            { type: "icons", d: 0.34, size: 10.5, titleSize: 12, items: [
+              { icon: "FaWandMagicSparkles", title: "Embedding is automatic", text: "Chroma runs its default model on every document you add" },
+              { icon: "FaDiagramProject", title: "Indexed as you add", text: "Each vector joins an HNSW search graph" },
+            ] },
+          ],
+        ] },
+      ],
+    },
+    {
+      title: "When a Customer Asks a Question",
+      subtitle: "The question goes through the same model; Chroma returns the closest stored question – and its answer",
+      demo: M + "04_2_chromadb_faq_query.py",
+      blocks: [
+        { type: "callout", eyebrow: "Customer types", text: "\"My parcel hasn't come yet – where is it?\"" },
+        { type: "flow", d: 0.6, items: [
+          { icon: "FaMicrochip", label: "1. Embed the question", caption: "Same model → 384 numbers" },
+          { icon: "FaMagnifyingGlass", label: "2. Search the collection", caption: "Find the nearest stored question vectors" },
+          { icon: "FaBullseye", label: "3. Best match", caption: "\"When will my order arrive?\"" },
+          { icon: "FaReply", label: "4. Reply", caption: "Its answer from metadata – or hand it to an LLM to phrase the reply" },
+        ] },
+        { type: "code", code:
+`hits = faq.query(query_texts=["My parcel hasn't come yet - where is it?"],
+                 n_results=1)
+hits["metadatas"][0][0]["answer"]    # 'Orders arrive in 3-5 business days. ...'` },
+      ],
+    },
+    {
+      title: "How ChromaDB Finds the Best Match",
+      subtitle: "An HNSW index: hop through a graph of neighbours instead of comparing the query with every stored vector",
+      demo: M + "04_2_chromadb_faq_query.py",
+      split: [1.1, 1],
+      left: [
+        { type: "steps", size: 10.5, gap: 0.1, items: [
+          { title: "Link each vector to its neighbours", text: "Done while adding: up to 16 links each, in a few layers – a sparse top layer, every vector at the bottom" },
+          { title: "Start at the top layer", text: "Hop to whichever neighbour is closer to the query" },
+          { title: "Drop a layer and repeat", text: "Long jumps first, then short, careful steps" },
+          { title: "Return the closest", text: "Ranked by distance; the top n_results come back" },
+        ] },
+      ],
+      right: [
+        { type: "table", size: 10.5, widths: [3.2, 1.2], firstBold: false, head: ["Stored question", "Distance"], rows: [
+          ["**When will my order arrive?**", "**1.07**"],
+          ["Can I change my delivery address?", "1.25"],
+          ["How do I return a product?", "1.34"],
+          ["What payment methods do you accept?", "1.92"],
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "Query: \"My parcel hasn't come yet – where is it?\" Default metric: squared L2 distance – **lower = closer**." },
+        { type: "callout", eyebrow: "Approximate, by design", text: "HNSW skips most vectors, so it stays fast at millions of records – and almost always finds the true best match." },
+      ],
+    },
     {
       title: "Popular Embedding Models",
       subtitle: "More dimensions can capture more nuance – at the cost of storage and speed",
-      demo: M + "04_1_faiss_search.py (all-MiniLM-L6-v2), 04_2_faiss_search_ollama.py (nomic-embed-text)",
+      demo: M + "04_3_chromadb_ollama_embeddings.py – MiniLM (384) vs nomic-embed-text (768)",
       blocks: [
         { type: "table", size: 10.5, widths: [2.2, 2.0, 3.4, 1.1], head: ["Model", "Provider", "Key features", "Dimensions"], rows: [
           ["text-embedding-3-small", "OpenAI", "Fast and cost-effective; search and clustering", "1536"],
@@ -69,109 +157,112 @@ module.exports = {
           ["e5-base-v2", "Hugging Face (Microsoft)", "Strong for retrieval and Q&A", "768"],
           ["nomic-embed-text", "Nomic (via Ollama)", "Runs locally with Ollama", "768"],
         ] },
-        { type: "callout", eyebrow: "Rule", text: "Embed documents and queries with the same model – vectors from different models can't be compared." },
+        { type: "callout", eyebrow: "Rule", text: "Embed documents and queries with the same model – vectors from different models can't be compared. 04_3 shows the error you get." },
       ],
     },
-
-    // ---------------------------------------------------------------- ChromaDB
-    { kind: "image", src: "chromadb_qa_vectors.png", alt: "How ChromaDB stores Q&A: questions as vectors, answers as text", demo: M + "04_4_chromadb_search.py" },
-    { kind: "image", src: "chromadb_similarity_metrics.png", alt: "How ChromaDB uses similarity in search", demo: M + "04_4_chromadb_search.py" },
     {
       title: "ChromaDB: CRUD and Metadata Filters",
-      subtitle: "A local, persistent vector database – documents, embeddings and metadata together",
-      demo: M + "04_3_chromadb_crud.py, " + M + "04_4_chromadb_search.py",
+      subtitle: "The full help-desk FAQ – 48 questions from faq.csv, answers and categories as metadata",
+      demo: M + "04_4_chromadb_crud.py",
       left: [
         { type: "code", caption: "Create", code:
-`client = chromadb.PersistentClient(path="./chroma_db")
-col = client.get_or_create_collection("employees")
-col.add(ids=["1", "2"],
-        documents=["Alice works in Finance.",
-                   "Bob works in HR."],
-        metadatas=[{"department": "Finance"},
-                   {"department": "HR"}])` },
+`faq = client.create_collection("faq_all")
+faq.add(ids=ids,              # 48 rows of faq.csv
+        documents=questions,  # embedded
+        metadatas=metas)      # answer, category` },
         { type: "code", caption: "Read, update, delete", code:
-`col.get(ids=["1"])["documents"]
-col.update(ids=["1"],
-    documents=["Alice is now the Finance Manager."])
-col.delete(ids=["2"])` },
+`faq.get(ids=["9"])
+faq.get(where={"category": "payments"})
+faq.get(where_document={"$contains": "OTP"})
+faq.update(ids=["9"], metadatas=[new_meta])
+faq.delete(ids=["47"])` },
       ],
       right: [
         { type: "code", caption: "Search by meaning + filter by metadata", code:
-`results = col.query(
-    query_texts=["budget"],
-    n_results=5,
-    where={"department": "Finance"},
-)` },
-        { type: "icons", d: 0.36, size: 11, items: [
-          { icon: "FaMagnifyingGlass", title: "query_texts", text: "Embedded automatically, then compared by similarity" },
-          { icon: "FaFilter", title: "where", text: "Narrows results by metadata before ranking" },
+`faq.query(query_texts=["How long does it take?"],
+          n_results=3,
+          where={"category": "returns"})` },
+        { type: "table", size: 10.5, widths: [2.0, 2.6], firstBold: false, head: ["\"How long does it take?\"", "Best match"], rows: [
+          ["No filter", "When will my order arrive?"],
+          ["where category = returns", "**When will I get my refund?**"],
         ] },
+        { type: "text", size: 10.5, color: "slate", text: "A help widget on the Returns page already knows the context – the filter settles the ambiguity before ranking." },
       ],
     },
     {
       title: "Vector Databases Compared",
-      subtitle: "Same idea – store vectors, find the nearest ones – different trade-offs",
+      subtitle: "Same job – store vectors, find the nearest ones fast – packaged in different ways",
       demo: "Concept",
       blocks: [
-        { type: "table", size: 10, widths: [1.1, 1.4, 1.9, 2.0, 1.9], head: ["Database", "Type", "Best for", "Pros", "Cons"], rows: [
-          ["ChromaDB", "Local / embedded", "Small–medium apps, notebooks", "Easy, local persistence, Python-first", "Not ideal at very large scale"],
-          ["FAISS", "Library, not a DB", "Fast in-process search", "Very fast, offline, optimised", "No metadata store or server"],
-          ["Pinecone", "Managed cloud", "Production, large scale", "Scalable, highly available, no infra", "Paid, cloud-only"],
-          ["Weaviate", "Open source + cloud", "Search with metadata", "Hybrid search, schema, GraphQL", "More setup"],
-          ["Milvus", "Open source + cloud", "Heavy workloads", "Highly scalable, rich index options", "Needs infrastructure"],
-          ["Qdrant", "Open source + cloud", "Production with filters", "Fast filtering, simple API", "Heavier to self-host"],
-          ["Redis", "Add-on to Redis", "Apps already on Redis", "Fast, real-time", "Not specialised"],
+        { type: "table", size: 10.5, widths: [1.2, 1.7, 2.6, 2.6], head: ["Store", "What it is", "Strengths", "Watch out for"], rows: [
+          ["ChromaDB", "Local / embedded DB", "Easiest start; documents + metadata + vectors together", "One index type (HNSW); one machine"],
+          ["FAISS", "Search library", "Many index types, compression, GPU; billions of vectors", "Vectors only – you store the text and metadata"],
+          ["Qdrant", "Open source + cloud", "Fast metadata filtering, simple API", "A server to run in production"],
+          ["Weaviate", "Open source + cloud", "Built-in hybrid (keyword + vector) search", "More setup"],
+          ["Milvus", "Open source + cloud", "Very large scale, many index types", "Needs real infrastructure"],
+          ["Pinecone", "Managed cloud", "No infrastructure; scales on demand", "Paid, cloud only"],
         ] },
+        { type: "callout", eyebrow: "Common ground", text: "All of them search an index (most often HNSW) – none compares the query with every stored vector unless you ask for exact search." },
       ],
     },
-
-    // ---------------------------------------------------------------- FAISS
-    { kind: "image", src: "chromadb_vs_faiss.png", alt: "ChromaDB vs FAISS – what's the difference?", demo: M + "04_1_faiss_search.py" },
     {
-      title: "FAISS: Search Without Comparing Everything",
-      subtitle: "Facebook AI Similarity Search – Meta's library for fast similarity search over dense vectors",
-      demo: M + "04_1_faiss_search.py, " + M + "04_2_faiss_search_ollama.py",
-      blocks: [
-        { type: "text", text: "One million documents, and the user asks **\"What is machine learning?\"**" },
-        { type: "compare", size: 11.5, cols: [
-          { title: "Without FAISS – linear scan", color: "slate", items: ["Embed the query", "Compare with document 1, then 2, then 3 …", "… all the way to document 1,000,000", "Slow, and gets slower as data grows"] },
-          { title: "With FAISS – an index", color: "teal", items: ["Embed the query", "Look it up in the FAISS index", "Get the top 5 results directly", "Pick the index type to trade accuracy for speed"] },
+      title: "ChromaDB or FAISS?",
+      subtitle: "Both find nearest neighbours through an index – one is a database, the other a search engine you build around",
+      demo: M + "04_5_faiss_search.py",
+      split: [1, 1.1],
+      left: [
+        { type: "compare", size: 10.5, cols: [
+          { title: "ChromaDB", color: "teal", items: [
+            "A database: stores documents, metadata and vectors",
+            "Embeds text for you; add, update, delete, where filters",
+            "One built-in index: HNSW",
+            "Returns documents and metadata",
+          ] },
+          { title: "FAISS", color: "navy", items: [
+            "A library: stores vectors only",
+            "Many indexes: exact Flat, IVF, HNSW, compressed PQ",
+            "GPU support; billions of vectors",
+            "Returns row numbers – you look up the text",
+          ] },
         ] },
       ],
+      right: [
+        { type: "code", caption: "04_5_faiss_search.py (condensed)", code:
+`embeddings = model.encode(questions)   # you embed
+index = faiss.IndexFlatL2(384)         # exact search
+index.add(embeddings)
+
+distances, rows = index.search(model.encode([query]), 3)
+for r in rows[0]:
+    print(FAQ[r]["answer"])            # you look it up` },
+        { type: "callout", eyebrow: "Rule of thumb", text: "Start with ChromaDB. Reach for FAISS when you need exact search, a GPU, or more vectors than fit in memory." },
+      ],
     },
-    { kind: "image", src: "faiss_index_types.png", alt: "FAISS index types compared: Flat, IVF, HNSW", demo: M + "04_1_faiss_search.py" },
     {
       title: "Choosing a FAISS Index",
-      subtitle: "Different applications need different trade-offs between accuracy, speed and memory",
-      demo: M + "04_1_faiss_search.py",
+      subtitle: "Trade accuracy for speed and memory – ChromaDB makes this choice for you: HNSW",
+      demo: M + "04_5_faiss_search.py",
       blocks: [
-        { type: "table", size: 10.5, widths: [1.7, 2.1, 2.1, 2.1], head: ["", "Flat L2", "IVF (inverted file)", "HNSW (graph)"], rows: [
-          ["Search", "Exact", "Approximate", "Approximate"],
-          ["Accuracy", "Best (100%)", "High", "Very high"],
-          ["Speed", "Slow on big data", "Fast", "Very fast"],
-          ["Memory", "High", "Medium", "High"],
-          ["Training needed", "No", "Yes (clustering)", "No"],
-          ["How it works", "Compares the query with every vector", "Finds the nearest cluster, searches inside it", "Hops through a graph of neighbouring vectors"],
-          ["Best for", "Small datasets", "Large datasets", "Real-time applications"],
+        { type: "table", size: 10.5, widths: [1.5, 3.0, 1.3, 1.3, 2.1], head: ["Index", "How it searches", "Results", "Memory", "Use when"], rows: [
+          ["Flat", "Compares the query with every vector", "Exact", "Full vectors", "Up to ~100K vectors, or exact answers matter"],
+          ["IVF", "Clusters vectors first (needs training); searches only the nearest clusters", "Approximate", "Full vectors", "Millions of vectors"],
+          ["IVF + PQ", "IVF plus compressing each vector to a few bytes", "Approximate", "Very small", "More vectors than fit in RAM"],
+          ["HNSW", "Hops through a graph of neighbours – the same index ChromaDB uses", "Approximate", "Full vectors + links", "Fast, high-recall search; no training"],
         ] },
+        { type: "text", size: 10.5, color: "slate", text: "04_5 builds `IndexFlatL2` and `IndexHNSWFlat(384, 32)` over the FAQ: the same top 3 for every query, and the same distances ChromaDB reported." },
       ],
     },
-    { kind: "image", src: "embeddings_create_store_retrieve.png", alt: "How embeddings work: create, store, retrieve, look up", demo: M + "04_1_faiss_search.py" },
     {
       title: "Similarity Metrics",
       subtitle: "Nearest-neighbour retrieval ranks stored vectors by how close they are to the query vector",
-      demo: "Concept",
+      demo: M + "04_6_similarity_metrics.py",
       blocks: [
         { type: "cards", size: 11, codeSize: 10, items: [
           { icon: "FaCompassDrafting", title: "Cosine similarity", lines: ["The angle between two vectors – ignores their length", "**Larger is better** (1 = same direction)"], code: "A·B / (‖A‖ ‖B‖)" },
           { icon: "FaRulerHorizontal", title: "L2 (Euclidean) distance", lines: ["Straight-line distance between two points", "**Smaller is better** (0 = identical)"], code: "√ Σ (Aᵢ − Bᵢ)²" },
           { icon: "FaArrowsLeftRight", title: "Dot product", lines: ["Alignment and magnitude together", "**Larger is better**; equals cosine for normalised vectors"], code: "Σ Aᵢ · Bᵢ" },
         ] },
-        { type: "table", size: 10.5, widths: [2.2, 2.0, 2.0], head: ["Vectors stored", "ChromaDB (typical)", "FAISS (typical)"], rows: [
-          ["10K", "5–10 ms", "2–5 ms"],
-          ["1 million", "100–500 ms", "20–80 ms"],
-          ["10 million", "Seconds", "< 200 ms"],
-        ] },
+        { type: "callout", eyebrow: "On the FAQ", text: "MiniLM vectors have length 1, so dot = cosine and squared L2 = 2 − 2·cosine – all three rank the same. That is ChromaDB's 1.07: 2 − 2 × 0.47. Make one vector 3× longer and only the dot product changes its answer." },
       ],
     },
 
@@ -201,77 +292,74 @@ col.delete(ids=["2"])` },
     },
     {
       title: "Two-Stage Retrieval",
-      subtitle: "First cast a wide net, then put the best chunks first",
-      demo: "Concept",
+      subtitle: "First cast a wide net, then put the best matches first",
+      demo: M + "04_7_reranking.py",
       split: [1, 1.1],
       left: [
         { type: "steps", size: 11, items: [
-          { title: "Stage 1 – candidate generation", text: "Retrieve a generous set of chunks. Goal: high **recall** – don't miss anything useful" },
-          { title: "Stage 2 – reranking", text: "Reorder them with a more accurate model. Goal: high **precision** – best first" },
+          { title: "Stage 1 – vector search", text: "ChromaDB returns 10 candidates. Goal: high **recall** – don't miss anything useful" },
+          { title: "Stage 2 – reranking", text: "A cross-encoder reads the question with each candidate's question and answer. Goal: high **precision** – best first" },
         ] },
-        { type: "chain", size: 10, items: ["Relevance reranking", "MMR (diversity)", "Custom rules"] },
+        { type: "text", size: 10.5, color: "slate", text: "Reranker: mxbai-rerank-xsmall-v1, local, ~150 MB." },
       ],
       right: [
-        { type: "text", text: "**\"How do I reset my Windows password?\"**", size: 11.5 },
-        { type: "table", size: 10, widths: [2.2, 2.2], head: ["Vector search order", "After reranking"], rows: [
-          ["Change Windows password", "**Reset forgotten Windows password**"],
-          ["Reset forgotten Windows password", "Change Windows password"],
-          ["Windows login troubleshooting", "Windows login troubleshooting"],
-          ["Password manager", "Password manager"],
+        { type: "text", text: "**\"I want my money back\"**", size: 11.5 },
+        { type: "table", size: 10, widths: [2.3, 2.3], firstBold: false, head: ["Vector search order", "After reranking"], rows: [
+          ["My payment failed but money was deducted", "**When will I get my refund?**"],
+          ["When will I get my refund?", "My payment failed but money was deducted"],
+          ["Can I return an item I bought on sale?", "How is a COD refund paid?"],
         ] },
-        { type: "callout", eyebrow: "Key idea", text: "Vector search finds similar documents; reranking finds the most relevant ones." },
+        { type: "callout", eyebrow: "Test it on your data", text: "For \"I bought shoes in the wrong size\" the same reranker demotes the right answer – check before you switch one on." },
       ],
     },
     {
       title: "Hybrid Search",
       subtitle: "Keyword search and semantic search fail in different places – use both",
-      demo: M + "04_5_hybrid_search.py",
+      demo: M + "04_8_hybrid_search.py",
       blocks: [
         { type: "compare", size: 11, cols: [
-          { title: "Keyword search", color: "navy", items: ["Finds exact words", "Error codes, names, acronyms (\"ELSS\")"] },
+          { title: "Keyword search", color: "navy", items: ["Finds exact words", "Codes and acronyms (\"NEFT\", \"GSTIN\")"] },
           { title: "Semantic search", color: "teal", items: ["Finds meaning", "Paraphrases with no shared words"] },
           { title: "Hybrid = both", color: "coral", items: ["Best of both worlds", "Support, legal, medical, e-commerce"] },
         ] },
-        { type: "callout", eyebrow: "Example", text: "\"My computer is slow and shows error 0x80070057\" – keyword search catches the exact error code; semantic search understands \"computer is slow\"." },
+        { type: "callout", eyebrow: "Example", text: "\"Refund by NEFT for my COD order?\" – keyword search catches the exact terms NEFT and COD; semantic search understands \"refund\"." },
         { type: "cols", cols: [
           [{ type: "text", size: 11, text: "**Weighted average:** normalise both scores to 0–1, then `α·semantic + (1−α)·keyword` – simple and tunable." }],
-          [{ type: "text", size: 11, text: "**Reciprocal Rank Fusion:** ignore raw scores; sum `1/(k + rank)` across both lists – rewards documents ranked high by both." }],
+          [{ type: "text", size: 11, text: "**Reciprocal Rank Fusion:** ignore raw scores; sum `1/(k + rank)` over each method's top results – rewards entries ranked high by both." }],
         ] },
       ],
     },
-    { kind: "image", src: "hybrid_search_rrf_weighted.png", alt: "Hybrid search: two ways to combine results – RRF and weighted average", demo: M + "04_5_hybrid_search.py" },
     {
-      title: "Inside 04_5_hybrid_search.py",
-      subtitle: "100 short documents (finance, sports, tech …) searched three ways, side by side",
-      demo: M + "04_5_hybrid_search.py",
+      title: "Inside 04_8_hybrid_search.py",
+      subtitle: "The 48 help-desk FAQs searched four ways – top answer for three customer questions",
+      demo: M + "04_8_hybrid_search.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaFileCsv", label: "Load", caption: "documents.csv" },
-          { icon: "FaFont", label: "Keyword", caption: "TF-IDF vectors, cosine score" },
-          { icon: "FaBrain", label: "Semantic", caption: "Sentence-transformer embeddings" },
+          { icon: "FaFileCsv", label: "Load", caption: "faq.csv" },
+          { icon: "FaFont", label: "Keyword", caption: "TF-IDF over question + answer" },
+          { icon: "FaBrain", label: "Semantic", caption: "Embeddings of the questions" },
           { icon: "FaScaleBalanced", label: "Fuse", caption: "Weighted average and RRF", color: "coral" },
-          { icon: "FaTableList", label: "Compare", caption: "Each method's ranking", color: "teal" },
         ] },
-        { type: "tiles", cols: 3, items: [
-          { icon: "FaEquals", title: "Balanced query", text: "Both signals agree" },
-          { icon: "FaPersonCane", title: "\"Put money away for old age\"", text: "Zero word overlap – semantic wins" },
-          { icon: "FaFont", title: "\"ELSS\"", text: "An acronym – keyword wins" },
+        { type: "table", size: 10, widths: [2.2, 2.0, 2.0, 1.9, 1.9], firstBold: false, head: ["Customer types", "Keyword only", "Semantic only", "50 / 50", "RRF"], rows: [
+          ["\"How do I cancel my order?\"", "✓ Cancel my order", "✓ Cancel my order", "✓", "✓"],
+          ["\"can I get a bill for my company\"", "✗ Return shipping", "✓ GST invoice", "✓", "✓"],
+          ["\"NEFT\"", "✓ COD refund", "✗ Card declined", "✓", "tie"],
         ] },
-        { type: "text", size: 11, color: "slate", text: "Why not just add the raw scores? TF-IDF and embedding cosine live on different scales – one would dominate." },
+        { type: "text", size: 10.5, color: "slate", text: "RRF sees only ranks: for NEFT each method's #1 is missing from the other's top 10, so it ties. The weighted average uses how strong each match is." },
       ],
     },
     {
       title: "Seeing Embeddings with UMAP",
       subtitle: "Project hundreds of dimensions down to 2D while keeping neighbours close – spot clusters, overlaps and outliers",
-      demo: M + "04_6_umap_visualization.py",
+      demo: M + "04_9_umap_visualization.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaFileLines", label: "Documents", caption: "\"I want to invest in mutual funds.\"" },
+          { icon: "FaFileLines", label: "48 FAQ questions", caption: "\"How do I return a product?\"" },
           { icon: "FaCubes", label: "Embedding model", caption: "384-dimensional vectors" },
           { icon: "FaCompress", label: "UMAP", caption: "Uniform Manifold Approximation and Projection", color: "coral" },
-          { icon: "FaChartLine", label: "Scatter plot", caption: "2D points, one per document", color: "teal" },
+          { icon: "FaChartLine", label: "Scatter plot", caption: "One point per question, coloured by category", color: "teal" },
         ] },
-        { type: "callout", eyebrow: "Why it helps", text: "Humans can't picture 384 dimensions. A 2D map shows whether topics separate cleanly – a quick sanity check on your embeddings and chunks." },
+        { type: "callout", eyebrow: "Why it helps", text: "Humans can't picture 384 dimensions. On the FAQ map, payments, account and warranty questions form their own islands while some shipping and returns questions overlap – a quick sanity check before you trust retrieval." },
       ],
     },
     {
@@ -279,15 +367,16 @@ col.delete(ids=["2"])` },
       title: "Module 04 Summary",
       subtitle: "What you built",
       built: [
-        { tag: "chroma", title: "ChromaDB", text: "CRUD, similarity search and metadata filters" },
-        { tag: "faiss", title: "FAISS", text: "An in-process index with local and Ollama embeddings" },
+        { tag: "chroma", title: "A help-desk FAQ in ChromaDB", text: "Store, query, CRUD and metadata filters" },
+        { tag: "faiss", title: "The same FAQ in FAISS", text: "Exact and HNSW indexes, same distances" },
+        { tag: "rerank", title: "Two-stage retrieval", text: "A local cross-encoder reorders the top 10" },
         { tag: "hybrid", title: "Hybrid search", text: "TF-IDF + embeddings fused by weights and by RRF" },
-        { tag: "umap", title: "A map of meaning", text: "Document embeddings projected to 2D" },
+        { tag: "umap", title: "A map of the FAQ", text: "Question embeddings projected to 2D" },
       ],
       takeaways: [
         "Embeddings turn meaning into geometry",
         "Same embedding model for documents and queries",
-        "Chroma manages data; FAISS is a fast index",
+        "ChromaDB is a database; FAISS is a toolkit of indexes",
         "Recall first, then rerank for precision",
         "Hybrid search covers what either method misses",
       ],

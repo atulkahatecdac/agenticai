@@ -85,7 +85,7 @@ Files inside a folder are numbered in teaching order (`2_1_...` before `2_2_...`
 | `3_langgraph` | LangChain LCEL and LangGraph: memory and checkpointers, guardrails, a banking chatbot built up step by step (Chroma, FAISS, web search, email/ntfy notifications) |
 | `4_crewai` | CrewAI multi-agent crews: document generation, log analysis, cloud billing, stock analysis, customer service |
 | `5_autogen` | AutoGen: agents, group chats (round robin, selector, magentic), GraphFlow, structured output, multimodal, memory |
-| `6_mcp` | Model Context Protocol: paired server/client scripts, OAuth2 progression (`authentication/`), agentic RAG over MCP (`mcp_agentic_rag/`). `6_10_malicious_mcp_*` is a deliberate **attack demo** for security awareness. |
+| `6_mcp` | Model Context Protocol: own and official MCP servers, agents using MCP tools, multi-server apps, OAuth2 progression (`authentication/`), agentic RAG over MCP (`mcp_agentic_rag/`), mutual fund NAV forecasting (`mf_nav/`). `6_5_malicious_mcp_*` is a deliberate **attack demo** for security awareness. |
 | `7_n8n` | n8n workflow exports (JSON, import into n8n), a Flask bridge to an n8n webhook, Qdrant setup scripts |
 | `8_bedrock` | AWS Bedrock: boto3, LangChain integration and RAG, image generation, embeddings |
 | `9_general` | Grab-bag: DSPy, SHAP/LIME explainability, LangChain basics, Langfuse observability, Phidata, RAG with Chroma/LlamaIndex/Cohere, production-style app layouts (`prod/`) |

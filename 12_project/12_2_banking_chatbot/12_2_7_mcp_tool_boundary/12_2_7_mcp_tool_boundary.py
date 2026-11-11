@@ -35,7 +35,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 # of this process entirely, into three separate MCP servers
 # (accounts_mcp_server.py, transaction_mcp_server.py,
 # service_mcp_server.py - one stdio subprocess each), following
-# 6_mcp/6_22_langgraph_agent_mcp_tools.py's MultiServerMCPClient
+# 6_mcp/6_15_langgraph_agent_mcp_tools.py's MultiServerMCPClient
 # pattern. The seven @tool-decorated functions from step 6 are gone
 # from this file - only their MCP server counterparts remain, and this
 # file now just asks the MCP client for whatever tools each server

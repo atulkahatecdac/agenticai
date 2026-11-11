@@ -1,4 +1,4 @@
-const MCP = "../6_mcp/";
+const MCP = "10_mcp/";
 
 module.exports = {
   section: "Module 10 – Model Context Protocol",
@@ -10,19 +10,20 @@ module.exports = {
       subtitle: "One open standard for connecting AI apps to tools, data and prompts – write a server once, use it anywhere",
       goals: [
         { icon: "FaPlug", title: "Explain hosts, clients and servers", text: "and why a standard protocol helps" },
-        { icon: "FaShapes", title: "Use the three primitives", text: "resources, tools and prompts" },
-        { icon: "FaRightLeft", title: "Follow the messages", text: "JSON-RPC, stdio vs streamable HTTP, initialise, discover" },
-        { icon: "FaShieldHalved", title: "Secure a server", text: "scopes, access control, input validation" },
+        { icon: "FaShapes", title: "Use the three primitives", text: "resources, tools and prompts – on a live API" },
+        { icon: "FaRightLeft", title: "Follow and debug the messages", text: "JSON-RPC, transports, discovery, the MCP Inspector" },
+        { icon: "FaShieldHalved", title: "Secure a server", text: "permission checks and input validation" },
       ],
       agenda: [
         "What MCP is: host, client, server",
         "Writing a server with FastMCP",
         "Primitives: resources, tools, prompts",
-        "Prompts are not tools",
+        "A live data API as a resource",
         "Message format and transports",
         "Initialisation and tool discovery",
+        "MCP Inspector and Claude Desktop",
         "Prompt templates as a primitive",
-        "Security and input validation",
+        "Permission checks and input validation",
       ],
     },
     {
@@ -49,10 +50,10 @@ module.exports = {
     {
       title: "A Server in a Few Lines",
       subtitle: "FastMCP turns decorated Python functions into MCP tools – the docstring becomes the description",
-      demo: MCP + "6_1_weather_mcp_server.py, 6_1_weather_mcp_client.py",
+      demo: MCP + "10_1_weather_mcp_server.py, 10_1_weather_mcp_client.py",
       split: [1.15, 1],
       left: [
-        { type: "code", caption: "6_1_weather_mcp_server.py", code:
+        { type: "code", caption: "10_1_weather_mcp_server.py", code:
 `from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("Weather")
@@ -85,6 +86,41 @@ mcp = MCPServer("Forex")` },
           { icon: "FaComment", title: "Prompt", tag: "Guide", lines: ["A reusable instruction template the user picks", "**e.g.** summarise a document, review code, write minutes", "`/analyze-currency-trend`"] },
         ] },
         { type: "callout", eyebrow: "Example", text: "\"Should I convert my USD to INR now – and if so, do it for $1,000?\" The AI reads the rate resources, runs the trend-analysis prompt, then calls the place_order tool." },
+      ],
+    },
+    {
+      title: "A Live Data API as a Resource",
+      subtitle: "One CoinGecko call behind two primitives: a resource the app reads, a tool the LLM calls",
+      demo: MCP + "10_2_crypto_mcp_server.py, 10_2_crypto_mcp_client.py",
+      split: [1.2, 1],
+      left: [
+        { type: "code", caption: "10_2_crypto_mcp_server.py (condensed)", code:
+`mcp = FastMCP("Crypto")
+
+@mcp.resource("crypto://price/{coin}",
+              mime_type="application/json")
+def crypto_price_resource(coin: str) -> str:
+    """Live price in USD and INR, with 24h change."""
+    return json.dumps(fetch_price(coin))   # CoinGecko
+
+@mcp.tool()
+def get_cryptocurrency_price(crypto: str) -> str:
+    """Gets the price of a cryptocurrency."""
+    ...` },
+      ],
+      right: [
+        { type: "code", caption: "10_2_crypto_mcp_client.py (condensed)", code:
+`await session.list_resource_templates()
+# crypto://price/{coin}
+await session.read_resource(
+    AnyUrl("crypto://price/bitcoin"))
+await session.call_tool(
+    "get_cryptocurrency_price",
+    {"crypto": "tether"})` },
+        { type: "icons", d: 0.34, size: 10.5, items: [
+          { icon: "FaLink", title: "{coin} makes it a template", text: "One URI pattern covers every coin" },
+          { icon: "FaEye", title: "Read, never act", text: "Resources return data with no side effects" },
+        ] },
       ],
     },
     {
@@ -134,7 +170,7 @@ mcp = MCPServer("Forex")` },
     {
       title: "Initialisation and Tool Discovery",
       subtitle: "Before any tool call, client and server say what they support; then the client asks what tools exist",
-      demo: MCP + "6_0_database_mcp_client_discover_methods.py",
+      demo: MCP + "10_3_database_mcp_client.py",
       split: [1.1, 1],
       left: [
         { type: "text", text: "**Step 1 – session initialisation** (trading app ↔ forex server)", size: 11.5 },
@@ -160,12 +196,41 @@ def search_documents(query: str,
       ],
     },
     {
+      title: "Debug with the Inspector, Connect to Claude Desktop",
+      subtitle: "Test a server on its own first, then plug it into a real host",
+      demo: MCP + "10_3_database_mcp_server.py",
+      split: [1, 1.1],
+      left: [
+        { type: "text", text: "**MCP Inspector** – a browser UI for one server", size: 11.5 },
+        { type: "code", caption: "Needs Node.js (npx)", code: `mcp dev 10_mcp/10_3_database_mcp_server.py` },
+        { type: "steps", size: 10, gap: 0.06, titleSize: 10.5, items: [
+          { title: "Connect", text: "The Inspector launches the server over stdio" },
+          { title: "Tools → List Tools", text: "See names, descriptions and input schemas" },
+          { title: "Run add_user, then list_users", text: "Fill the form; read the raw result" },
+          { title: "History", text: "Every JSON-RPC request and response" },
+        ] },
+      ],
+      right: [
+        { type: "text", text: "**Claude Desktop** – a ready-made host", size: 11.5 },
+        { type: "code", caption: "Settings → Developer → Edit Config", code:
+`{
+  "mcpServers": {
+    "sqlite-database": {
+      "command": "python",
+      "args": ["C:/.../10_mcp/10_3_database_mcp_server.py"]
+    }
+  }
+}` },
+        { type: "text", size: 10.5, color: "slate", text: "Restart Claude Desktop, then ask: \"Add a user Albert Einstein, ae@example.com\" and \"List all users\". `mcp install <server>.py` writes this entry for you." },
+      ],
+    },
+    {
       title: "Prompt Templates as a Primitive",
       subtitle: "Reviewed wording lives on the server, so every client – web app, Slack bot, CLI – says it the same way",
-      demo: MCP + "6_11_prompt_template_mcp_server.py, 6_11_prompt_template_mcp_client.py",
+      demo: MCP + "10_4_prompt_template_mcp_server.py, 10_4_prompt_template_mcp_client.py",
       split: [1.2, 1],
       left: [
-        { type: "code", caption: "6_11_prompt_template_mcp_server.py (condensed)", code:
+        { type: "code", caption: "10_4_prompt_template_mcp_server.py (condensed)", code:
 `mcp = FastMCP("SupportPrompts")
 
 @mcp.tool()
@@ -190,7 +255,7 @@ def product_not_found_reply(product_name, customer_question): ...` },
     {
       title: "Securing an MCP Server",
       subtitle: "Never trust a request just because it came from an AI client",
-      demo: MCP + "6_12_sql_injection_mcp_server.py  ·  " + MCP + "6_10_malicious_mcp_server.py",
+      demo: MCP + "10_5_secure_mcp_server.py  ·  10_6_malicious_mcp_server.py",
       split: [1, 1.1],
       left: [
         { type: "icons", d: 0.38, size: 11, items: [
@@ -201,8 +266,8 @@ def product_not_found_reply(product_name, customer_question): ...` },
       ],
       right: [
         { type: "compare", size: 10.5, cols: [
-          { title: "6_12 – SQL injection", color: "navy", items: ["A tool that builds SQL from model input", "Shows the attack, then the validated version"] },
-          { title: "6_10 – malicious server", color: "coral", items: ["A \"harmless calculator\" that also writes a file to your home folder", "Review server code before you connect – awareness demo, never a template"] },
+          { title: "10_5 – secure server", color: "navy", items: ["`@requires(\"admin\")` on delete_user; the host sets the caller's role", "A SQL injection attack, then the validated, parameterised version"] },
+          { title: "10_6 – malicious server", color: "coral", items: ["A \"harmless calculator\" that also writes a file to your home folder", "Review server code before you connect – awareness demo, never a template"] },
         ] },
         { type: "callout", eyebrow: "Rule", text: "Treat tool arguments as untrusted user input – parameterised queries, allow-lists, least privilege." },
       ],
@@ -212,17 +277,18 @@ def product_not_found_reply(product_name, customer_question): ...` },
       title: "Module 10 Summary",
       subtitle: "What you built",
       built: [
-        { tag: "6_1", title: "A first MCP server", text: "One FastMCP tool, called from a client" },
-        { tag: "6_0", title: "Discovery", text: "Listing a server's tools and schemas" },
-        { tag: "6_11", title: "Prompt templates", text: "Server-owned wording plus a grounding tool" },
-        { tag: "6_12", title: "A hardened server", text: "Input validation against SQL injection" },
+        { tag: "10_1", title: "A first MCP server", text: "One FastMCP tool, called from a client" },
+        { tag: "10_2", title: "A live resource", text: "CoinGecko prices as crypto://price/{coin}" },
+        { tag: "10_3", title: "Discovery and debugging", text: "Schemas, the Inspector, Claude Desktop" },
+        { tag: "10_4", title: "Prompt templates", text: "Server-owned wording plus a grounding tool" },
+        { tag: "10_5", title: "A hardened server", text: "Role checks and input validation" },
       ],
       takeaways: [
         "MCP standardises how apps reach tools and data",
         "Resources are read, tools act, prompts guide",
         "JSON-RPC everywhere; stdio locally, HTTP remotely",
         "The LLM chooses tools from their schemas – describe them well",
-        "Validate every tool argument on the server",
+        "Check permissions and validate every argument on the server",
       ],
       next: "Module 11: MCP Ecosystem Integrations",
     },

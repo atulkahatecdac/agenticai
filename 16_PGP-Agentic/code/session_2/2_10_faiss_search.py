@@ -48,7 +48,7 @@ dimension = embeddings.shape[1]
 # Append raw vectors into a flat list for L2 (Euclidean distance) comparison
 # The only identity a vector has is its row position (0, 1, 2, ...) - the order which they were added in
 index = faiss.IndexFlatL2(dimension)
-# Other options: IndexFlatIP, IndexHNSW32, IndexHNSW64
+# Other options: IndexFlatIP (inner product), IndexHNSWFlat(dimension, 32) (HNSW graph)
 
 index.add(embeddings)
 

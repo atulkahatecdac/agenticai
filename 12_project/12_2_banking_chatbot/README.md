@@ -80,7 +80,7 @@ demo prompts against the new code (regression check) before moving on.
    transactions") end-to-end in one turn. *(slide 8)*
 
 7. **`12_2_7_mcp_tool_boundary/`** — Move each specialist's tool implementations
-   behind MCP servers, following `6_mcp/6_22_langgraph_agent_mcp_tools.py`. Proves
+   behind MCP servers, following `6_mcp/6_15_langgraph_agent_mcp_tools.py`. Proves
    tool changes no longer require agent code changes. *(slide 9)*
 
 8. **`12_2_8_auth_and_session/`** — Two things land together, as they do in the deck:
