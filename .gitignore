@@ -48,6 +48,10 @@ ENV/
 
 # Large data files exceeding GitHub's size limit
 3_langgraph/amazon_products.csv
+# AMFI NAV Parquet files (~180 MB, re-downloaded by 6_mcp/mf_nav/download_data.py)
+6_mcp/mf_nav/data/
+# Generated NAV / forecast CSVs
+6_mcp/mf_nav/output/
 
 # Logs
 *.log

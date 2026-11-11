@@ -105,6 +105,8 @@ datasets==5.0.0
 peft==0.21.0  # LoRA adapters, used by 14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/17_4_lora_sentiment_finetuning.py
 accelerate==1.15.0  # required by transformers.Trainer, used by the same script
 yfinance==1.5.1
+polars==1.40.1  # fast Parquet scans over the 37M-row AMFI NAV file, used by 6_mcp/mf_nav/mf_nav_server.py
+statsmodels==0.14.6  # ARIMA/SARIMAX NAV forecasts in 6_mcp/mf_nav/mf_nav_server.py; 0.14.4 breaks on scipy 1.18 (fmin_l_bfgs_b lost its disp kwarg)
 
 # Document / file handling
 pypdf==6.14.2
