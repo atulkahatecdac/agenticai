@@ -1,8 +1,8 @@
-import importlib
-# pip install openai-agents tavily-python python-dotenv
+# pip install openai-agents tavily-python chromadb python-dotenv
 
 import os
-import sys
+import csv
+import chromadb
 from openai import OpenAI
 from agents import Agent, Runner, function_tool
 from tavily import TavilyClient
@@ -10,9 +10,9 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-sys.path.insert(0, os.path.dirname(__file__))
-_support_ticketing_agent_hitl = importlib.import_module("8_1_support_ticketing_agent_hitl")  # file names start with a digit
-retrieve = _support_ticketing_agent_hitl.retrieve  # reuse the same FAQ vector search for both approaches
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, "customer_support_qa_500.csv")
+TOP_K = 3
 
 MODEL = "gpt-4o-mini"
 openai_client = OpenAI()
@@ -20,8 +20,8 @@ tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 # =====================================================================
 # Traditional RAG vs Agentic RAG, answering questions against the SAME
-# FAQ knowledge base (8_1_support_ticketing_agent_hitl.py's ChromaDB index),
-# so the comparison isolates the RETRIEVAL STRATEGY, not the data.
+# FAQ knowledge base (customer_support_qa_500.csv in an in-memory ChromaDB
+# index), so the comparison isolates the RETRIEVAL STRATEGY, not the data.
 #
 # Traditional RAG: retrieve once -> stuff into context -> generate.
 # A fixed pipeline, no matter what the question actually needs.
@@ -33,6 +33,33 @@ tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 # information?" loop IS the agent's own tool-calling loop; there's no
 # separate check written in this file for it.
 # =====================================================================
+
+
+def load_faq_index(csv_path: str):
+    """Read the FAQ CSV and embed it into an in-memory ChromaDB collection."""
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    collection = chromadb.Client().create_collection("support_faq", metadata={"hnsw:space": "cosine"})
+    collection.add(
+        ids=[row["id"] for row in rows],
+        documents=[row["question"] for row in rows],
+        metadatas=[{"answer": row["answer"]} for row in rows],
+    )
+    return collection
+
+
+FAQ_INDEX = load_faq_index(CSV_PATH)
+
+
+def retrieve(message: str) -> tuple[list[dict], float]:
+    """Semantic search for the most relevant FAQs. Returns (matches, top similarity)."""
+    result = FAQ_INDEX.query(query_texts=[message], n_results=TOP_K)
+    matches = [
+        {"question": q, "answer": meta["answer"]}
+        for q, meta in zip(result["documents"][0], result["metadatas"][0])
+    ]
+    top_similarity = 1 - result["distances"][0][0]  # cosine distance -> similarity
+    return matches, top_similarity
 
 
 def traditional_rag(question: str) -> str:

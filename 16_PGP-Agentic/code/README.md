@@ -139,20 +139,17 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 
 ## Session 8: Agentic RAG and GraphRAG for Agents
 
-`8_1_support_ticketing_agent_hitl.py` is also imported by `8_2` for its FAQ vector search.
-
 | File | Copied from |
 |---|---|
-| `session_8/8_1_support_ticketing_agent_hitl.py` | `15_real/support_ticketing_agent_hitl.py` |
-| `session_8/8_2_traditional_vs_agentic_rag.py` | `15_real/traditional_vs_agentic_rag.py` |
-| `session_8/8_3_loan_eligibility_rag_reasoning.py` | `15_real/loan_eligibility_rag_reasoning.py` |
-| `session_8/8_4_self_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_2_self_rag.py` |
-| `session_8/8_5_corrective_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_3_corrective_rag.py` |
-| `session_8/8_6_cohere_reranking.py` | `14_advanced/14_agentic_rag_graph_rag/14_4_cohere_reranking.py` |
-| `session_8/8_7_hybrid_search.py` | `14_advanced/14_agentic_rag_graph_rag/14_9_hybrid_search.py` |
-| `session_8/8_8_graph_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_7_graph_rag.py` |
-| `session_8/8_9_multi_hop_reasoning.py` | `14_advanced/14_agentic_rag_graph_rag/14_8_multi_hop_reasoning.py` |
-| `session_8/8_10_ragas_evaluation.py` | `14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py` |
+| `session_8/8_1_traditional_vs_agentic_rag.py` | `15_real/traditional_vs_agentic_rag.py` (FAQ index inlined from `15_real/support_ticketing_agent_hitl.py`) |
+| `session_8/8_2_loan_eligibility_rag_reasoning.py` | `15_real/loan_eligibility_rag_reasoning.py` |
+| `session_8/8_3_self_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_2_self_rag.py` |
+| `session_8/8_4_corrective_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_3_corrective_rag.py` |
+| `session_8/8_5_cohere_reranking.py` | `14_advanced/14_agentic_rag_graph_rag/14_4_cohere_reranking.py` |
+| `session_8/8_6_hybrid_search.py` | `14_advanced/14_agentic_rag_graph_rag/14_9_hybrid_search.py` |
+| `session_8/8_7_graph_rag.py` | `14_advanced/14_agentic_rag_graph_rag/14_7_graph_rag.py` |
+| `session_8/8_8_multi_hop_reasoning.py` | `14_advanced/14_agentic_rag_graph_rag/14_8_multi_hop_reasoning.py` |
+| `session_8/8_9_ragas_evaluation.py` | `14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py` |
 
 ## Session 9: Deep Agents: Reflection, Planning and Long-Term Memory
 

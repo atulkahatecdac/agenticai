@@ -32,7 +32,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 # to those entities in one traversal, rather than hoping similarity
 # search happens to rank them all in the same top-k.
 #
-# This differs from 8_9_multi_hop_reasoning.py, which chains FACTS
+# This differs from 8_8_multi_hop_reasoning.py, which chains FACTS
 # together with repeated vector searches and no persistent structure.
 # GraphRAG instead builds the structure once (the index-time cost) and
 # retrieves by traversing it (the query-time payoff).

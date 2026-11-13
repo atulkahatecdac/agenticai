@@ -20,7 +20,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 # =====================================================================
 # Self-RAG: Retrieve -> Evaluate -> Regenerate -> Synthesize.
 #
-# Corrective RAG (see 8_5_corrective_rag.py) grades the RETRIEVED
+# Corrective RAG (see 8_4_corrective_rag.py) grades the RETRIEVED
 # DOCUMENTS and decides where to get context from (KB vs. web search).
 # Self-RAG grades the GENERATED ANSWER instead: after drafting a reply,
 # it asks "is every claim in this draft actually backed by the context I

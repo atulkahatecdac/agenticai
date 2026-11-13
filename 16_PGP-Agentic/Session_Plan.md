@@ -461,49 +461,49 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 2. Traditional RAG vs agentic RAG
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 85–86 | Traditional vs Agentic RAG; (image) | `session_8/8_2_traditional_vs_agentic_rag.py` (FAQ index from `8_1_support_ticketing_agent_hitl.py`) |
-| REAL | 87 | Common Adaptive Strategies | `session_8/8_2_traditional_vs_agentic_rag.py` (adaptive-strategy demos removed) |
+| REAL | 85–86 | Traditional vs Agentic RAG; (image) | `session_8/8_1_traditional_vs_agentic_rag.py` |
+| REAL | 87 | Common Adaptive Strategies | `session_8/8_1_traditional_vs_agentic_rag.py` (adaptive-strategy demos removed) |
 
 ### 3. Retrieval + reasoning
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 89–90 | Retrieval + Reasoning; Example | `session_8/8_3_loan_eligibility_rag_reasoning.py` |
+| REAL | 89–90 | Retrieval + Reasoning; Example | `session_8/8_2_loan_eligibility_rag_reasoning.py` |
 
 ### 4. Self-RAG
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 242 | Self-RAG | `session_8/8_4_self_rag.py` |
+| ADV | 242 | Self-RAG | `session_8/8_3_self_rag.py` |
 
 ### 5. Corrective RAG (CRAG)
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 243 | Corrective RAG (CRAG) | `session_8/8_5_corrective_rag.py` |
+| ADV | 243 | Corrective RAG (CRAG) | `session_8/8_4_corrective_rag.py` |
 
 ### 6. Re-ranking retrieved chunks
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 244 | Re-ranking with Cohere and Cross-encoder Models | `session_8/8_6_cohere_reranking.py` |
+| ADV | 244 | Re-ranking with Cohere and Cross-encoder Models | `session_8/8_5_cohere_reranking.py` |
 
 ### 7. Hybrid search
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 124 | Hybrid Search | (removed – covered by `8_7_hybrid_search.py`) |
-| ADV | 249 | Hybrid Search (agentic RAG) | `session_8/8_7_hybrid_search.py` |
+| ADV | 124 | Hybrid Search | (removed – covered by `8_6_hybrid_search.py`) |
+| ADV | 249 | Hybrid Search (agentic RAG) | `session_8/8_6_hybrid_search.py` |
 
 ### 8. GraphRAG
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 247 | GraphRAG | `session_8/8_8_graph_rag.py` |
+| ADV | 247 | GraphRAG | `session_8/8_7_graph_rag.py` |
 
 ### 9. Multi-hop reasoning
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 248 | Multi-Hop Reasoning | `session_8/8_9_multi_hop_reasoning.py` |
+| ADV | 248 | Multi-Hop Reasoning | `session_8/8_8_multi_hop_reasoning.py` |
 
 ### 10. Evaluating RAG with RAGAS
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 234–241 | RAGAS; Metrics; Faithfulness; Answer Relevance; Context Precision; Context Recall | `session_8/8_10_ragas_evaluation.py` |
+| ADV | 234–241 | RAGAS; Metrics; Faithfulness; Answer Relevance; Context Precision; Context Recall | `session_8/8_9_ragas_evaluation.py` |
 
 ---
 
