@@ -283,18 +283,18 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
 | MAIN | 179 | Looping in LangGraph | `session_5/5_1_langgraph_looping_agents.py` |
-| ADV | 168 | Creating Loops in LangGraph | `session_5/5_2_bank_transfer_retry_loop.py` |
+| ADV | 168 | Creating Loops in LangGraph | `session_5/5_1_langgraph_looping_agents.py` |
 
 ### 2. Human-in-the-loop (HITL)
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 169–170 | Human In the Loop (HIL) | `session_5/5_3_human_approval_gate.py` |
-| REAL | 102–103 | Human In The Loop (HITL) UX; Code Example | `session_5/5_3_human_approval_gate.py` |
+| ADV | 169–170 | Human In the Loop (HIL) | `session_5/5_2_human_approval_gate.py` |
+| REAL | 102–103 | Human In The Loop (HITL) UX; Code Example | `session_5/5_2_human_approval_gate.py` |
 
 ### 3. Checkpointers and persistence
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 79 | Checkpointers | `session_5/5_4_langgraph_memory.py`, `5_5_sqlite_checkpointing_crash_recovery.py` |
+| REAL | 79 | Checkpointers | `session_5/5_3_langgraph_memory.py`, `5_4_sqlite_checkpointing_crash_recovery.py` |
 
 ### 4. State schema design
 | Deck | Slides | Slide content | Code example |
@@ -304,17 +304,17 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 5. Subgraphs
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| ADV | 172 | Subgraphs | `session_5/5_6_medical_diagnosis_subgraphs.py` |
+| ADV | 172 | Subgraphs | `session_5/5_5_medical_diagnosis_subgraphs.py` |
 
 ### 6. Stateful banking chatbot
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| — | — | `12_project/12_2_banking_chatbot/Banking-Agentic-AI.pptx` (project deck) | `session_5/5_7_langgraph_bank_ntfy_email_flask.py`, `5_8_langgraph_create_guardrails.py`, `5_9_langgraph_guardrails_bank_flask.py`, `5_10_langgraph_STM_RAG_chatbot.py` |
+| — | — | `12_project/12_2_banking_chatbot/Banking-Agentic-AI.pptx` (project deck) | `session_5/5_6_langgraph_bank_ntfy_email_flask.py`, `5_7_langgraph_create_guardrails.py`, `5_8_langgraph_guardrails_bank_flask.py`, `5_9_langgraph_STM_RAG_chatbot.py` |
 
 ### 7. Guardrails in LangGraph
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| REAL | 80 | Guardrails | `session_5/5_8_langgraph_create_guardrails.py`, `5_9_langgraph_guardrails_bank_flask.py` |
+| REAL | 80 | Guardrails | `session_5/5_7_langgraph_create_guardrails.py`, `5_8_langgraph_guardrails_bank_flask.py` |
 
 ---
 

@@ -97,20 +97,19 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 
 ## Session 5: LangGraph: Cycles, Human-in-the-Loop and Persistence
 
-`5_9_langgraph_guardrails_bank_flask.py` reads the `banking_faqs` collection built by `5_7` and the `guardrail_chromadb` store built by `5_8`; run those first.
+`5_8_langgraph_guardrails_bank_flask.py` reads the `banking_faqs` collection built by `5_6` and the `guardrail_chromadb` store built by `5_7`; run those first.
 
 | File | Copied from |
 |---|---|
 | `session_5/5_1_langgraph_looping_agents.py` | `3_langgraph/3_12_langgraph_looping_agents.py.py` |
-| `session_5/5_2_bank_transfer_retry_loop.py` | new for this course (replaces a copy of `14_advanced/08_langgraph_cycles_HIL_persistence/08_1_order_processing_state_machine.py`) |
-| `session_5/5_3_human_approval_gate.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_2_human_approval_gate.py` |
-| `session_5/5_4_langgraph_memory.py` | `3_langgraph/3_4_langgraph_memory.py` |
-| `session_5/5_5_sqlite_checkpointing_crash_recovery.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_3_sqlite_checkpointing_crash_recovery.py` |
-| `session_5/5_6_medical_diagnosis_subgraphs.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_7_medical_diagnosis_subgraphs.py` |
-| `session_5/5_7_langgraph_bank_ntfy_email_flask.py` | `3_langgraph/3_9_langgraph_bank_ntfy_email_flask.py` |
-| `session_5/5_8_langgraph_create_guardrails.py` | `3_langgraph/3_10_1_langgraph_create_guardrails.py` |
-| `session_5/5_9_langgraph_guardrails_bank_flask.py` | `3_langgraph/3_10_3_langgraph_guardrails_bank_flask.py` |
-| `session_5/5_10_langgraph_STM_RAG_chatbot.py` | `3_langgraph/3_11_langgraph_STM_RAG_chatbot.py` |
+| `session_5/5_2_human_approval_gate.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_2_human_approval_gate.py` |
+| `session_5/5_3_langgraph_memory.py` | `3_langgraph/3_4_langgraph_memory.py` |
+| `session_5/5_4_sqlite_checkpointing_crash_recovery.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_3_sqlite_checkpointing_crash_recovery.py` |
+| `session_5/5_5_medical_diagnosis_subgraphs.py` | `14_advanced/08_langgraph_cycles_HIL_persistence/08_7_medical_diagnosis_subgraphs.py` |
+| `session_5/5_6_langgraph_bank_ntfy_email_flask.py` | `3_langgraph/3_9_langgraph_bank_ntfy_email_flask.py` |
+| `session_5/5_7_langgraph_create_guardrails.py` | `3_langgraph/3_10_1_langgraph_create_guardrails.py` |
+| `session_5/5_8_langgraph_guardrails_bank_flask.py` | `3_langgraph/3_10_3_langgraph_guardrails_bank_flask.py` |
+| `session_5/5_9_langgraph_STM_RAG_chatbot.py` | `3_langgraph/3_11_langgraph_STM_RAG_chatbot.py` |
 
 ## Session 6: Multi-Agent Orchestration with CrewAI
 

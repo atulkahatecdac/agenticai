@@ -177,7 +177,7 @@ langgraph dev --tunnel     # opens Studio
         ] },
       ],
     },
-    { kind: "image", src: "langgraph_memory_options.png", alt: "LangGraph memory options: no memory, MemorySaver, SqliteSaver", demo: "session_5/5_4_langgraph_memory.py (covered in Session 5)" },
+    { kind: "image", src: "langgraph_memory_options.png", alt: "LangGraph memory options: no memory, MemorySaver, SqliteSaver", demo: "session_5/5_3_langgraph_memory.py (covered in Session 5)" },
     {
       title: "More LangGraph Examples",
       subtitle: "Bigger demos that combine everything so far – several continue into Session 5",
@@ -187,16 +187,16 @@ langgraph dev --tunnel     # opens Studio
           ["News summariser", "External API + conditional logic on news sentiment", "4_6 (4_7 Ollama, 4_8 Gemini)"],
           ["Company sector outlook", "Multi-node research pipeline", "4_9"],
           ["Code security reviewer", "A planner agent decides the review steps", "4_10"],
-          ["Bank chatbot (real data)", "Kaggle FAQs in ChromaDB, ntfy.sh and Gmail, Flask UI", "session_5/5_7"],
-          ["Guardrails", "Build from a Hugging Face dataset, apply to the bank bot", "session_5/5_8 → 5_9"],
-          ["Short-term memory + RAG", "Answer from memory first, else the vector DB", "session_5/5_10"],
+          ["Bank chatbot (real data)", "Kaggle FAQs in ChromaDB, ntfy.sh and Gmail, Flask UI", "session_5/5_6"],
+          ["Guardrails", "Build from a Hugging Face dataset, apply to the bank bot", "session_5/5_7 → 5_8"],
+          ["Short-term memory + RAG", "Answer from memory first, else the vector DB", "session_5/5_9"],
         ] },
       ],
     },
     {
       title: "Setup: Sending Email from Code",
       subtitle: "The notification demos send mail through Gmail with an app password",
-      demo: "session_5/5_7_langgraph_bank_ntfy_email_flask.py",
+      demo: "session_5/5_6_langgraph_bank_ntfy_email_flask.py",
       blocks: [
         { type: "steps", items: [
           { title: "Open your Google Account", text: "Security and sign-in" },

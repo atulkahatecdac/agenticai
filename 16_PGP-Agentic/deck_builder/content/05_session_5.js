@@ -54,38 +54,11 @@ builder.add_conditional_edges(
 )` },
       ],
     },
-    {
-      title: "Retry Loops in a Workflow",
-      subtitle: "Chat message → fund transfer: the LLM extracts, code validates, errors go back to the LLM",
-      demo: S + "5_2_bank_transfer_retry_loop.py",
-      split: [1, 1.1],
-      left: [
-        { type: "code", caption: "Routing after validation", code:
-`graph.add_conditional_edges(
-    "validate_transfer",      # source node
-    route_after_validation,   # routing function
-    {
-        "valid":   "make_transfer",
-        "retry":   "extract_transfer",   # loop
-        "give_up": "human_review",
-    },
-)` },
-      ],
-      right: [
-        { type: "icons", d: 0.38, size: 11, items: [
-          { icon: "FaCircleCheck", title: "valid", text: "Payee is saved and amount > 0: make_transfer", color: "teal" },
-          { icon: "FaRotateRight", title: "retry", text: "Errors go back to extract_transfer – the cycle", color: "coral" },
-          { icon: "FaCircleXmark", title: "give_up", text: "Still invalid after 3 attempts: human_review", color: "slate" },
-        ] },
-        { type: "callout", eyebrow: "Always", text: "Give every loop an exit: an attempt counter, a quality threshold, or both." },
-      ],
-    },
-
     // ---------------------------------------------------------------- HITL
     {
       title: "Human-in-the-Loop",
       subtitle: "Pause the graph at a risky step so a person can approve, edit or reject before it continues",
-      demo: S + "5_3_human_approval_gate.py",
+      demo: S + "5_2_human_approval_gate.py",
       split: [1.15, 1],
       left: [
         { type: "flow", items: [
@@ -109,7 +82,7 @@ builder.add_conditional_edges(
     {
       title: "Checkpointers",
       subtitle: "Save the graph's state so execution can continue later instead of starting over",
-      demo: S + "5_4_langgraph_memory.py, 5_5_sqlite_checkpointing_crash_recovery.py",
+      demo: S + "5_3_langgraph_memory.py, 5_4_sqlite_checkpointing_crash_recovery.py",
       blocks: [
         { type: "tiles", cols: 3, items: [
           { icon: "FaDatabase", title: "Graph state", text: "All current field values" },
@@ -129,7 +102,7 @@ builder.add_conditional_edges(
     {
       title: "Crash Recovery with a SQLite Checkpointer",
       subtitle: "A bank transfer that crashes half-way, then resumes exactly where it stopped",
-      demo: S + "5_5_sqlite_checkpointing_crash_recovery.py",
+      demo: S + "5_4_sqlite_checkpointing_crash_recovery.py",
       blocks: [
         { type: "flow", items: [
           { icon: "FaPlay", label: "START", caption: "thread_id = \"transfer-1\"" },
@@ -188,10 +161,10 @@ builder.add_conditional_edges(
     {
       title: "Subgraphs",
       subtitle: "A graph inside a graph – split one huge workflow into smaller, reusable pieces",
-      demo: S + "5_6_medical_diagnosis_subgraphs.py",
+      demo: S + "5_5_medical_diagnosis_subgraphs.py",
       blocks: [
         { type: "chain", items: ["In parallel: medical_history + lab_analysis (subgraphs) + analyze_xray", "diagnosis", "prescription"], highlight: [0] },
-        { type: "text", size: 11, color: "slate", text: "In 5_6, each subgraph has its own state and nodes – e.g. lab_analysis runs load_lab_results → flag_abnormal_results → summarize_labs – and is called from one node of the main graph." },
+        { type: "text", size: 11, color: "slate", text: "In 5_5, each subgraph has its own state and nodes – e.g. lab_analysis runs load_lab_results → flag_abnormal_results → summarize_labs – and is called from one node of the main graph." },
         { type: "tiles", cols: 3, items: [
           { icon: "FaPuzzlePiece", title: "One responsibility each", text: "A subgraph does one well-defined job" },
           { icon: "FaRecycle", title: "Reusable", text: "Plug the same subgraph into other graphs" },
@@ -203,24 +176,24 @@ builder.add_conditional_edges(
     {
       title: "The Stateful Banking Chatbot",
       subtitle: "The bank assistant grows feature by feature across these scripts",
-      demo: S + "5_7_…_email_flask.py, 5_8_…_guardrails.py, 5_9_…_bank_flask.py, 5_10_…_RAG_chatbot.py",
+      demo: S + "5_6_…_email_flask.py, 5_7_…_guardrails.py, 5_8_…_bank_flask.py, 5_9_…_RAG_chatbot.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaBell", label: "5_7  RAG + notifications", caption: "Bank FAQs in ChromaDB; ntfy for account opening, Gmail for loans" },
-          { icon: "FaFilter", label: "5_8  Build a guardrail", caption: "Harmful examples from a Hugging Face dataset" },
-          { icon: "FaShieldHalved", label: "5_9  Guarded bot", caption: "Unsafe questions are blocked; an LLM explains why" },
-          { icon: "FaMemory", label: "5_10  STM + RAG", caption: "Check short-term memory first, then the vector DB" },
+          { icon: "FaBell", label: "5_6  RAG + notifications", caption: "Bank FAQs in ChromaDB; ntfy for account opening, Gmail for loans" },
+          { icon: "FaFilter", label: "5_7  Build a guardrail", caption: "Harmful examples from a Hugging Face dataset" },
+          { icon: "FaShieldHalved", label: "5_8  Guarded bot", caption: "Unsafe questions are blocked; an LLM explains why" },
+          { icon: "FaMemory", label: "5_9  STM + RAG", caption: "Check short-term memory first, then the vector DB" },
         ] },
-        { type: "callout", eyebrow: "Try it, in this order", text: "5_7 builds the FAQ store that 5_9 reads: ask about opening an account (ntfy) or a loan (Gmail). Then run 5_8 and 5_9 and try an off-topic or unsafe question." },
+        { type: "callout", eyebrow: "Try it, in this order", text: "5_6 builds the FAQ store that 5_8 reads: ask about opening an account (ntfy) or a loan (Gmail). Then run 5_7 and 5_8 and try an off-topic or unsafe question." },
       ],
     },
 
     // ---------------------------------------------------------------- guardrails
-    { kind: "image", src: "guardrails_in_agents.png", alt: "Guardrails in AI agents", demo: S + "5_8_langgraph_create_guardrails.py, 5_9_langgraph_guardrails_bank_flask.py" },
+    { kind: "image", src: "guardrails_in_agents.png", alt: "Guardrails in AI agents", demo: S + "5_7_langgraph_create_guardrails.py, 5_8_langgraph_guardrails_bank_flask.py" },
     {
       title: "Types of Guardrails",
       subtitle: "Controls that keep a model within limits: safe, on-topic, accurate and within policy",
-      demo: S + "5_8_langgraph_create_guardrails.py, 5_9_langgraph_guardrails_bank_flask.py",
+      demo: S + "5_7_langgraph_create_guardrails.py, 5_8_langgraph_guardrails_bank_flask.py",
       blocks: [
         { type: "tiles", cols: 3, size: 10, items: [
           { icon: "FaBan", title: "Keyword blocking", text: "Block restricted words" },
@@ -233,7 +206,7 @@ builder.add_conditional_edges(
           { icon: "FaGaugeHigh", title: "Rate and abuse control", text: "Throttling, authentication" },
           { icon: "FaBookOpen", title: "Grounding", text: "Retrieval-only answers with citations" },
         ] },
-        { type: "text", size: 11, color: "slate", text: "The demos build a semantic guardrail from a Hugging Face dataset (5_8), then put it in front of the bank chatbot (5_9)." },
+        { type: "text", size: 11, color: "slate", text: "The demos build a semantic guardrail from a Hugging Face dataset (5_7), then put it in front of the bank chatbot (5_8)." },
       ],
     },
     {
@@ -242,10 +215,10 @@ builder.add_conditional_edges(
       subtitle: "What you built today",
       built: [
         { tag: "5_1", title: "A self-refining loop", text: "answer → evaluate → continue or stop, capped at 3 rounds" },
-        { tag: "5_3", title: "Human approval gate", text: "interrupt() and Command(resume=…) for expense claims" },
-        { tag: "5_5", title: "Crash recovery", text: "A SQLite checkpointer resumes a half-done transfer" },
-        { tag: "5_6", title: "Subgraphs", text: "A medical-diagnosis flow built from smaller graphs" },
-        { tag: "5_9", title: "Guarded bank bot", text: "Semantic guardrails in front of RAG" },
+        { tag: "5_2", title: "Human approval gate", text: "interrupt() and Command(resume=…) for expense claims" },
+        { tag: "5_4", title: "Crash recovery", text: "A SQLite checkpointer resumes a half-done transfer" },
+        { tag: "5_5", title: "Subgraphs", text: "A medical-diagnosis flow built from smaller graphs" },
+        { tag: "5_8", title: "Guarded bank bot", text: "Semantic guardrails in front of RAG" },
       ],
       takeaways: [
         "A loop is a conditional edge pointing backwards – always add an exit",
