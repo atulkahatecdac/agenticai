@@ -99,7 +99,7 @@ async def main():
     async for chunk in team.run_stream(task=task):
         # Stream each message as it arrives
         if hasattr(chunk, "content") and chunk.content:
-            sender = getattr(chunk, "sender", "Agent")
+            sender = getattr(chunk, "source", "Agent")
             print(f"\033[96m[{sender}]\033[0m {chunk.content}\n")
 
     print("\n=== Final Report Generated ===\n")

@@ -405,37 +405,37 @@ All hands-on in this session uses the **OpenAI Agents SDK** (`pip install openai
 ### 2. AssistantAgent and tools
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 189–190 | AssistantAgent; Step / Component / What Happens table | `session_7/7_1_autogen_forex_api.py`, `7_2_autogen_forex_api_text_message.py` |
+| MAIN | 189–190 | AssistantAgent; Step / Component / What Happens table | `session_7/7_1_autogen_forex_api.py` |
 
 ### 3. Synchronous vs asynchronous agents
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 191 | Synchronous Versus Asynchronous Agents | `session_7/7_3_autogen_multimodal_message.py` (sequential), `7_4_autogen_asynchronous_agents.py` |
+| MAIN | 191 | Synchronous Versus Asynchronous Agents | `session_7/7_2_autogen_multimodal_message.py` (sequential), `7_3_autogen_asynchronous_agents.py` |
 
 ### 4. Structured output
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 192 | Structured Output | `session_7/7_5_autogen_structured_output.py` |
+| MAIN | 192 | Structured Output | `session_7/7_4_autogen_structured_output.py` |
 
 ### 5. Multimodal messages
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| — | — | (no dedicated slide) | `session_7/7_3_autogen_multimodal_message.py` |
+| — | — | (new slide: Messages: Text and Images) | `session_7/7_2_autogen_multimodal_message.py` |
 
 ### 6. Teams / group chats
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 193 | Teams | `session_7/7_6_autogen_round_robin_group_chat.py`, `7_7_autogen_selector_group_chat.py`, `7_8_autogen_magentic_group_chat.py` (recession-claim demo removed) |
+| MAIN | 193 | Teams | `session_7/7_5_autogen_round_robin_group_chat.py`, `7_6_autogen_selector_group_chat.py`, `7_7_autogen_magentic_group_chat.py` (recession-claim demo removed) |
 
 ### 7. GraphFlow
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 194 | AutoGen GraphFlow (Similar to LangGraph) | `session_7/7_9_autogen_graphflow.py`, `7_10_autogen_graphflow_parallel_join.py` |
+| MAIN | 194 | AutoGen GraphFlow (Similar to LangGraph) | `session_7/7_8_autogen_graphflow_parallel_join.py` |
 
 ### 8. Memory
 | Deck | Slides | Slide content | Code example |
 |---|---|---|---|
-| MAIN | 195 | Memory | `session_7/7_11_autogen_memory.py` |
+| MAIN | 195 | Memory | `session_7/7_9_autogen_memory.py` |
 
 ---
 

@@ -128,16 +128,14 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 | File | Copied from |
 |---|---|
 | `session_7/7_1_autogen_forex_api.py` | `5_autogen/5_2_autogen_forex_api.py` |
-| `session_7/7_2_autogen_forex_api_text_message.py` | `5_autogen/5_3_autogen_forex_api_text_message.py` |
-| `session_7/7_3_autogen_multimodal_message.py` | `5_autogen/5_4_autogen_multimodal_message.py` |
-| `session_7/7_4_autogen_asynchronous_agents.py` | `5_autogen/5_6_autogen_asynchronous_agents.py` |
-| `session_7/7_5_autogen_structured_output.py` | `5_autogen/5_7_autogen_structured_output.py` |
-| `session_7/7_6_autogen_round_robin_group_chat.py` | `5_autogen/5_8_autogen_round_robin_group_chat.py` |
-| `session_7/7_7_autogen_selector_group_chat.py` | `5_autogen/5_9_autogen_selector_group_chat.py` |
-| `session_7/7_8_autogen_magentic_group_chat.py` | `5_autogen/5_10_autogen_magentic_group_chat.py` |
-| `session_7/7_9_autogen_graphflow.py` | `5_autogen/5_12_autogen_graphflow.py` |
-| `session_7/7_10_autogen_graphflow_parallel_join.py` | `5_autogen/5_13_autogen_graphflow_parallel_join.py` |
-| `session_7/7_11_autogen_memory.py` | `5_autogen/5_14_autogen_memory.py` |
+| `session_7/7_2_autogen_multimodal_message.py` | `5_autogen/5_4_autogen_multimodal_message.py` |
+| `session_7/7_3_autogen_asynchronous_agents.py` | `5_autogen/5_6_autogen_asynchronous_agents.py` |
+| `session_7/7_4_autogen_structured_output.py` | `5_autogen/5_7_autogen_structured_output.py` |
+| `session_7/7_5_autogen_round_robin_group_chat.py` | `5_autogen/5_8_autogen_round_robin_group_chat.py` |
+| `session_7/7_6_autogen_selector_group_chat.py` | `5_autogen/5_9_autogen_selector_group_chat.py` |
+| `session_7/7_7_autogen_magentic_group_chat.py` | `5_autogen/5_10_autogen_magentic_group_chat.py` |
+| `session_7/7_8_autogen_graphflow_parallel_join.py` | `5_autogen/5_13_autogen_graphflow_parallel_join.py` |
+| `session_7/7_9_autogen_memory.py` | `5_autogen/5_14_autogen_memory.py` |
 
 ## Session 8: Agentic RAG and GraphRAG for Agents
 

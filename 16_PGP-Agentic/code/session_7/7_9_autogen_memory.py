@@ -46,7 +46,7 @@ async def main():
     # Run the assistant — it should recall the memory and reply in preferred language
     print("Assistant is thinking...\n")
     stream = assistant_agent.run_stream(
-        task=f"The user asked: '{user_question}'. Respond in their preferred language."
+        task=user_question  # no language hint: it comes from memory
     )
     await Console(stream)
 

@@ -48,7 +48,7 @@ async def main():
     async for message in team.run_stream(task="Give me a Java SpringBoot code to create an API for a simple banking application."):
         # Handle both TextMessage and delta-style chunks
         if hasattr(message, "content"):
-            sender = getattr(message, "sender", "Unknown")
+            sender = getattr(message, "source", "Unknown")
             print(f"\n[{sender}]:\n{message.content}\n{'-' * 60}")
 
     print("\n=== Discussion Finished ===\n")
