@@ -286,7 +286,7 @@ LANGSMITH_PROJECT="market-research-crew"` },
         "Context passes work inside a run; memory carries it across runs",
         "Trace everything – multi-agent bugs are hard to see otherwise",
       ],
-      next: "Session 7: Multi-Agent Systems with Microsoft AutoGen",
+      next: "Session 7: Microsoft Agent Framework and AutoGen",
     },
   ],
 };

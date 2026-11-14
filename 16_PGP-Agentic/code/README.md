@@ -123,19 +123,25 @@ Run `3_4_create_sales_db.py` first: it creates the `sales.db` that `3_5` and `3_
 | `session_6/6_6_guardrails_and_reliability.py` | `14_advanced/13_crew_ai/13_8_guardrails_and_reliability.py` |
 | `session_6/6_7_crewai_observability.py` | `4_crewai/4_5_crewai_observability.py` (also `14_advanced/13_crew_ai/13_9_crewai_observability.py`) |
 
-## Session 7: Multi-Agent Systems with Microsoft AutoGen
+## Session 7: Microsoft Agent Framework and AutoGen
+
+All demos share one story: the SecureBank support desk.
 
 | File | Copied from |
 |---|---|
-| `session_7/7_1_autogen_forex_api.py` | `5_autogen/5_2_autogen_forex_api.py` |
-| `session_7/7_2_autogen_multimodal_message.py` | `5_autogen/5_4_autogen_multimodal_message.py` |
-| `session_7/7_3_autogen_asynchronous_agents.py` | `5_autogen/5_6_autogen_asynchronous_agents.py` |
-| `session_7/7_4_autogen_structured_output.py` | `5_autogen/5_7_autogen_structured_output.py` |
-| `session_7/7_5_autogen_round_robin_group_chat.py` | `5_autogen/5_8_autogen_round_robin_group_chat.py` |
-| `session_7/7_6_autogen_selector_group_chat.py` | `5_autogen/5_9_autogen_selector_group_chat.py` |
-| `session_7/7_7_autogen_magentic_group_chat.py` | `5_autogen/5_10_autogen_magentic_group_chat.py` |
-| `session_7/7_8_autogen_graphflow_parallel_join.py` | `5_autogen/5_13_autogen_graphflow_parallel_join.py` |
-| `session_7/7_9_autogen_memory.py` | `5_autogen/5_14_autogen_memory.py` |
+| `session_7/7_1_maf_bank_assistant.py` | new (Microsoft Agent Framework: agent + tools) |
+| `session_7/7_2_maf_session_and_structured_output.py` | new (sessions, complaint → SupportTicket) |
+| `session_7/7_3_maf_middleware.py` | new (agent and function middleware) |
+| `session_7/7_4_maf_tool_approval.py` | new (human approval for transfer_funds) |
+| `session_7/7_5_maf_workflow_routing.py` | new (switch-case routing workflow) |
+| `session_7/7_6_maf_loan_pipeline_checkpoints.py` | new (fan-out/fan-in + checkpoint resume; writes `loan_checkpoints/`) |
+| `session_7/7_7_maf_sequential_concurrent.py` | new (SequentialBuilder, ConcurrentBuilder) |
+| `session_7/7_8_maf_handoff_support_desk.py` | new (HandoffBuilder, interactive) |
+| `session_7/7_9_maf_observability.py` | new (OpenTelemetry console spans) |
+| `session_7/7_10_autogen_bank_assistant.py` | adapted from `5_autogen/5_2_autogen_forex_api.py` (SecureBank twin of 7_1) |
+| `session_7/7_11_autogen_round_robin_group_chat.py` | adapted from `5_autogen/5_8_autogen_round_robin_group_chat.py` (loan letter + compliance) |
+| `session_7/7_12_autogen_graphflow_loan_checks.py` | adapted from `5_autogen/5_13_autogen_graphflow_parallel_join.py` (twin of 7_6) |
+| `session_7/7_13_migrated_round_robin_to_maf.py` | new (7_11 migrated to the Agent Framework) |
 
 ## Session 8: Agentic RAG and GraphRAG for Agents
 

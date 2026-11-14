@@ -101,7 +101,7 @@ if __name__ == "__main__":
     print("RUN 1: a real ticker - should route to 'good' -> analyze_with_crew")
     print("=" * 70)
     good_flow = StockResearchFlow()
-    good_flow.kickoff(inputs={"ticker": "AAPL"})
+    good_flow.kickoff(inputs={"ticker": "NVDA"})
 
     print("\n" + "=" * 70)
     print("RUN 2: an invalid ticker - should route to 'retry' -> handle_low_confidence")

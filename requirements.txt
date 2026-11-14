@@ -16,6 +16,11 @@ crewai==0.203.2
 autogen-agentchat==0.7.5
 autogen-ext[openai]==0.7.5
 autogen-ext[anthropic]==0.7.5
+# Microsoft Agent Framework (AutoGen successor), used by 16_PGP-Agentic/code/session_7/7_1-7_9, 7_13.
+# Its MCP client (MCPStdioTool) needs mcp>=2.2, which conflicts with openai-agents (mcp<2) below - not usable here.
+agent-framework-core==1.26.0
+agent-framework-openai==1.18.2
+agent-framework-orchestrations==1.4.2
 google-adk==2.3.0
 phidata==2.7.10
 

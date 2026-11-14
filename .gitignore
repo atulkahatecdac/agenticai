@@ -66,3 +66,6 @@ desktop.ini
 
 # Node dependencies (e.g. tools/deck_builder - restore with npm install)
 node_modules/
+
+# Runtime checkpoints written by 16_PGP-Agentic/code/session_7/7_6_maf_loan_pipeline_checkpoints.py
+loan_checkpoints/
