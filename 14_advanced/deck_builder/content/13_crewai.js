@@ -23,6 +23,7 @@ module.exports = {
         "Knowledge and structured output",
         "Guardrails, error handling and reliability",
         "Observability with LangSmith",
+        "CrewAI inside a LangGraph graph",
       ],
     },
     {
@@ -296,6 +297,37 @@ LANGSMITH_PROJECT="market-research-crew"` },
       ],
     },
     {
+      title: "CrewAI Inside LangGraph",
+      subtitle: "LangGraph owns the control flow; a CrewAI crew does the teamwork inside one node",
+      demo: M + "13_10_crewai_inside_langgraph.py   (local qwen3:8b, no API key)",
+      split: [1, 1.1],
+      left: [
+        { type: "chain", size: 10, items: ["START", "triage", "crew_node", "quality_gate", "END"], highlight: [2] },
+        { type: "bullets", size: 10.5, items: [
+          "**triage** (LangChain + Ollama): merchandising request? If not, a polite decline – the crew never starts",
+          "**crew_node**: a sequential crew – Trend Analyst → Merchandising Copywriter",
+          "**quality_gate** (plain code): exactly 3 bullets, under ~90 words? If not, back to crew_node once, with the reason as feedback",
+        ] },
+      ],
+      right: [
+        { type: "code", caption: "The whole integration is one function", code:
+`def crew_node(state: MerchState) -> MerchState:
+    result = merch_crew.kickoff(inputs={
+        "request": state["request"],
+        "feedback": state.get("feedback", "")})
+    return {"draft": result.raw,
+            "attempts": state["attempts"] + 1}
+
+g.add_node("crew_node", crew_node)
+g.add_conditional_edges("quality_gate", after_gate,
+                        ["crew_node", END])` },
+        { type: "table", size: 10, widths: [1.1, 2.6], head: ["Use", "For"], rows: [
+          ["LangGraph", "Routing, loops, retries, state, checkpoints, human approval"],
+          ["CrewAI", "Role-based agents handing work to each other"],
+        ] },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 13 Summary",
       subtitle: "What you built",
@@ -305,6 +337,7 @@ LANGSMITH_PROJECT="market-research-crew"` },
         { tag: "13_3", title: "A Flow", text: "@start, @router and @listen around a stock-analysis crew" },
         { tag: "13_4", title: "Hierarchical crew", text: "A manager agent delegating to specialists" },
         { tag: "13_8", title: "Guardrails", text: "Checks that reject a bad answer before it moves on" },
+        { tag: "13_10", title: "Crew + graph", text: "A crew as one node, with a quality-gate loop" },
       ],
       takeaways: [
         "A crew is about who works; a flow is about what happens next",

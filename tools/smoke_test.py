@@ -45,7 +45,9 @@ SEPARATE_ENV_DIRS = {
     os.path.join("14_advanced", "19_capstone"),  # each capstone has its own setup
 }
 # Packages documented as needing a separate venv wherever they appear.
-SEPARATE_ENV_MODULES = {"dspy", "docling", "langchain_docling"}
+# guardrails (14_advanced/16_guardrails/16_5) and phoenix (14_advanced/17_.../17_6) pull
+# langchain-core 1.x / newer OpenTelemetry; each has its own 16_5_/17_6_requirements.txt.
+SEPARATE_ENV_MODULES = {"dspy", "docling", "langchain_docling", "guardrails", "phoenix"}
 
 # A string literal that starts with a drive letter, e.g. "C:\..." or 'd:/...'
 ABS_PATH = re.compile(r"""(?<![A-Za-z0-9_])[rRbBfFuU]{0,2}(["'])[A-Za-z]:(\\|/)""")

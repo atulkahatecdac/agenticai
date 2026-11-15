@@ -1,0 +1,135 @@
+{
+  "name": "15_9 n8n to LangGraph Bridge",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_9 n8n -> LangGraph bridge\n**Setup**\n1. Start the agent: `python 15_9_langgraph_agent_service.py` (port 8015).\n2. Publish 15_3 too - the agent creates tickets through its webhook.\n**Test** (PowerShell):\n`Invoke-RestMethod -Method Post http://localhost:5678/webhook/ask-agent -ContentType application/json -Body '{\"question\":\"My router has been dead since yesterday\",\"name\":\"Asha\",\"email\":\"asha@example.com\"}'`\nn8n runs in Docker, so it reaches your PC as host.docker.internal.",
+        "width": 560,
+        "height": 300,
+        "color": 5
+      },
+      "id": "5e5e7eff-9883-4123-ae97-46695aba7a92",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -380
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ask-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0ca78bd4-69ff-4f3f-9d64-c8c900774725",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "e7b3d3b9-867f-4530-a353-492381b48225"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8015/agent/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ question: $json.body.question, name: $json.body.name || 'Customer', email: $json.body.email || '' }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "49db17df-87ae-4920-9af6-9b4810b03b2c",
+      "name": "Call LangGraph Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "790d1097-8ebe-4691-a7bf-de8110d2fd3e",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"The agent service is not reachable - is 15_9_langgraph_agent_service.py running?\"\n}",
+        "options": {
+          "responseCode": 503
+        }
+      },
+      "id": "ffe01d8e-5e8f-49e6-9d4f-42c1fe894633",
+      "name": "Respond 503",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Call LangGraph Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call LangGraph Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond 200",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 503",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

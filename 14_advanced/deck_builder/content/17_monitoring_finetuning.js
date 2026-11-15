@@ -17,10 +17,11 @@ module.exports = {
       agenda: [
         "OpenTelemetry for a LangGraph agent",
         "Jaeger and the trace waterfall",
-        "Prometheus and Grafana",
-        "Arize Phoenix",
+        "Prometheus, Grafana, PromQL and alerts",
         "SLA, SLO and SLI",
-        "Prompting vs fine-tuning",
+        "Embedding drift; Arize Phoenix tracing",
+        "Cost per run and budgets per user",
+        "Prompting vs fine-tuning; data from traces",
         "LoRA, QLoRA and PEFT",
         "RLHF and DPO",
       ],
@@ -107,6 +108,38 @@ start_http_server(8000)   # /metrics` },
       ],
     },
     {
+      title: "PromQL and Alerting",
+      subtitle: "Every Grafana panel is a PromQL query; an alert is a query that returns rows only when something is wrong",
+      demo: M + "monitoring/prometheus/alert_rules.yml  →  :9095/alerts",
+      split: [1.1, 1],
+      left: [
+        { type: "table", size: 9.5, widths: [2.6, 1.3], head: ["PromQL", "Reads as"], rows: [
+          ["sum(rate(securelife_agent_requests_total[1m])) * 60", "Turns per minute"],
+          ["histogram_quantile(0.95, sum by (le) (rate(..._turn_duration_seconds_bucket[5m])))", "p95 turn latency"],
+          ["sum by (node) (increase(..._node_errors_total[5m]))", "Errors per node, last 5 min"],
+          ["sum by (token_type) (rate(..._llm_tokens_total[1m]))", "Token burn rate"],
+        ] },
+        { type: "text", size: 10, color: "slate", text: "`rate()` turns an ever-growing counter into a per-second speed; `histogram_quantile()` turns buckets into a percentile." },
+      ],
+      right: [
+        { type: "code", caption: "alert_rules.yml (one of four rules)", code:
+`- alert: AgentTurnLatencyHigh
+  expr: |
+    histogram_quantile(0.95, sum by (le) (rate(
+      securelife_agent_turn_duration_seconds_bucket[5m]
+    ))) > 8
+  for: 2m          # must stay bad for 2 minutes
+  labels: { severity: warning }
+  annotations:
+    summary: "p95 is {{ $value }}s (SLO 8s)"` },
+        { type: "bullets", size: 10.5, items: [
+          "Also: error rate > 5%, token burn above budget, agent down (`up == 0`)",
+          "Checked with `promtool check rules` – 4 rules",
+          "Production: Prometheus → Alertmanager → Slack / PagerDuty",
+        ] },
+      ],
+    },
+    {
       title: "LLM-Specific Observability and Reliability Targets",
       subtitle: "\"Did the API return 200?\" isn't enough – \"Was the answer actually good?\" is the question",
       demo: "Concept",
@@ -126,6 +159,85 @@ start_http_server(8000)   # /metrics` },
         { type: "callout", eyebrow: "Read the example", text: "The SLI missed the SLO but not the SLA – an early warning to tighten reliability before a customer promise is broken." },
       ],
     },
+    {
+      title: "Embedding Drift: Users Ask New Things",
+      subtitle: "Nothing errors and latency is fine – only the meaning of the traffic has moved. Three checks catch it",
+      demo: M + "17_5_embedding_drift.py   (no LLM, no API key)",
+      split: [1, 1.05],
+      left: [
+        { type: "image", src: "embedding_drift.png", alt: "This week's queries form a new cluster with no knowledge-base points near it" },
+        { type: "text", size: 10, color: "slate", text: "A new EV wall charger launched; the help-desk KB has nothing on it." },
+      ],
+      right: [
+        { type: "table", size: 9.5, widths: [1.45, 2.3], head: ["Check", "Result this week"], rows: [
+          ["1. Centroid distance", "0.284 vs 0.248 chance level (bootstrap) → DRIFT"],
+          ["2. KB coverage", "Queries with no good KB match: 9% → 45%"],
+          ["3. New clusters", "8 queries, best KB match 0.26 – all about the EV charger"],
+        ] },
+        { type: "text", size: 10.5, text: "**Why three:** only 8 of 22 queries changed, so the average moves just past the noise. Checks 2 and 3 look at each query and name the new topic." },
+        { type: "text", size: 10, color: "slate", text: "**Not covered: Phoenix's \"Inferences\" drift view** – current Phoenix (v21) removed it. The maths above is what it computed." },
+      ],
+    },
+    {
+      title: "Arize Phoenix: Tracing in One Line",
+      subtitle: "OpenInference instrumentors already know what an LLM call, a prompt and a retriever are",
+      demo: M + "17_6_phoenix_tracing.py  (own venv: 17_6_requirements.txt)",
+      split: [1.1, 1],
+      left: [
+        { type: "code", caption: "Terminal 1", code: `phoenix serve          # UI + collector on :6006` },
+        { type: "code", caption: "Terminal 2 – 17_6_phoenix_tracing.py (condensed)", code:
+`from phoenix.otel import register
+
+register(endpoint="http://localhost:6006/v1/traces",
+         project_name="helpdesk-rag",
+         auto_instrument=True)     # finds LangChain itself
+
+chain = ({"context": faq_retriever, "question": ...}
+         | prompt | ChatOpenAI(model="gpt-4o-mini"))
+chain.invoke("Can I pay with UPI?")   # traced` },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.3, 2.4], head: ["17_1 / 17_2", "17_6 Phoenix"], rows: [
+          ["You create spans and set attributes", "Spans and LLM attributes come for free"],
+          ["Generic: Jaeger shows timings", "LLM-aware: prompt text, tokens, retrieved docs"],
+          ["Any app", "LLM apps; plus evals on the traces"],
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "Tested: three questions → three traces in project helpdesk-rag. Phoenix needs its own venv because it pins newer OpenTelemetry packages than this repo." },
+      ],
+    },
+    {
+      title: "Cost per Run, Budgets per User",
+      subtitle: "Every response carries its token usage – one callback can price it, cap it and raise an alert",
+      demo: M + "17_7_cost_tracking_token_budget.py",
+      split: [1.15, 1],
+      left: [
+        { type: "code", caption: "17_7 (condensed)", code:
+`class CostTracker(BaseCallbackHandler):
+    def on_chat_model_start(self, s, m, *, run_id,
+                            metadata, **kw):
+        self.who[run_id] = metadata     # who is calling
+
+    def on_llm_end(self, response, *, run_id, **kw):
+        msg = response.generations[0][0].message
+        u = msg.usage_metadata
+        cost = (u["input_tokens"] * 0.15
+                + u["output_tokens"] * 0.60) / 1e6
+        self.spent[user] += cost        # + alert at 80%
+
+def ask(user, plan, question):
+    tracker.check(user, plan)           # BEFORE the call
+    meta = {"user": user, "plan": plan}
+    return llm.invoke(question, config={"metadata": meta})` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Price every call", text: "Tokens × the model's price, per user and per model" },
+          { title: "Alert early", text: "80% of a daily budget → a warning (Slack, PagerDuty)" },
+          { title: "Refuse at 100%", text: "Check before calling, so the over-budget call never happens" },
+        ] },
+        { type: "callout", eyebrow: "In the demo", text: "The free-plan user passes 80% on their first call and is refused on the next two; the pro user is unaffected." },
+      ],
+    },
 
     // ---------------------------------------------------------------- fine-tuning
     {
@@ -138,6 +250,32 @@ start_http_server(8000)   # /metrics` },
           { title: "Fine-tuning", color: "teal", items: ["A behaviour, style or task done consistently", "e.g. classify complaints in your own labelling scheme", "Needs data, compute and evaluation"] },
         ] },
         { type: "callout", eyebrow: "Rule of thumb", text: "Don't fine-tune just because the model doesn't know your latest information – retrieve it instead." },
+      ],
+    },
+    {
+      title: "From Traces to a Training Set",
+      subtitle: "Your traced runs are real questions and real answers – the well-rated ones are fine-tuning data",
+      demo: M + "17_8_finetuning_dataset_from_traces.py",
+      split: [1, 1.1],
+      left: [
+        { type: "steps", size: 10.5, gap: 0.08, items: [
+          { title: "Keep", text: "Thumbs-up feedback and no error (LangSmith feedback_stats)" },
+          { title: "Scrub", text: "Phones, e-mails, card numbers → <PHONE>, <EMAIL>, <CARD>" },
+          { title: "Dedupe", text: "The same Q&A twice teaches nothing" },
+          { title: "Split", text: "80/20 – the test set is never trained on" },
+          { title: "Write", text: "Chat JSONL – OpenAI fine-tuning, Hugging Face TRL, Unsloth" },
+        ] },
+      ],
+      right: [
+        { type: "code", caption: "One line of data/finetune_train.jsonl", code:
+`{"messages": [
+  {"role": "system", "content": "You are the support
+      assistant for an online store..."},
+  {"role": "user", "content": "My refund hasn't come.
+      Call me on <PHONE> or mail <EMAIL>"},
+  {"role": "assistant", "content": "I'm sorry about
+      the delay, Priya. Refunds reach your account..."}]}` },
+        { type: "text", size: 10.5, color: "slate", text: "Sample run: 16 traces → 12 kept (1 error, 2 not liked, 1 duplicate dropped), PII masked in 2 fields → 9 train, 3 test. Real projects start at a few hundred good examples." },
       ],
     },
     {
@@ -194,9 +332,11 @@ lora_model.print_trainable_parameters()` },
       title: "Module 17 Summary",
       subtitle: "What you built",
       built: [
-        { tag: "17_1", title: "OpenTelemetry spans", text: "A LangGraph agent instrumented node by node" },
-        { tag: "17_2", title: "Jaeger waterfall", text: "The same spans as a timeline" },
-        { tag: "17_3", title: "Prometheus metrics", text: "Counters and histograms in Grafana" },
+        { tag: "17_1", title: "Traces", text: "OpenTelemetry spans, a Jaeger waterfall, Phoenix" },
+        { tag: "17_3", title: "Metrics and alerts", text: "Prometheus, Grafana, four alert rules" },
+        { tag: "17_5", title: "Drift checks", text: "A new topic found by its embeddings" },
+        { tag: "17_7", title: "A cost guard", text: "Per-user budgets, alerts and refusals" },
+        { tag: "17_8", title: "Training data", text: "Clean JSONL from rated production traces" },
         { tag: "17_4", title: "A LoRA adapter", text: "Sentiment fine-tuning with PEFT" },
       ],
       takeaways: [

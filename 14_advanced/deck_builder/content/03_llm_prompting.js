@@ -23,6 +23,7 @@ module.exports = {
         "Zero/few-shot, chain-of-thought, tree-of-thought, ReAct",
         "Structured output and tool calling",
         "Measuring tokens with tiktoken",
+        "Managing the context window",
         "Evaluating LLM output",
       ],
     },
@@ -94,6 +95,8 @@ module.exports = {
           ["instructions", "The AI's role or behaviour (system prompt)"],
           ["input", "The user's prompt or question"],
           ["temperature", "Randomness: 0 = deterministic, 2 = most creative"],
+          ["top_p", "Called nucleus sampling, alternative to temperature, consider tokens within the highest cumulative probability group (e.g. top_p = 0.5)"],
+          ["top_k", "Not supported in OpenAI, Controls how many of the most probable tokens are considered using text generation"],
         ] },
       ],
       right: [
@@ -107,6 +110,68 @@ module.exports = {
           ["output_text", "SDK helper – all text in one string"],
         ] },
       ],
+    },
+    // The next four slides (sampling infographic + three step-by-step builds) were made by hand in PowerPoint; `box`/`side` reproduce their layout exactly.
+    { kind: "image", full: true, src: "sampling_top_k_top_p_temperature.png" },
+    {
+      kind: "image", title: "Building an AI Agent Step by Step – OpenAI Responses API", titleSize: 24,
+      src: "agent_step_by_step_responses_api.png", box: { x: 4.53, y: 1.19, w: 5.45, h: 3.63 },
+      side: { box: { x: 0.07, y: 0.92, w: 4.46, h: 4.34 }, size: 12, items: [
+        { label: "Import packages", code: "from openai import OpenAI\nfrom dotenv import load_dotenv" },
+        { label: "Load API key", code: "load_dotenv()" },
+        { label: "Specify which LLM provider to use", code: "client = OpenAI()" },
+        { label: "Use the OpenAI API to send a request to OpenAI LLM", code:
+`response = client.responses.create(
+    model="gpt-4o-mini",
+    instructions="You are a person who understands AI very well.",
+    input="Explain Artificial Intelligence.",
+    temperature=0.9
+)` },
+        { label: "Print response from the LLM", code: "print(response.output_text)" },
+      ] },
+    },
+    {
+      kind: "image", title: "Building an AI Agent Step by Step – OpenAI Agents SDK", titleSize: 24,
+      src: "agent_step_by_step_agents_sdk.png", box: { x: 4.37, y: 1.53, w: 5.68, h: 2.9 },
+      side: { box: { x: 0.07, y: 0.86, w: 4.46, h: 4.75 }, size: 12, items: [
+        { label: "Import packages", code: "from agents import Agent, Runner\nfrom dotenv import load_dotenv" },
+        { label: "Load API key", code: "load_dotenv()" },
+        { label: "Define an AI Agent", code:
+`agent = Agent(
+    name="AI Expert",
+    instructions="You are a person who understands AI very well.",
+    model="gpt-4o-mini"
+)` },
+        { label: "Run the agent", code:
+`response = Runner.run_sync(
+    agent,
+    "Explain Artificial Intelligence."
+)` },
+        { label: "Print response from the LLM", code: "print(response.output_text)" },
+      ] },
+    },
+    {
+      kind: "image", title: "Building an AI Agent Step by Step – LangChain Version", titleSize: 28,
+      src: "agent_step_by_step_langchain.png", box: { x: 4.16, y: 1.32, w: 5.84, h: 2.98 },
+      side: { box: { x: 0.07, y: 0.92, w: 4.46, h: 4.64 }, size: 10, items: [
+        { label: "Import packages", code: "from langchain_openai import ChatOpenAI\nfrom langchain_core.messages import SystemMessage, HumanMessage\nfrom dotenv import load_dotenv" },
+        { label: "Load API key", code: "load_dotenv()" },
+        { label: "Specify which LLM provider to use", code:
+`client = ChatOpenAI(
+        model="gpt-4o-mini",
+        temperature=0.9
+)` },
+        { label: "Use the LangChain API to send a request to OpenAI LLM", code:
+`response = client.invoke([
+    SystemMessage(
+        content="You are a person who understands AI very well."
+    ),
+    HumanMessage(
+        content="Explain Artificial Intelligence."
+    )
+])` },
+        { label: "Print response from the LLM", code: "print(response.content)" },
+      ] },
     },
     {
       title: "The Anthropic API",
@@ -317,7 +382,7 @@ rec = response.output_parsed   # a validated object` },
  "recommended_product": "Balanced Fund",
  "expected_return": 10.0,
  "reason": "Balanced growth, moderate risk"}` },
-        { type: "text", size: 11, color: "slate", text: "Consistent responses, easy parsing, built-in validation, reliable integration with APIs and databases." },
+        { type: "text", size: 10.5, color: "slate", text: "**Why not JSON mode?** It only promises valid JSON – not your fields or types. A schema guarantees both, so this course skips JSON mode." },
       ],
     },
     {
@@ -375,6 +440,36 @@ def show_tokens(text):
           { icon: "FaIndianRupeeSign", title: "Estimate cost", text: "Providers bill input and output tokens" },
           { icon: "FaWindowMaximize", title: "Stay within the window", text: "Trim or chunk before you hit the limit" },
           { icon: "FaLanguage", title: "Language matters", text: "The Hindi example needs many more tokens for the same meaning" },
+        ] },
+      ],
+    },
+    {
+      title: "Managing the Context Window",
+      subtitle: "When a conversation or document outgrows the window: keep the recent part, summarise the old part, or split it",
+      demo: M + "03_13_context_window_strategies.py",
+      split: [1.15, 1],
+      left: [
+        { type: "code", caption: "1. Windowing – keep the newest turns that fit", code:
+`windowed = trim_messages(history, max_tokens=400,
+    token_counter=count_tokens, strategy="last",
+    include_system=True, start_on="human")` },
+        { type: "code", caption: "2. Summarisation – fold old turns into one message", code:
+`summary = llm.invoke("Summarise this conversation. "
+    f"Keep every name, ID and number:\\n{transcript}")
+context = [system, SystemMessage(summary)] + last_4_turns` },
+        { type: "code", caption: "3. Chunking – map each piece, then reduce", code:
+`partials = [llm.invoke(f"Notes on: {c}") for c in chunks]
+final = llm.invoke("Combine: " + "\\n".join(partials))` },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.25, 2.4], head: ["21-turn chat", "\"What is my order number?\""], rows: [
+          ["Windowing (380 tokens)", "Doesn't know – turn 1 was cut"],
+          ["Summary (311 tokens)", "ORD-4471, Priya – kept in the summary"],
+        ] },
+        { type: "icons", d: 0.34, size: 10.5, items: [
+          { icon: "FaScissors", title: "Windowing", text: "Free and simple; old facts are lost" },
+          { icon: "FaFileLines", title: "Summarisation", text: "One extra call; keeps names, IDs and decisions" },
+          { icon: "FaLayerGroup", title: "Chunking", text: "For one document bigger than the window – or use RAG (Module 04)" },
         ] },
       ],
     },

@@ -1,0 +1,3 @@
+# Separate venv for 16_5_guardrails_ai_validators.py only (see the script docstring).
+# guardrails-ai 0.11 pulls langchain-core 1.x and newer litellm/langsmith, which break the repo-wide pins.
+guardrails-ai==0.11.0

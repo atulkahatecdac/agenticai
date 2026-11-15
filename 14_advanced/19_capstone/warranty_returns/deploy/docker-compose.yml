@@ -1,0 +1,59 @@
+# The whole capstone in containers: API, UI, Prometheus, Grafana.
+# From the warranty_returns folder:
+#   docker compose -f deploy/docker-compose.yml up -d --build
+#   UI http://localhost:8519 | API http://localhost:8019/docs | Grafana http://localhost:3001
+# Without OPENAI_API_KEY in the repo-root .env the API runs in offline mode.
+name: capstone
+services:
+  api:
+    build: { context: .., dockerfile: deploy/Dockerfile }
+    image: capstone-warranty-returns
+    ports: ["8019:8019"]
+    env_file:
+      - path: ../../../../.env          # OPENAI_API_KEY, LANGSMITH_*, CAPSTONE_APPROVER_KEY
+        required: false
+    environment:
+      CAPSTONE_NO_PUSH: "1"
+    volumes:
+      # A named volume over /app/data: on first start Docker fills it from the
+      # image (orders, policy index); after that it keeps the LangGraph
+      # checkpoints, so tickets waiting for approval survive a restart.
+      - capstone-data:/app/data
+    stop_grace_period: 20s
+    restart: unless-stopped
+
+  ui:
+    image: capstone-warranty-returns       # same image, different command
+    command: ["streamlit", "run", "19_8_ui_streamlit.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports: ["8519:8501"]
+    env_file:
+      - path: ../../../../.env
+        required: false
+    environment:
+      CAPSTONE_API_URL: http://api:8019    # service name, not localhost
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports: ["9096:9090"]
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on: [api]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports: ["3001:3000"]
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on: [prometheus]
+
+volumes:
+  capstone-data:

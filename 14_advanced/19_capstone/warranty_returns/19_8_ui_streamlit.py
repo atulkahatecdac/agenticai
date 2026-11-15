@@ -5,7 +5,7 @@ import time
 import requests
 import streamlit as st
 
-from capstone_common import API_URL, TICKETS_FILE
+from capstone_common import API_URL, APPROVER_HEADERS, TICKETS_FILE
 
 # =====================================================================
 # STEP 8 of the capstone: the Streamlit front-end.
@@ -28,7 +28,9 @@ st.set_page_config(page_title="ElectroMart Support", layout="wide")
 
 
 def api(method: str, path: str, **kwargs):
-    return requests.request(method, API_URL + path, timeout=10, **kwargs).json()
+    # The approver endpoints need X-Approver-Key. This demo UI sends it on every call;
+    # a real one would show the Approver tab only to staff who have signed in.
+    return requests.request(method, API_URL + path, timeout=10, headers=APPROVER_HEADERS, **kwargs).json()
 
 
 def show_ticket(ticket: dict):

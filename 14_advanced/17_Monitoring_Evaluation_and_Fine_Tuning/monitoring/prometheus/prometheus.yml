@@ -2,6 +2,11 @@ global:
   # Default is 1m; 5s gives a demo script that only runs for a couple of minutes
   # enough data points for the Grafana graphs to actually show a trend.
   scrape_interval: 5s
+  evaluation_interval: 15s
+
+# Alert rules (latency SLO, error rate, token burn, agent down) - see the file.
+rule_files:
+  - /etc/prometheus/alert_rules.yml
 
 scrape_configs:
   - job_name: securelife-insurance-agent

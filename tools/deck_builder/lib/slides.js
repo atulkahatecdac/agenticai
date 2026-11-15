@@ -36,7 +36,10 @@ function titleSize(t) {
 }
 
 function header(slide, s) {
-  slide.addText(s.title, { placeholder: "title", fontSize: titleSize(s.title) });
+  // pptxgenjs drops a placeholder-level fontSize (titles always come out at the master's 28pt), so an explicit
+  // titleSize (e.g. to match a hand-made slide) goes on the text run instead.
+  if (s.titleSize) slide.addText([{ text: s.title, options: { fontSize: s.titleSize } }], { placeholder: "title" });
+  else slide.addText(s.title, { placeholder: "title", fontSize: titleSize(s.title) });
   if (s.subtitle) text(slide, s.subtitle, { x: G.MX, y: G.subY, w: G.CW, h: G.subH, fontSize: 13.5, color: C.slate });
 }
 
@@ -83,6 +86,23 @@ K.content = async (ctx, s) => {
   demoBar(ctx.slide, s.demo);
 };
 
+// side: { box: {x, y, w, h}, size, items: [{ label, code }] } – a text box next to the picture: each item is a
+// bulleted bold label with its code lines indented under it, blank line between items (a hand-made layout).
+function sideNotes(slide, side) {
+  const size = side.size || 12, runs = [];
+  side.items.forEach((it, i) => {
+    if (i) runs.push({ text: "", options: { breakLine: true } });
+    runs.push({ text: it.label, options: { bold: true, bullet: true, breakLine: true } });
+    const lines = (it.code || "").split("\n");
+    // A non-breaking-space prefix stands in for the level-2 indent (pptxgenjs writes marL="0" for indentLevel).
+    lines.forEach((ln, j) => runs.push({ text: " ".repeat(8) + ln.replace(/^ +/, (m) => " ".repeat(m.length)), options: { breakLine: j < lines.length - 1 || i < side.items.length - 1 } }));
+  });
+  slide.addText(runs, {
+    x: side.box.x, y: side.box.y, w: side.box.w, h: side.box.h, fontFace: F.body, fontSize: size,
+    color: "000000", valign: "top", margin: 0.05, paraSpaceBefore: 0, paraSpaceAfter: 0,
+  });
+}
+
 // Full-slide figure (an infographic that carries its own title).
 K.image = async (ctx, s) => {
   // full: true fits the picture to the whole slide (centred, aspect kept), with no title, margins or DEMO bar.
@@ -93,6 +113,13 @@ K.image = async (ctx, s) => {
   }
   const top = s.title ? (s.subtitle ? G.top : G.topNoSub) : 0.18;
   if (s.title) header(ctx.slide, s);
+  // box: {x, y, w, h} in inches places the picture exactly (fitted, aspect kept) – e.g. to match a hand-made slide.
+  if (s.box) {
+    await B.image.render(ctx, { path: s.path, ratio: s.ratio, alt: s.alt || s.title || "" }, s.box.x, s.box.y, s.box.w, s.box.h);
+    if (s.side) sideNotes(ctx.slide, s.side);
+    demoBar(ctx.slide, s.demo);
+    return;
+  }
   const bottom = s.demo ? G.demoY - 0.1 : G.H - 0.18;
   await B.image.render(ctx, { path: s.path, ratio: s.ratio, alt: s.alt || s.title || "" }, 0.3, top, G.W - 0.6, bottom - top);
   demoBar(ctx.slide, s.demo);

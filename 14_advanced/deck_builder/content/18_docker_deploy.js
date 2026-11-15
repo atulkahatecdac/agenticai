@@ -1,5 +1,6 @@
 const M = "18_Dockerizing/";
 const FS = M + "4_streamlit_fastapi_fullstack/";
+const CI = M + "5_ci_cd_cloud_deploy/";
 
 module.exports = {
   section: "Module 18 – Dockerizing and Deploying",
@@ -13,19 +14,18 @@ module.exports = {
         { icon: "FaDocker", title: "Understand images and containers", text: "layers and the build cache" },
         { icon: "FaFileCode", title: "Write a good Dockerfile", text: "multi-stage, non-root, with a health check" },
         { icon: "FaLayerGroup", title: "Compose multi-container stacks", text: "API + MySQL; a queue; a Streamlit + FastAPI full stack" },
-        { icon: "FaAws", title: "Run it on AWS", text: "the same compose stack on an EC2 instance" },
-        { icon: "FaCodeBranch", title: "Release without downtime", text: "blue/green and canary deployments" },
+        { icon: "FaCloud", title: "Ship it to the cloud", text: "EC2; Cloud Run and ECS from a GitHub Actions pipeline" },
+        { icon: "FaCodeBranch", title: "Release without downtime", text: "secrets as files; blue/green and canary" },
       ],
       agenda: [
-        "Docker key terms",
-        "A FastAPI + LangChain image",
+        "Docker key terms; a FastAPI + LangChain image",
         "Multi-stage builds",
-        "Docker Compose: API + MySQL",
-        "A full agent stack with a worker queue",
+        "Compose: API + MySQL; an agent stack with a queue",
         "A full-stack app: Streamlit + FastAPI",
         "Running it on AWS (EC2)",
-        "Blue/green deployment",
-        "Canary deployment",
+        "Secrets as files; CI/CD with GitHub Actions",
+        "Google Cloud Run and AWS ECS (Fargate)",
+        "Blue/green (hands-on) and canary deployment",
       ],
     },
     {
@@ -244,6 +244,137 @@ docker compose ps        # both "healthy"` },
       ],
     },
     {
+      title: "Secrets as Files, Not Environment Variables",
+      subtitle: "A mounted secret file is not in the image, not in docker inspect and not inherited by child processes",
+      demo: CI + "docker-compose.yml  ·  app/config.py",
+      split: [1, 1],
+      left: [
+        { type: "code", caption: "docker-compose.yml", code:
+`services:
+  agent:
+    build: .
+    environment:
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+    secrets: [openai_api_key]
+
+secrets:
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt   # git-ignored` },
+        { type: "code", caption: "app/config.py", code:
+`def secret(name):
+    path = os.getenv(f"{name}_FILE")       # file first
+    if path and os.path.exists(path):
+        return open(path).read().strip()
+    return os.getenv(name)                  # fallback` },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.3, 2.4], head: ["Platform", "Where the secret lives"], rows: [
+          ["Docker Compose", "secrets: → a file in /run/secrets"],
+          ["Kubernetes", "A Secret mounted as a volume"],
+          ["Cloud Run", "Secret Manager: --set-secrets"],
+          ["ECS Fargate", "Secrets Manager / SSM in the task definition"],
+          ["GitHub Actions", "Repository secrets; cloud login by OIDC, no stored keys"],
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "Tested: inside the container `env` shows only OPENAI_API_KEY_FILE; the key itself is a file." },
+      ],
+    },
+    {
+      title: "CI/CD with GitHub Actions",
+      subtitle: "Every push is tested; every merge to main is built, pushed and released in stages",
+      demo: CI + ".github/workflows/ci-cd.yml",
+      split: [1, 1.1],
+      left: [
+        { type: "steps", size: 10.5, gap: 0.07, items: [
+          { title: "test", text: "pytest with a fake LLM (5 tests, no key) + build the image and wait for /ready" },
+          { title: "build + push", text: "Tag = git SHA → Artifact Registry (GCP) or ECR (AWS)" },
+          { title: "deploy canary", text: "Cloud Run revision with 0% traffic, smoke-test its own URL, then 10%" },
+          { title: "approve", text: "A \"production\" environment with required reviewers – a human signs off" },
+          { title: "promote", text: "100% of traffic; the old revision stays for rollback" },
+        ] },
+      ],
+      right: [
+        { type: "code", caption: "ci-cd.yml (excerpt)", code:
+`deploy-cloud-run:
+  needs: test
+  if: github.ref == 'refs/heads/main'
+  permissions:
+    id-token: write     # OIDC: no cloud keys
+  steps:
+    - uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: \${{ secrets.WIP }}
+    - run: |
+        docker build -t "$IMAGE" .
+        docker push "$IMAGE"
+        gcloud run deploy agent-service \\
+          --image "$IMAGE" --no-traffic --tag canary` },
+        { type: "text", size: 10, color: "slate", text: "GitHub runs workflows only from the repository root's .github/workflows – copy it there to use it." },
+      ],
+    },
+    {
+      title: "Deploy to Google Cloud Run",
+      subtitle: "Give it an image; it runs, scales from zero, serves HTTPS and bills per request",
+      demo: CI + "deploy/cloud_run_deploy.sh",
+      split: [1.25, 1],
+      left: [
+        { type: "code", caption: "cloud_run_deploy.sh (condensed)", code:
+`gcloud artifacts repositories create agents \\
+  --repository-format=docker --location=asia-south1
+printf '%s' "$KEY" | gcloud secrets create \\
+  openai-api-key --data-file=-
+
+docker build -t "$IMAGE" . && docker push "$IMAGE"
+
+gcloud run deploy agent-service --image "$IMAGE" \\
+  --region asia-south1 \\
+  --set-secrets OPENAI_API_KEY=openai-api-key:latest \\
+  --min-instances 0 --max-instances 5 --concurrency 20
+
+# canary: new revision, no traffic, then 10%
+gcloud run deploy ... --no-traffic --tag canary
+gcloud run services update-traffic agent-service \\
+  --to-tags canary=10` },
+      ],
+      right: [
+        { type: "icons", d: 0.36, size: 10.5, items: [
+          { icon: "FaArrowsUpDown", title: "Autoscaling", text: "0 → 5 instances, 20 requests each; idle costs nothing" },
+          { icon: "FaCodeBranch", title: "Revisions", text: "Every deploy is a revision; traffic can be split between them" },
+          { icon: "FaChartLine", title: "Monitoring", text: "Requests, latency and instances in the console; logs with gcloud run services logs read" },
+          { icon: "FaTriangleExclamation", title: "Stateless", text: "Local files vanish on restart – keep state in a database" },
+        ] },
+      ],
+    },
+    {
+      title: "Deploy to AWS ECS on Fargate",
+      subtitle: "Containers without servers to manage: a task definition says what to run; a service keeps it running",
+      demo: CI + "deploy/ecs-task-definition.json  ·  deploy/ecs_deploy.sh",
+      split: [1.05, 1],
+      left: [
+        { type: "code", caption: "ecs-task-definition.json (excerpt)", code:
+`"requiresCompatibilities": ["FARGATE"],
+"cpu": "512", "memory": "1024",
+"containerDefinitions": [{
+  "name": "agent",
+  "image": "<ECR image, set by the pipeline>",
+  "secrets": [{ "name": "OPENAI_API_KEY",
+    "valueFrom": "arn:aws:secretsmanager:..." }],
+  "healthCheck": {
+    "command": ["CMD-SHELL", "... /health"] },
+  "stopTimeout": 25,
+  "logConfiguration": { "logDriver": "awslogs" }
+}]` },
+      ],
+      right: [
+        { type: "chain", size: 10, items: ["docker push → ECR", "register task definition", "update-service", "rolling update"] },
+        { type: "bullets", size: 10.5, items: [
+          "**Service** with 2 tasks behind an Application Load Balancer",
+          "**Rolling update:** new tasks start and pass health checks before old ones stop; failures roll back",
+          "**Logs** in CloudWatch, **secrets** from Secrets Manager",
+          "Blue/green on ECS: CodeDeploy switches the load balancer between two target groups",
+        ] },
+      ],
+    },
+    {
       title: "Blue/Green Deployment",
       subtitle: "Run the old and new versions side by side, then switch traffic all at once",
       demo: "Concept",
@@ -259,6 +390,36 @@ docker compose ps        # both "healthy"` },
           { title: "Switch the load balancer to Green" },
           { title: "Keep Blue ready for an instant rollback" },
         ] },
+      ],
+    },
+    {
+      title: "Blue/Green on Your Laptop",
+      subtitle: "Two versions behind nginx; one script checks the new one is ready, then flips traffic",
+      demo: CI + "blue_green/  ·  .\\switch.ps1 green",
+      split: [1.1, 1],
+      left: [
+        { type: "code", caption: "switch.ps1 (condensed)", code:
+`# 1. never switch to a version that is not ready
+docker compose exec -T $Color python -c "...ready..."
+if ($LASTEXITCODE -ne 0) { exit 1 }
+
+# 2. point nginx at it, reload gracefully
+$up = "upstream live { server \${Color}:8000; }"
+Set-Content active.conf $up
+docker compose exec -T proxy nginx -s reload` },
+        { type: "code", caption: "Try it", code:
+`docker compose up -d --build     # blue-1.0 and green-2.0
+curl.exe localhost:8028/version  # {"version":"blue-1.0"}
+.\\switch.ps1 green               # -> green-2.0
+.\\switch.ps1 blue                # rollback` },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.9, 1.5], head: ["Measured during the switch", ""], rows: [
+          ["Requests sent through the proxy", "300"],
+          ["Failed", "0"],
+          ["Answered by blue, then by green", "44 / 256"],
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "`nginx -s reload` starts new workers and lets the old ones finish their requests – that is why nothing is dropped. The app's /ready endpoint is the gate." },
       ],
     },
     {
@@ -296,7 +457,8 @@ docker compose ps        # both "healthy"` },
         { tag: "2", title: "Two containers", text: "API + MySQL history with Compose" },
         { tag: "3", title: "Four containers", text: "API, worker, Redis queue, ChromaDB" },
         { tag: "4", title: "A full stack on AWS", text: "Streamlit + FastAPI with Compose, on EC2" },
-        { tag: "ship", title: "Safe releases", text: "Blue/green and canary strategies" },
+        { tag: "5", title: "A pipeline to the cloud", text: "Tests, OIDC, Cloud Run canary, ECS rollout" },
+        { tag: "ship", title: "Safe releases", text: "Blue/green with 0 dropped requests; canary" },
       ],
       takeaways: [
         "Images are layers – order the Dockerfile for caching",

@@ -1,0 +1,7 @@
+tests/
+secrets/
+.github/
+blue_green/
+deploy/
+**/__pycache__/
+*.md

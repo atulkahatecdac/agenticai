@@ -22,6 +22,7 @@ module.exports = {
         "15_4 AI email triage",
         "15_5 + 15_6 Capstone: AI support desk",
         "15_7 Error workflow; running in production",
+        "Extensions: 15_8 schedule + Claude + Slack, 15_9 n8n ↔ LangGraph",
       ],
     },
     {
@@ -305,6 +306,62 @@ electronics store. Return:
       ],
     },
     {
+      title: "15_8 Schedule, Claude and Slack",
+      subtitle: "Every weekday at 08:00: read a competitor's catalogue, summarise the prices, post to Slack",
+      demo: M + "15_8_scheduled_competitor_monitor.json   (extension)",
+      blocks: [
+        { type: "flow", d: 0.55, size: 9.5, items: [
+          { icon: "FaClock", label: "Schedule Trigger", caption: "cron 0 8 * * 1-5" },
+          { icon: "FaGlobe", label: "HTTP Request", caption: "Retry on fail: 3 tries, 5 s apart" },
+          { icon: "FaCode", label: "HTML", caption: "Titles + prices by CSS selector" },
+          { icon: "FaRobot", label: "LLM Chain", caption: "Anthropic Chat Model (Claude)", color: "coral" },
+          { icon: "FaSlack", label: "Slack", caption: "#competitor-watch", color: "teal" },
+        ] },
+        { type: "cols", cols: [
+          [{ type: "table", size: 10, widths: [1.2, 2.5], head: ["cron field", "0 8 * * 1-5"], rows: [
+            ["minute hour", "0 8 → at 08:00 (GENERIC_TIMEZONE)"],
+            ["day, month", "* * → every day of every month"],
+            ["weekday", "1-5 → Monday to Friday"],
+          ] }],
+          [{ type: "bullets", size: 10.5, items: [
+            "**Error output:** if the page still fails after 3 tries, the HTTP node's second output posts a Slack warning instead of crashing",
+            "**Any model:** swap the Anthropic sub-node for OpenAI – the chain does not change",
+            "Tested: fetch + extract returned 20 titles with prices from books.toscrape.com",
+          ] }],
+        ] },
+      ],
+    },
+    {
+      title: "15_9 n8n ↔ LangGraph",
+      subtitle: "When a step needs real code, put the code behind a REST API – and let each side call the other",
+      demo: M + "15_9_langgraph_bridge.json  +  15_9_langgraph_agent_service.py",
+      split: [1.05, 1],
+      left: [
+        { type: "flow", boxes: true, size: 9.5, labelSize: 10, items: [
+          { label: "n8n webhook /ask-agent" },
+          { label: "HTTP Request → :8015/agent/run", fill: "teal" },
+          { label: "LangGraph: triage → ticket? → answer", fill: "navy" },
+          { label: "n8n 15_3 webhook → MySQL ticket", fill: "coral" },
+        ] },
+        { type: "code", caption: "What comes back to the caller", code:
+`{"route": "ticket", "ticket_id": "SR-261115-07",
+ "answer": "Hi Asha, ticket SR-261115-07 is open -
+            a technician will be in touch..."}` },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.05, 2.6], head: ["Side", "Does what it is good at"], rows: [
+          ["n8n", "Triggers, credentials, 400+ app nodes (Slack, Gmail, Sheets, MySQL), retries, error workflow"],
+          ["LangGraph", "Branching reasoning, structured output, loops – awkward to draw as boxes"],
+        ] },
+        { type: "bullets", size: 10.5, items: [
+          "n8n (in Docker) reaches the service as `host.docker.internal:8015`",
+          "The service degrades if n8n is down: it apologises instead of crashing",
+          "Service down? The workflow's error output answers **503**",
+          "Tested end to end: n8n webhook → agent → JSON back in 1.6 s",
+        ] },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 15 Summary",
       subtitle: "What you built",
@@ -314,6 +371,7 @@ electronics store. Return:
         { tag: "15_3", title: "Your own API", text: "Webhook with validation and status codes" },
         { tag: "15_4", title: "AI email triage", text: "Classifier → label → log" },
         { tag: "15_6", title: "AI support desk", text: "LLM + schema + SLA + human review + error workflow" },
+        { tag: "15_9", title: "Low-code + code", text: "A cron monitor; n8n calling a LangGraph agent" },
       ],
       takeaways: [
         "Share production URLs, never test URLs",

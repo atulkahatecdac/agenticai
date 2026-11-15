@@ -24,6 +24,7 @@ module.exports = {
         "Confidence and uncertainty",
         "Self-improvement from failures",
         "One unified architecture",
+        "Deep agents, 2025 style: todos, sub-agents, files",
       ],
     },
     {
@@ -223,6 +224,65 @@ module.exports = {
       ],
     },
     {
+      title: "Deep Agents, 2025 Style",
+      subtitle: "Claude Code and Deep Research made a recipe popular: a plain tool loop plus four parts for long, open tasks",
+      demo: M + "12_7_deep_research_agent.py",
+      blocks: [
+        { type: "tiles", cols: 4, size: 10, titleSize: 11.5, items: [
+          { icon: "FaListCheck", title: "1. A planning tool", text: "write_todos: the agent writes its own to-do list and updates it after every step" },
+          { icon: "FaUsers", title: "2. Sub-agents", text: "task(): each sub-question runs in a fresh, empty context and returns a short result" },
+          { icon: "FaFolderOpen", title: "3. A file system", text: "write_file / read_file / ls: long notes live outside the context window" },
+          { icon: "FaScroll", title: "4. A detailed prompt", text: "Says how and when to use the three tools above" },
+        ] },
+        { type: "cols", ratio: [1.1, 1], cols: [
+          [{ type: "code", caption: "The planning tool – same shape as the deepagents package", code:
+`class Todo(BaseModel):
+    task: str
+    status: Literal["pending", "in_progress", "completed"]
+
+@tool
+def write_todos(todos: list[Todo]) -> str:
+    """Replace the whole to-do list. Call it first,
+    and again after each step."""` }],
+          [{ type: "table", size: 10, widths: [1.6, 2.2], head: ["", "Plan-and-execute (12_2)"], rows: [
+            ["Who writes the plan", "Your code, a fixed step"],
+            ["Can it change?", "Only at replanning points"],
+            ["Here (12_7)", "The agent, with a tool, any time"],
+          ] },
+          { type: "text", size: 10, color: "slate", text: "LangChain's `deepagents` package needs LangChain 1.x; this course is pinned to 0.3, so 12_7 builds the four parts by hand (~100 lines)." }],
+        ] },
+      ],
+    },
+    {
+      title: "A Deep Research Agent at Work",
+      subtitle: "\"What is driving genre rises on streaming platforms this year – and what should a content team do?\"",
+      demo: M + "12_7_deep_research_agent.py  →  deep_research_output/report.md",
+      split: [1, 1.1],
+      left: [
+        { type: "steps", size: 10.5, gap: 0.08, items: [
+          { title: "Plan", text: "write_todos: 3 sub-questions + \"write the report\"" },
+          { title: "Delegate", text: "task() per sub-question; each sub-agent searches the web (Tavily) on its own" },
+          { title: "Offload", text: "A sub-agent's findings go to notes/1.md – the main agent gets a ~200-character pointer, not 1,000+ characters" },
+          { title: "Update the plan", text: "write_todos again: [x] done, [>] in progress" },
+          { title: "Synthesise", text: "ls, read_file every note, write_file('report.md')" },
+        ] },
+      ],
+      right: [
+        { type: "code", caption: "Console output (shortened)", code:
+`PLAN: [ ] genres | [ ] drivers | [ ] actions | [ ] report
+SUB-AGENT starts: Identify the key genres...
+   sub-agent -> web_search
+   FILE: wrote notes/1.md (1286 chars)
+   SUB-AGENT done -> main agent gets 216 chars
+PLAN: [x] genres | [>] drivers | [ ] actions | ...
+...
+main -> ls()
+main -> read_file(notes/1.md)  ... (notes/3.md)
+FILE: wrote report.md (5591 chars)` },
+        { type: "callout", eyebrow: "Why it matters", text: "The main agent's context stays small however much is researched – that is what lets it run for many steps without losing the thread." },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 12 Summary",
       subtitle: "What you built",
@@ -231,6 +291,7 @@ module.exports = {
         { tag: "plan", title: "Plan and replan", text: "A study plan; a plan that changes with a pathology report" },
         { tag: "memory", title: "Episodic memory", text: "Support tickets recalled, then consolidated" },
         { tag: "learn", title: "Self-improving agent", text: "Lessons stored only when the agent was wrong" },
+        { tag: "research", title: "A deep research agent", text: "Its own plan, sub-agents and a notes folder" },
       ],
       takeaways: [
         "Deep agents evaluate how they are doing, not just what to do",

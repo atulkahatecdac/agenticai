@@ -23,6 +23,7 @@ module.exports = {
         "Message graphs",
         "Streaming",
         "LangGraph Studio",
+        "Testing nodes in isolation",
       ],
     },
     {
@@ -155,6 +156,7 @@ app = graph.compile()` },
       left: [
         { type: "text", text: "Instead of separate fields such as question, answer and context, the state is a list of **messages**. Each node reads the history and appends to it." },
         { type: "callout", eyebrow: "Key idea", text: "The conversation becomes the state of the graph – ideal for chat assistants like the bank FAQ demo." },
+        { type: "text", size: 10.5, color: "slate", text: "Built as a StateGraph whose state has a `messages` list (`MessagesState` / `add_messages`). Older tutorials use a separate `MessageGraph` class – it is deprecated, so we don't." },
       ],
       right: [
         { type: "code", caption: "State", code:
@@ -197,6 +199,36 @@ langgraph dev --tunnel     # opens Studio
       ],
     },
     {
+      title: "Testing Nodes in Isolation",
+      subtitle: "A node is a plain function: state in, partial update out – so test it like one, with a fake LLM",
+      demo: M + "07_7_testing_nodes_in_isolation.py   (8 tests, no API key)",
+      split: [1.15, 1],
+      left: [
+        { type: "code", caption: "Write it so it can be tested: the LLM is passed in", code:
+`def classify(state, llm):
+    label = llm.invoke(...).content.strip().lower()
+    return {"category": label if label in CATEGORIES
+                        else "general"}
+
+def build_graph(llm):
+    node = partial(classify, llm=llm)
+    g.add_node("classify", node)` },
+        { type: "code", caption: "Then test each piece", code:
+`def test_classify_falls_back_on_odd_labels():
+    state = {"message": "hi"}
+    out = classify(state, fake("Billing"))
+    assert out == {"category": "general"}` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Unit: one node", text: "Hand-made state + FakeListChatModel" },
+          { title: "Routing", text: "A dict in, a node name out – no LLM" },
+          { title: "Wiring", text: "The compiled graph with scripted fake replies; check the node order" },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "**Not tested here:** whether the real LLM labels well – that is evaluation (Module 09). Tests check the code around it, in milliseconds." },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 07 Summary",
       subtitle: "What you built",
@@ -205,6 +237,7 @@ langgraph dev --tunnel     # opens Studio
         { tag: "route", title: "Conditional routing", text: "News sentiment and specialist routing" },
         { tag: "msgs", title: "A message graph", text: "A bank FAQ assistant over chat history" },
         { tag: "studio", title: "Streaming and Studio", text: "Watch the graph run, node by node" },
+        { tag: "test", title: "Tests for a graph", text: "Nodes, routing and wiring with a fake LLM" },
       ],
       takeaways: [
         "Use LangGraph when you need state, branches or loops",

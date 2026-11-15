@@ -23,6 +23,8 @@ module.exports = {
         "Streamlit apps and chat history",
         "Gradio apps and sharing them",
         "Streamlit / Gradio front end + FastAPI back end",
+        "A production layout: routers, dependencies, uploads, tests",
+        "Streamlit caching",
       ],
     },
     { kind: "image", full: true, src: "agentic_app_architecture.png", alt: "Agentic AI app: Streamlit + FastAPI + LangChain architecture" },
@@ -375,6 +377,104 @@ python frontend.py               # terminal 2` }],
       ],
     },
     {
+      title: "Routers and Dependencies",
+      subtitle: "How a real FastAPI service is laid out: main.py only wires routers; endpoints declare what they need",
+      demo: "02_fastapi_production/  ·  uvicorn app.main:app --reload",
+      split: [1.15, 1],
+      left: [
+        { type: "code", caption: "app/main.py", code:
+`app = FastAPI(title="Agent API")
+app.include_router(chat.router)            # open
+app.include_router(documents.router,       # every route
+    dependencies=[Depends(require_api_key)])  # needs a key` },
+        { type: "code", caption: "app/routers/chat.py", code:
+`router = APIRouter(prefix="/chat", tags=["chat"])
+
+@router.post("")
+async def chat(req: ChatRequest,
+               llm=Depends(get_llm)):
+    reply = await llm.ainvoke(req.message)
+    return ChatResponse(reply=reply.content)` },
+      ],
+      right: [
+        { type: "icons", d: 0.36, size: 10.5, items: [
+          { icon: "FaFolderTree", title: "One router per area", text: "chat.py, documents.py – each with its own prefix and tag in /docs" },
+          { icon: "FaPlug", title: "Depends(get_llm)", text: "FastAPI builds the LLM client and passes it in; the endpoint never creates one" },
+          { icon: "FaKey", title: "Depends(require_api_key)", text: "Checks the X-API-Key header – attached once, to a whole router" },
+          { icon: "FaVialCircleCheck", title: "Swap anything in tests", text: "A dependency can be replaced without touching the endpoint – next slide" },
+        ] },
+      ],
+    },
+    {
+      title: "File Uploads, and Tests Without an LLM",
+      subtitle: "UploadFile receives a document; dependency_overrides gives every test a fake LLM",
+      demo: "02_fastapi_production/  ·  pytest -q test_api.py   (7 passed, no API key)",
+      split: [1, 1],
+      left: [
+        { type: "code", caption: "app/routers/documents.py (condensed)", code:
+`@router.post("/summarize")
+async def summarize(file: UploadFile,
+                    llm = Depends(get_llm)):
+    if file.content_type not in ALLOWED:
+        raise HTTPException(415, "Upload .txt or .pdf")
+    data = await file.read()
+    if len(data) > 2 * 1024 * 1024:
+        raise HTTPException(413, "File is over 2 MB")
+    text = extract_text(data, file.content_type)
+    prompt = f"Summarise:\\n{text[:12000]}"
+    result = await llm.ainvoke(prompt)
+    return SummaryResponse(summary=result.content)` },
+      ],
+      right: [
+        { type: "code", caption: "test_api.py", code:
+`fake = FakeListChatModel(responses=["- a\\n- b\\n- c"])
+app.dependency_overrides[get_llm] = lambda: fake
+client = TestClient(app)
+
+def test_upload_a_text_file():
+    files = {"file": ("note.txt", b"Refunds...",
+                      "text/plain")}
+    r = client.post("/documents/summarize",
+                    files=files, headers=KEY)
+    assert r.status_code == 200
+
+def test_wrong_file_type_is_rejected():
+    ...  # image/png -> 415` },
+        { type: "text", size: 10.5, color: "slate", text: "**Check before you spend:** type and size are checked first – a 50 MB upload never reaches the LLM." },
+      ],
+    },
+    {
+      title: "Streamlit Caching",
+      subtitle: "Streamlit re-runs the whole script on every click – cache what is slow or billed",
+      demo: "02_fastapi_production/frontend.py  ·  streamlit run frontend.py",
+      split: [1.2, 1],
+      left: [
+        { type: "code", caption: "frontend.py", code:
+`@st.cache_resource      # one object, all re-runs
+def get_client() -> httpx.Client:
+    return httpx.Client(base_url=API, timeout=60)
+
+@st.cache_data(ttl=3600)  # results, keyed by the arguments
+def summarise(name: str, data: bytes, ctype: str) -> dict:
+    files = {"file": (name, data, ctype)}
+    r = get_client().post("/documents/summarize",
+                          files=files, headers=KEY)
+    return r.json()
+
+upload = st.file_uploader("Upload", type=["txt", "pdf"])
+if upload:
+    st.markdown(summarise(upload.name, upload.getvalue(),
+                          upload.type)["summary"])` },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.45, 2.2], head: ["Decorator", "Use it for"], rows: [
+          ["st.cache_resource", "Things you create once: HTTP clients, models, DB connections, vector stores"],
+          ["st.cache_data", "Results of a function: API responses, LLM answers, data frames"],
+        ] },
+        { type: "callout", eyebrow: "Try it", text: "Upload a file, then press any button: the script re-runs, the summary comes from the cache – no second LLM call, no second bill." },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 02 Summary",
       subtitle: "What you built",
@@ -383,6 +483,7 @@ python frontend.py               # terminal 2` }],
         { tag: "async", title: "Concurrent endpoint", text: "Summary, keywords and sentiment in one gather()" },
         { tag: "SSE", title: "Streaming", text: "Tokens yielded to the client as they arrive" },
         { tag: "UI", title: "Two front ends", text: "Streamlit and Gradio calling the same back end" },
+        { tag: "prod", title: "A team-ready service", text: "Routers, Depends(), file uploads, 7 offline tests" },
       ],
       takeaways: [
         "REST is how agents reach almost every external system",

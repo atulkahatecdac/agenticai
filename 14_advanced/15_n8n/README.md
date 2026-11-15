@@ -1,6 +1,7 @@
 # Module 15 — Low-Code AI Automation with n8n (3-hour lab)
 
-Seven importable n8n workflows that grow from a no-code form app into an AI support desk.
+Seven importable n8n workflows that grow from a no-code form app into an AI support desk, plus two
+extensions (15_8 scheduling + Slack + Claude, 15_9 n8n ↔ LangGraph).
 Do the **Before class** steps at home: Google OAuth and the OpenAI key take longer than any workflow.
 
 | File | What it does | Block |
@@ -12,6 +13,8 @@ Do the **Before class** steps at home: Google OAuth and the OpenAI key take long
 | `15_5_customer_lookup_api.json` | Helper API: `GET /webhook/customer?email=…` → `{ "tier": "Gold", "customer_id": "C-001" }` (unknown → `Standard`) | Hour 3 |
 | `15_6_ai_support_desk.json` | Contact form → tier (15_5) → **LLM Chain + Structured Output Parser** → SLA → MySQL → High: draft + alert, else reply sent → log | Hour 3 |
 | `15_7_error_handler.json` | Error Trigger → Error Log sheet → admin email with a link to the failed execution | Hour 3 |
+| `15_8_scheduled_competitor_monitor.json` | **Schedule Trigger** (cron `0 8 * * 1-5`) → HTTP Request with 3 retries → HTML extract → **Anthropic Chat Model** summary → **Slack**; error output → Slack alert | Extension |
+| `15_9_langgraph_bridge.json` + `15_9_langgraph_agent_service.py` | n8n ↔ code: a webhook calls a LangGraph agent over HTTP; the agent calls back into 15_3 to create tickets | Extension |
 | `15_schema.sql` | Creates `leads`, `customers` (4 sample customers, 2 Gold) and `tickets` | — |
 | `tickets_header.csv` | Header row for the **Tickets** sheet tab (15_1) | — |
 | `test_emails.txt` | Four test emails for 15_4, with the expected label | — |
@@ -122,6 +125,35 @@ as read so it is not processed twice.
 5. `docker exec -it mysql mysql -un8n -pn8npass bizdb -e "SELECT ticket_id, category, priority, sla_hours, summary FROM tickets"`
 6. Error handling: `docker stop mysql`, submit the 15_6 form, `docker start mysql`. Within seconds the
    Error Log gets a row and the admin an email. The Error Trigger fires only for production runs.
+
+## Extensions — scheduling, Slack, Claude, and n8n ↔ LangGraph
+
+These two are not part of the 3-hour plan; use them as homework or a fourth hour.
+
+**15_8 Scheduled Competitor Monitor** – a workflow nobody triggers by hand.
+1. Credentials: **Anthropic** (console.anthropic.com → API key) on *Anthropic Chat Model*, and **Slack**
+   (a Slack app with the `chat:write` scope, invited to `#competitor-watch`) on both Slack nodes.
+   No Anthropic key? Delete the Anthropic sub-node and attach an *OpenAI Chat Model* instead – the chain does not change.
+2. **Settings → Error workflow → 15_7 Error Handler.**
+3. **Execute workflow** to run it now; **Publish** and it runs at 08:00 Monday–Friday on its own
+   (the cron expression is `minute hour day-of-month month day-of-week`).
+4. The page it reads, books.toscrape.com, is a public demo shop built for scraping practice. Change the
+   URL to something that does not exist: the HTTP node retries 3 times, 5 s apart (**Settings → Retry on fail**),
+   then the **error output** posts a warning to Slack instead of failing the workflow.
+
+**15_9 n8n → LangGraph bridge** – when a step needs real code, put the code behind a REST API.
+1. Publish **15_3** (the agent creates tickets through its webhook).
+2. `python 15_9_langgraph_agent_service.py` (port 8015; `--test` runs two questions without a server).
+3. Import and publish **15_9**, then:
+
+```powershell
+$body = @{ question = 'My router has been dead since yesterday'; name = 'Asha'; email = 'asha@example.com' } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri 'http://localhost:5678/webhook/ask-agent' -ContentType 'application/json' -Body $body
+```
+
+A how-to question comes back with `route: answer`; a fault comes back with `route: ticket` and a ticket ID
+from MySQL. n8n reaches the service as `host.docker.internal:8015`; the service reaches n8n as `localhost:5678`
+(override with `N8N_TICKET_WEBHOOK`). Stop the service and call the webhook again: **Respond 503**.
 
 ## Troubleshooting
 

@@ -11,6 +11,7 @@ services:
       - "9095:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
     # The scrape target (17_3_prometheus_metrics_agent.py) runs on the HOST, not in
     # a container, since it needs .env / OpenAI access like every other script in
     # this repo. host.docker.internal is built into Docker Desktop (Windows/Mac);

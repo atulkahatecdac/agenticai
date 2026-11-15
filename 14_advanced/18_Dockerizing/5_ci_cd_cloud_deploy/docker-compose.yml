@@ -1,0 +1,25 @@
+# Local run with a Docker SECRET instead of an environment variable.
+#   1. Put your key in secrets/openai_api_key.txt (git-ignored; see secrets/README.md)
+#   2. docker compose up -d --build        -> http://localhost:8018/docs
+#
+# The key is mounted as a file at /run/secrets/openai_api_key. It is NOT in
+# the image, NOT in `docker inspect`'s environment list, and NOT inherited
+# by child processes. app/config.py reads it via OPENAI_API_KEY_FILE.
+services:
+  agent:
+    build:
+      context: .
+      args:
+        APP_VERSION: local
+    ports:
+      - "8018:8000"
+    environment:
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+    secrets:
+      - openai_api_key
+    stop_grace_period: 25s        # longer than uvicorn's 20 s graceful shutdown
+    restart: unless-stopped
+
+secrets:
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt

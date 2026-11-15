@@ -24,6 +24,8 @@ module.exports = {
         "HyDE and multi-query retrieval",
         "GraphRAG and multi-hop reasoning",
         "Hybrid vector + graph search",
+        "Parent-child chunking",
+        "Benchmarking agentic vs standard RAG",
       ],
     },
     {
@@ -241,6 +243,56 @@ module.exports = {
       ],
     },
     {
+      title: "Parent-Child Chunking",
+      subtitle: "Search with small chunks for precision; hand the LLM their whole parent section for context",
+      demo: M + "14_10_parent_child_chunking.py   (no LLM – same result every run)",
+      split: [1.05, 1],
+      left: [
+        { type: "code", caption: "14_10_parent_child_chunking.py (condensed)", code:
+`retriever = ParentDocumentRetriever(
+    vectorstore=Chroma(embedding_function=emb),
+    docstore=InMemoryStore(),   # parents
+    child_splitter=RecursiveCharacterTextSplitter(
+        chunk_size=160),
+    search_kwargs={"k": 1})
+retriever.add_documents(sections)
+# 3 sections -> 12 child chunks` },
+        { type: "table", size: 10, widths: [1.1, 2.6], head: ["Late chunking", "A related idea"], rows: [
+          ["How", "Embed the WHOLE document with a long-context embedding model, then split the token vectors into chunks"],
+          ["Effect", "Each chunk's vector already \"knows\" its surrounding text"],
+        ] },
+      ],
+      right: [
+        { type: "text", size: 11, text: "**Q: Within how many days must I submit my motor claim documents, and which ones?**" },
+        { type: "compare", size: 10, cols: [
+          { title: "Small chunk (156 chars)", color: "slate", items: ["\"4.2 The documents needed for a motor claim are: the claim form, a copy of the driving licence, … the police FIR if a third party\" – cut off, and no '7 days'"] },
+          { title: "Parent section (458 chars)", color: "teal", items: ["Clauses 4.1–4.4: the full list (4.2) and the 7-day deadline (4.4)"] },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "For a self-contained fact (\"30 days after discharge\") the child alone is enough – parents only cost extra tokens. Use parent-child when chunks refer to each other: clauses, steps, tables." },
+      ],
+    },
+    {
+      title: "Is Agentic RAG Worth It? Measure.",
+      subtitle: "Same knowledge base, same 10 questions, same judge – standard RAG vs query rewriting + grading + retry",
+      demo: M + "14_11_agentic_vs_standard_rag_benchmark.py",
+      split: [1, 1.05],
+      left: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Standard", text: "Retrieve top 3 → answer (1 LLM call)" },
+          { title: "Agentic", text: "Rewrite into queries → retrieve → grade → retry for what is missing → answer or \"not in the KB\" (3–5 calls)" },
+          { title: "Judge", text: "LLM-as-a-judge against reference answers; for out-of-KB questions only declining counts" },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "The test set mixes easy, reworded, two-part and hard questions with two the KB cannot answer." },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.1, 0.9, 0.9, 0.8, 0.8], head: ["", "Accuracy", "Hard", "Avg s", "Calls"], rows: [
+          ["Standard", "100%", "2/2", "0.7", "10"],
+          ["Agentic", "100%", "2/2", "2.9", "31"],
+        ] },
+        { type: "callout", eyebrow: "The honest result (local qwen3:8b run)", text: "On a small, clean 50-statement KB, agentic RAG got nothing extra right – for 3× the calls and 4× the latency. Run it on YOUR KB and questions; route only the hard ones to the agentic path if it helps there." },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 14 Summary",
       subtitle: "What you built",
@@ -250,6 +302,7 @@ module.exports = {
         { tag: "14_4", title: "Reranking", text: "A Cohere cross-encoder in front of the LLM" },
         { tag: "14_5", title: "HyDE and multi-query", text: "Better queries, better recall" },
         { tag: "14_7", title: "GraphRAG and multi-hop", text: "A bank-policy knowledge graph, plus hybrid search" },
+        { tag: "14_10", title: "Chunking and a benchmark", text: "Parent-child retrieval; agentic vs standard RAG" },
       ],
       takeaways: [
         "Name the failure mode before choosing a fix",

@@ -29,8 +29,15 @@ REFUND_APPROVAL_LIMIT = 5000      # refunds above this need a human
 REPAIR_PRICE_THRESHOLD = 10000    # above this, in-warranty defects are repaired, not replaced
 MAX_REVIEW_LOOPS = 2
 
-API_PORT = 8019
-API_URL = f"http://localhost:{API_PORT}"
+API_PORT = int(os.getenv("CAPSTONE_API_PORT", "8019"))
+API_URL = os.getenv("CAPSTONE_API_URL", f"http://localhost:{API_PORT}")
+
+# Approving money is a privileged action: /approvals and /tickets/{id}/approve
+# need this key in the X-Approver-Key header (found by 19_12_security_audit.py).
+# Set your own in .env; the default is for the classroom demo only.
+APPROVER_KEY = os.getenv("CAPSTONE_APPROVER_KEY", "approver-demo-key")
+APPROVER_HEADERS = {"X-Approver-Key": APPROVER_KEY}
+MAX_MESSAGE_CHARS = 4000
 
 
 def today() -> date:

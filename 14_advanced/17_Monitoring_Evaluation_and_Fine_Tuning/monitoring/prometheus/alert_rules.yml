@@ -1,0 +1,51 @@
+# Alert rules for the 17_3 agent metrics. Prometheus evaluates them every
+# evaluation_interval; firing alerts show at http://localhost:9095/alerts.
+# In production Prometheus forwards them to Alertmanager, which routes to
+# Slack, e-mail or PagerDuty (not part of this demo stack).
+#
+# Each rule: a PromQL expression that returns rows only when something is
+# wrong, and "for:" - how long it must stay wrong before the alert fires,
+# so one slow request does not page anyone.
+groups:
+  - name: agent-slos
+    rules:
+      # Latency SLO: 95% of turns finish within 8 seconds.
+      - alert: AgentTurnLatencyHigh
+        expr: |
+          histogram_quantile(0.95, sum by (le) (rate(
+            securelife_agent_turn_duration_seconds_bucket[5m]
+          ))) > 8
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "p95 is {{ $value }}s (SLO 8s)"
+
+      # Errors: any node failing more than 5% of the time over 5 minutes.
+      - alert: AgentNodeErrorRateHigh
+        expr: |
+          sum by (node) (rate(securelife_agent_node_errors_total[5m]))
+            / sum by (node) (rate(securelife_agent_node_duration_seconds_count[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node {{ $labels.node }} fails {{ $value | humanizePercentage }} of runs"
+
+      # Cost: token burn rate above budget (60k tokens/min ~ $0.02/min on gpt-4o-mini output pricing).
+      - alert: AgentTokenBurnHigh
+        expr: sum(rate(securelife_agent_llm_tokens_total[10m])) * 60 > 60000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spending {{ $value | humanize }} tokens per minute"
+
+      # Nothing at all: the agent stopped reporting (crashed, or the scrape is failing).
+      - alert: AgentDown
+        expr: up{job="securelife-insurance-agent"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus cannot scrape the agent's /metrics endpoint"

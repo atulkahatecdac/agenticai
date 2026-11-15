@@ -69,3 +69,8 @@ node_modules/
 
 # Runtime checkpoints written by 16_PGP-Agentic/code/session_7/7_6_maf_loan_pipeline_checkpoints.py
 loan_checkpoints/
+
+# 14_advanced demo run output (recreated by the scripts themselves)
+14_advanced/12_deep_agents/deep_research_output/
+14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/data/finetune_*.jsonl
+14_advanced/17_Monitoring_Evaluation_and_Fine_Tuning/embedding_drift.png

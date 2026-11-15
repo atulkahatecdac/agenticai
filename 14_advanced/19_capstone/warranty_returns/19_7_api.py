@@ -12,14 +12,14 @@ import time
 from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import Response
 from langgraph.types import Command
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
-from capstone_common import API_PORT, load_step
+from capstone_common import API_PORT, APPROVER_HEADERS, APPROVER_KEY, MAX_MESSAGE_CHARS, load_step
 
 agent = load_step("19_6_agent_graph.py")
 
@@ -32,8 +32,8 @@ agent = load_step("19_6_agent_graph.py")
 #   POST /tickets                  create a ticket, start the graph  -> ticket id
 #   GET  /tickets/{id}             status, progress events, reply
 #   GET  /tickets/{id}/stream      the same progress as Server-Sent Events
-#   GET  /approvals                tickets paused at the approval gate
-#   POST /tickets/{id}/approve     the approver's answer -> the graph resumes
+#   GET  /approvals                tickets paused at the approval gate   (X-Approver-Key)
+#   POST /tickets/{id}/approve     the approver's answer -> the graph resumes (X-Approver-Key)
 #   GET  /metrics                  Prometheus metrics (scraped by monitoring/)
 #
 # A ticket runs in a background thread so POST /tickets returns at once and
@@ -53,10 +53,38 @@ TICKETS: dict[str, dict] = {}       # in-memory ticket registry (the graph state
 graph = None
 
 
+def _recover_waiting_tickets() -> int:
+    """After a restart, re-register tickets that were paused at the approval gate.
+    Their graph state is in the SQLite checkpoint; only this API's in-memory
+    registry was lost. (Found by restarting the container - see README Part 2.)"""
+    import sqlite3
+    from capstone_common import CHECKPOINT_DB
+    try:
+        with sqlite3.connect(CHECKPOINT_DB) as db:
+            threads = [row[0] for row in db.execute("SELECT DISTINCT thread_id FROM checkpoints")]
+    except sqlite3.Error:
+        return 0                                       # no checkpoints yet
+    recovered = 0
+    for ticket_id in threads:
+        if ticket_id in TICKETS:
+            continue
+        config = {"configurable": {"thread_id": ticket_id}, "run_name": f"ticket-{ticket_id}",
+                  "metadata": {"ticket_id": ticket_id}}
+        snapshot = graph.get_state(config)
+        waiting = [i for task in snapshot.tasks for i in task.interrupts]
+        if waiting:
+            TICKETS[ticket_id] = {"id": ticket_id, "message": snapshot.values.get("message", ""),
+                                  "status": "waiting_approval", "pending": waiting[0].value, "config": config,
+                                  "events": [{"node": "approval_gate", "detail": "restored after a restart"}]}
+            recovered += 1
+    return recovered
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     global graph
     graph = agent.build_graph()
+    _recover_waiting_tickets()
     # Warm up the slow parts once, so the first customer does not wait for them.
     agent.guardrails.pii_engine()
     agent.toolbox()
@@ -68,12 +96,19 @@ app = FastAPI(title="Warranty & Returns Resolution Assistant", lifespan=lifespan
 
 
 class NewTicket(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=MAX_MESSAGE_CHARS)    # no 1 MB "tickets"
 
 
 class ApprovalAnswer(BaseModel):
     approved: bool
-    note: str = ""
+    note: str = Field(default="", max_length=500)
+
+
+def require_approver(x_approver_key: str | None = Header(default=None)) -> None:
+    """Only approvers may see pending refunds or approve them. (A real deployment
+    would use the company's login - OAuth/SSO - instead of a shared key.)"""
+    if x_approver_key != APPROVER_KEY:
+        raise HTTPException(401, "Approver key required (X-Approver-Key header)")
 
 
 def _drive(ticket: dict, graph_input):
@@ -141,13 +176,13 @@ async def stream_ticket(ticket_id: str):
     return EventSourceResponse(events())
 
 
-@app.get("/approvals")
+@app.get("/approvals", dependencies=[Depends(require_approver)])
 def list_approvals():
     return [{"ticket_id": t["id"], "message": t["message"], **t["pending"]}
             for t in TICKETS.values() if t["status"] == "waiting_approval"]
 
 
-@app.post("/tickets/{ticket_id}/approve")
+@app.post("/tickets/{ticket_id}/approve", dependencies=[Depends(require_approver)])
 def approve_ticket(ticket_id: str, body: ApprovalAnswer):
     ticket = TICKETS.get(ticket_id)
     if not ticket or ticket["status"] != "waiting_approval":
@@ -199,11 +234,11 @@ def _self_test():
         created = client.post("/tickets", json=body).json()
         ticket = wait(client, created["ticket_id"])
         print(f"POST /tickets -> {created['ticket_id']}, then status={ticket['status']}")
-        approvals = client.get("/approvals").json()
+        approvals = client.get("/approvals", headers=APPROVER_HEADERS).json()
         print(f"GET /approvals -> {len(approvals)} waiting: {approvals[0]['decision']} of Rs. "
               f"{approvals[0]['refund_amount']:,.0f} because {approvals[0]['why_approval']}")
         print(f"POST /tickets/{ticket['id']}/approve -> "
-              f"{client.post('/tickets/' + ticket['id'] + '/approve', json={'approved': True, 'note': 'ok'}).json()}")
+              f"{client.post('/tickets/' + ticket['id'] + '/approve', json={'approved': True, 'note': 'ok'}, headers=APPROVER_HEADERS).json()}")
         ticket = wait(client, ticket["id"])
         print(f"GET /tickets/{ticket['id']} -> status={ticket['status']}, decision={ticket['decision']}")
 

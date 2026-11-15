@@ -101,6 +101,8 @@ faq.add(
         ] },
       ],
     },
+    // Added by hand in PowerPoint (2026-11); ported here so a rebuild keeps it.
+    { kind: "image", title: "Hierarchical Navigable Small World (HNSW)", src: "hnsw_overview.png", box: { x: 0.05, y: 0.77, w: 9.9, h: 4.82 }, alt: "HNSW: a layered graph of neighbours for fast nearest-neighbour search" },
     {
       title: "When a Customer Asks a Question",
       subtitle: "The question goes through the same model; Chroma returns the closest stored question – and its answer",

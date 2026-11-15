@@ -21,7 +21,7 @@ module.exports = {
         "A live data API as a resource",
         "Message format and transports",
         "Initialisation and tool discovery",
-        "MCP Inspector and Claude Desktop",
+        "MCP Inspector, Claude Desktop and VS Code Copilot",
         "Prompt templates as a primitive",
         "Permission checks and input validation",
       ],
@@ -154,6 +154,7 @@ await session.call_tool(
           { icon: "FaTerminal", title: "stdio", text: "Client and server on the same machine; the server runs as a subprocess. Simple, fast, no network" },
           { icon: "FaGlobe", title: "Streamable HTTP", text: "For remote, hosted servers – works over the network" },
         ] },
+        { type: "text", size: 10.5, color: "slate", text: "**Not covered: HTTP + SSE.** The original remote transport used two endpoints and Server-Sent Events; the March 2025 spec replaced it with Streamable HTTP. Older tutorials still show it." },
       ],
       right: [
         { type: "code", caption: "Request (client → server)", code:
@@ -225,6 +226,31 @@ def search_documents(query: str,
       ],
     },
     {
+      title: "Connect the Same Server to VS Code Copilot",
+      subtitle: "Any MCP host can use your server – here, GitHub Copilot's agent mode inside the editor",
+      demo: MCP + "vscode_mcp.json  →  copy to <repo>/.vscode/mcp.json",
+      split: [1.1, 1],
+      left: [
+        { type: "code", caption: ".vscode/mcp.json (paths shortened)", size: 9, code:
+`{"servers": {
+  "course-database": {
+    "type": "stdio",
+    "command": "\${workspaceFolder}/.venv/.../python.exe",
+    "args": ["\${workspaceFolder}/.../10_3_..._server.py"]
+}}}` },
+        { type: "text", size: 10.5, color: "slate", text: "Not the Claude Desktop format: the key is `servers` (not `mcpServers`) and each entry names its `type`. On macOS/Linux use `.venv/bin/python`." },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Copy the file", text: "vscode_mcp.json → .vscode/mcp.json at the repo root" },
+          { title: "Click Start", text: "VS Code shows Start above the server entry; the tools appear in the tool picker" },
+          { title: "Copilot Chat → Agent mode", text: "Ask: \"add a user called Asha, then list all users\"" },
+          { title: "Approve each call", text: "Copilot shows the tool and its arguments and waits for you" },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "The server is unchanged from the Inspector and Claude Desktop – that is the point of a protocol." },
+      ],
+    },
+    {
       title: "Prompt Templates as a Primitive",
       subtitle: "Reviewed wording lives on the server, so every client – web app, Slack bot, CLI – says it the same way",
       demo: MCP + "10_4_prompt_template_mcp_server.py, 10_4_prompt_template_mcp_client.py",
@@ -279,7 +305,7 @@ def product_not_found_reply(product_name, customer_question): ...` },
       built: [
         { tag: "10_1", title: "A first MCP server", text: "One FastMCP tool, called from a client" },
         { tag: "10_2", title: "A live resource", text: "CoinGecko prices as crypto://price/{coin}" },
-        { tag: "10_3", title: "Discovery and debugging", text: "Schemas, the Inspector, Claude Desktop" },
+        { tag: "10_3", title: "Discovery and debugging", text: "Inspector, Claude Desktop, VS Code Copilot" },
         { tag: "10_4", title: "Prompt templates", text: "Server-owned wording plus a grounding tool" },
         { tag: "10_5", title: "A hardened server", text: "Role checks and input validation" },
       ],

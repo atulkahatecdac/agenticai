@@ -56,7 +56,9 @@ async function resolveImages(node) {
       n++;
       const kind = s.kind || "content";
       if (!K[kind]) throw new Error(`${f}: unknown slide kind "${kind}"`);
-      const slide = pres.addSlide({ masterName: ["image", "cover"].includes(kind) ? BLANK : kind === "opener" ? OPENER : MASTER, sectionTitle: section });
+      // An image slide with its own title uses the content master, so the title gets the deck's title style.
+      const blank = kind === "cover" || (kind === "image" && (s.full || !s.title));
+      const slide = pres.addSlide({ masterName: blank ? BLANK : kind === "opener" ? OPENER : MASTER, sectionTitle: section });
       const label = `${f} #${n} "${(s.title || s.src || kind).slice(0, 50)}"`;
       const ctx = { slide, warn: (m) => { warnings++; console.warn(`WARN ${label}: ${m}`); } };
       if (s.demo && s.demo.length > 100) ctx.warn(`DEMO text is ${s.demo.length} chars – shorten to ≤ 100 so it fits on one line`);

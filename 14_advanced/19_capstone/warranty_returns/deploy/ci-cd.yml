@@ -1,0 +1,82 @@
+# Capstone Part 2 pipeline. To use it, copy to .github/workflows/ at the root of
+# your own repository (GitHub only runs workflows from there) and set WORKDIR.
+#
+# Every gate runs OFFLINE (no LLM, no API key), so the pipeline is free, fast and
+# gives the same answer every run. Gates, in order - any failure stops the release:
+#   1. integration tests (19_10)      the system works end to end
+#   2. scorecard (19_9 --offline)     every test ticket gets the expected decision
+#   3. security audit (19_12)         no FAIL findings
+#   4. load test (19_11)              p95 within the SLO, no errors
+# then the image is built, pushed and deployed exactly like 18_Dockerizing/5_ci_cd_cloud_deploy.
+name: capstone-ci-cd
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  WORKDIR: 14_advanced/19_capstone/warranty_returns
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    env:
+      CAPSTONE_OFFLINE: "1"
+      CAPSTONE_NO_PUSH: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          pip install -r deploy/requirements-capstone.txt pytest httpx
+          python -m spacy download en_core_web_lg
+      - name: Data and policy index (steps 1-2)
+        run: python 19_1_generate_sample_data.py && python 19_2_ingest_policies.py
+      - name: "Gate 1: integration tests"
+        run: python 19_10_integration_tests.py
+      - name: "Gate 2: decision scorecard"
+        run: python 19_9_run_test_tickets.py --offline
+      - name: Start the API for the next two gates
+        run: |
+          python 19_7_api.py --offline &
+          for i in $(seq 1 60); do curl -fs localhost:8019/health && break; sleep 2; done
+      - name: "Gate 3: security audit"
+        run: python 19_12_security_audit.py
+      - name: "Gate 4: load test against the SLO"
+        run: python 19_11_load_test.py --users 10 --tickets 40 --slo-p95 15
+
+  deploy:
+    needs: gates
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production                 # required reviewers = a human signs off the release
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    env:
+      IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/agents/capstone:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: |
+          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
+          docker build -f deploy/Dockerfile -t "$IMAGE" .
+          docker push "$IMAGE"
+          gcloud run deploy capstone-api --image "$IMAGE" --region ${{ vars.GCP_REGION }} --port 8019 \
+            --set-secrets OPENAI_API_KEY=openai-api-key:latest,CAPSTONE_APPROVER_KEY=capstone-approver-key:latest \
+            --memory 2Gi --min-instances 1 --max-instances 3 --quiet
+      # Cloud Run instances are stateless: the SQLite checkpoints in data/ do not survive a restart there.
+      # For production, move checkpoints to a shared store (Postgres or Redis checkpointer, Module 08).

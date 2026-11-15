@@ -51,6 +51,23 @@ module.exports = {
       ],
     },
     {
+      title: "What We Leave Out – and Why",
+      subtitle: "Topics from older course outlines that the field has moved past; each module teaches what replaced them",
+      demo: "Concept",
+      blocks: [
+        { type: "table", size: 9.5, widths: [2.0, 3.3, 2.5], head: ["Not covered (module)", "Why", "Taught instead"], rows: [
+          ["AgentExecutor, initialize_agent (06)", "LangChain's first agent runtime; moved to the langchain-classic legacy package in LangChain 1.0. It hides the loop you need to understand", "The tool-calling loop in your own code (06), then LangGraph (07–08)"],
+          ["MessageGraph (07)", "Deprecated LangGraph class; a StateGraph with a messages key does the same and more", "StateGraph + MessagesState / add_messages"],
+          ["JSON mode (03)", "Guarantees valid JSON, not your fields or types", "Structured output with a Pydantic schema"],
+          ["MCP's HTTP + SSE transport (10)", "Replaced by Streamable HTTP in the March 2025 MCP spec", "stdio and Streamable HTTP"],
+          ["pyenv, venv + pip, conda (01)", "Three tools for what one now does, ten times faster", "uv (plain pip kept as a fallback)"],
+          ["Phoenix \"Inferences\" drift view (17)", "Removed from Arize Phoenix; current Phoenix (v21) is tracing and evals", "Drift checks in code (17_5), Phoenix for tracing (17_6)"],
+          ["IBM ACP, ANP (24, self-paced)", "ACP merged into A2A under the Linux Foundation in 2025; ANP has little adoption", "A2A (repo folder 13_a2a)"],
+          ["StructuredTool (06)", "@tool with a Pydantic argument schema does the same, more simply", "@tool + bind_tools"],
+        ] },
+      ],
+    },
+    {
       title: "Software 1.0 → 2.0 → 3.0",
       subtitle: "Andrej Karpathy: how we program computers has changed twice",
       demo: "Concept",

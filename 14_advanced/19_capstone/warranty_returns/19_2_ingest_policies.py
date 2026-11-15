@@ -6,6 +6,7 @@ import glob
 import os
 import re
 import sys
+import threading
 
 import chromadb
 from pypdf import PdfReader
@@ -74,6 +75,8 @@ def chunk_by_clause(pdf_path: str) -> list[dict]:
 
 
 def build_index() -> int:
+    global _collection
+    _collection = None                            # the collection is about to be replaced
     client = chromadb.PersistentClient(path=CHROMA_DIR)
     try:
         client.delete_collection(COLLECTION)      # rebuild from scratch every time
@@ -95,6 +98,21 @@ def _tokens(text: str) -> list[str]:
     return re.findall(r"[a-z0-9]+", text.lower())
 
 
+_collection = None
+_collection_lock = threading.Lock()
+
+
+def policy_collection():
+    """ONE Chroma client per process, created on first use. Creating a new
+    PersistentClient on every call races when the API runs several tickets at
+    once ("Could not connect to tenant default_tenant") - found by the 19_11 load test."""
+    global _collection
+    with _collection_lock:
+        if _collection is None:
+            _collection = chromadb.PersistentClient(path=CHROMA_DIR).get_collection(COLLECTION)
+    return _collection
+
+
 def retrieve(query: str, product_category: str | None = None, doc_types: list[str] | None = None,
              k: int = 4) -> list[dict]:
     """Metadata filter -> semantic search + BM25 keyword search -> Reciprocal Rank Fusion.
@@ -102,7 +120,7 @@ def retrieve(query: str, product_category: str | None = None, doc_types: list[st
     product_category keeps clauses for that category PLUS the clauses that apply to
     all products (exclusions, remedies, approvals) - never another category's.
     """
-    collection = chromadb.PersistentClient(path=CHROMA_DIR).get_collection(COLLECTION)
+    collection = policy_collection()
 
     conditions = []
     if product_category and product_category != "all":
@@ -141,7 +159,7 @@ def retrieve(query: str, product_category: str | None = None, doc_types: list[st
 
 def get_clause(doc_name: str, section: str) -> dict | None:
     """Fetch one known clause by its id (used when a rule needs an exact clause)."""
-    collection = chromadb.PersistentClient(path=CHROMA_DIR).get_collection(COLLECTION)
+    collection = policy_collection()
     got = collection.get(ids=[f"{doc_name}:{section}"], include=["documents", "metadatas"])
     if not got["ids"]:
         return None

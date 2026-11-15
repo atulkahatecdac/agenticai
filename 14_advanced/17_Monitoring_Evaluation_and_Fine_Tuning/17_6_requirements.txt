@@ -1,0 +1,7 @@
+# Separate venv for 17_6_phoenix_tracing.py only (see the script docstring).
+# Phoenix pins newer OpenTelemetry packages than the repo-wide requirements.txt.
+arize-phoenix==21.0.0
+openinference-instrumentation-langchain==0.1.86
+langchain-core==0.3.83
+langchain-openai==0.3.35
+python-dotenv

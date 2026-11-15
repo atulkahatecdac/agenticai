@@ -23,6 +23,7 @@ module.exports = {
         "Multi-step reasoning: chaining tools",
         "The ReAct pattern",
         "The plan-and-execute pattern",
+        "When tools fail: retries, fallbacks, circuit breakers",
       ],
     },
     {
@@ -185,6 +186,55 @@ structured_llm = llm.with_structured_output(BookAnswer)` },
       ],
     },
     {
+      title: "When Tools Fail",
+      subtitle: "Four layers of defence, from inside the tool to the loop around it",
+      demo: M + "06_8_tool_errors_and_retries.py",
+      split: [1.1, 1],
+      left: [
+        { type: "code", caption: "1. Retry transient errors inside the tool (tenacity)", code:
+`@retry(retry=retry_if_exception_type(TransientError),
+       stop=stop_after_attempt(4), wait=wait_exponential())
+def fetch_rate(currency): ...` },
+        { type: "code", caption: "2. Explain bad arguments, so the LLM can fix them", code:
+`raise ValueError(f"'{code}' is not an ISO code. "
+                 f"Use one of {sorted(RATES)}")` },
+        { type: "code", caption: "3. Retry the LLM call, then fall back to another model", code:
+`llm = primary.with_retry(stop_after_attempt=3) \\
+             .with_fallbacks([backup])` },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Transient (timeout, 429, 503)", text: "Retry with backoff – the LLM never sees it" },
+          { title: "Fixable (bad arguments)", text: "Return the error as the ToolMessage; the LLM corrects itself" },
+          { title: "Model or network down", text: "with_retry, then with_fallbacks" },
+          { title: "Keeps failing", text: "Circuit breaker: after 2 failures, tell the LLM the tool is unavailable; max_steps ends the loop" },
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "**In the demo:** two timeouts are retried silently; the shipping API fails twice and the third country is never tried." },
+      ],
+    },
+    {
+      title: "Why Not AgentExecutor?",
+      subtitle: "Older courses start with LangChain's AgentExecutor – this one deliberately does not",
+      demo: "Concept",
+      split: [1, 1],
+      left: [
+        { type: "code", caption: "What older tutorials show", code:
+`agent = create_tool_calling_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools,
+                         max_iterations=5,
+                         handle_parsing_errors=True)
+executor.invoke({"input": question})` },
+        { type: "text", size: 11, color: "slate", text: "max_iterations, error handling, early stopping and verbose mode are all real needs – you have now built each one yourself in the loop." },
+      ],
+      right: [
+        { type: "icons", d: 0.36, size: 10.5, items: [
+          { icon: "FaBoxArchive", title: "Legacy", text: "LangChain 1.0 moved AgentExecutor and initialize_agent to the langchain-classic package" },
+          { icon: "FaEyeSlash", title: "It hides the loop", text: "The loop is the one thing you must understand to debug an agent" },
+          { icon: "FaDiagramProject", title: "Its successor is LangGraph", text: "State, branching, retries, checkpoints and human approval – Modules 07–08" },
+        ] },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 06 Summary",
       subtitle: "What you built",
@@ -193,6 +243,7 @@ structured_llm = llm.with_structured_output(BookAnswer)` },
         { tag: "plan", title: "Plan-and-execute", text: "A Pydantic plan, a ReAct loop per step" },
         { tag: "tool", title: "Custom tools", text: "@tool, bind_tools and Pydantic schemas" },
         { tag: "SQL", title: "A SQL agent", text: "Questions over the sales database" },
+        { tag: "fail", title: "Failure handling", text: "Retries, fallbacks and a circuit breaker" },
       ],
       takeaways: [
         "The LLM requests tool calls; a few lines of our own loop run them",

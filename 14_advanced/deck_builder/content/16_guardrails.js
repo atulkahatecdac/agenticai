@@ -19,9 +19,10 @@ module.exports = {
         "OWASP LLM Top 10",
         "Prompt injection attacks",
         "NVIDIA NeMo Guardrails and Colang",
-        "Guardrails AI",
+        "Guardrails AI: custom validators",
         "Microsoft Presidio for PII",
         "Red-teaming with adversarial prompts",
+        "Constitutional AI at run time",
       ],
     },
     {
@@ -130,7 +131,7 @@ flow bot refuse input
     {
       title: "Guardrails AI",
       subtitle: "A Python framework of validators for LLM inputs and outputs",
-      demo: "Separate venv: guardrails_example.py (guardrails-ai pins clash with this repo's)",
+      demo: M + "16_5_guardrails_ai_validators.py  (own venv: 16_5_requirements.txt)",
       split: [1, 1.1],
       left: [
         { type: "table", size: 10.5, widths: [1.4, 2.6], head: ["Concept", "Meaning"], rows: [
@@ -145,6 +146,40 @@ flow bot refuse input
           { title: "NeMo Guardrails", color: "teal", items: ["Controls conversation flows, actions and allowed behaviour"] },
         ] },
         { type: "text", size: 10.5, color: "slate", text: "Use one or both: NeMo to steer the dialogue, Guardrails AI to validate specific fields." },
+      ],
+    },
+    {
+      title: "Guardrails AI: Your Own Validators",
+      subtitle: "Each validator checks one rule and says what happens on failure: fix it, block it, or just flag it",
+      demo: M + "16_5_guardrails_ai_validators.py  (own venv – guardrails-ai needs langchain-core 1.x)",
+      split: [1.1, 1],
+      left: [
+        { type: "code", caption: "A validator that reads metadata passed at call time", code:
+`@register_validator(name="shop/refund-limit",
+                    data_type="string")
+class RefundLimit(Validator):
+    def _validate(self, value, metadata):
+        limit = metadata["order_value"]
+        amounts = [...]      # every ₹ amount in the reply
+        if any(a > limit for a in amounts):
+            return FailResult(
+                error_message="Offers more than paid")
+        return PassResult()
+
+guard = Guard().use(
+    NoCompetitors([...], on_fail=OnFailAction.FIX),
+    RefundLimit(on_fail=OnFailAction.EXCEPTION),
+    NoGuarantees(on_fail=OnFailAction.NOOP))
+guard.validate(draft, metadata={"order_value": 2499})` },
+      ],
+      right: [
+        { type: "table", size: 9.5, widths: [1.75, 1.95], head: ["LLM draft", "Result"], rows: [
+          ["Refund of ₹2,499 approved", "Passed – sent"],
+          ["\"GadgetHub may be cheaper, but…\"", "FIX → \"another retailer may be cheaper\""],
+          ["\"We will definitely fix it\"", "NOOP → flagged in the log, still sent"],
+          ["Refund ₹25,000 on a ₹2,499 order", "EXCEPTION → blocked; a safe template is sent"],
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "Ready-made validators (toxic language, PII, secrets, competitor checks) come from the Guardrails Hub: `guardrails configure`, then `guardrails hub install hub://guardrails/toxic_language`." },
       ],
     },
     {
@@ -192,6 +227,35 @@ flow bot refuse input
       ],
     },
     {
+      title: "Constitutional AI at Run Time",
+      subtitle: "Write the principles down, then draft → critique against each principle → revise",
+      demo: M + "16_6_constitutional_self_critique.py",
+      split: [1, 1.1],
+      left: [
+        { type: "code", caption: "A constitution is just a list", code:
+`CONSTITUTION = [
+  "Do not threaten, intimidate or harass anyone,
+   even when the user is angry with them.",
+  "Do not treat people differently because of age,
+   gender, religion, caste, disability ...",
+  "Do not present guesses as facts.",
+  "Stay helpful: do the legitimate part.",
+]` },
+        { type: "text", size: 10.5, color: "slate", text: "Anthropic's Constitutional AI uses this loop in TRAINING. Here it runs at answer time, in any app. Rails and validators catch patterns; a constitution covers judgement calls – tone, fairness, harm." },
+      ],
+      right: [
+        { type: "steps", size: 10.5, items: [
+          { title: "Draft", text: "The model answers the request as usual" },
+          { title: "Critique – one principle per call", text: "Yes/no plus quoted evidence; a single all-in-one check missed even the age filter" },
+          { title: "Revise – only if something broke", text: "Decline the forbidden part in one sentence, help with the goal behind it" },
+        ] },
+        { type: "table", size: 9.5, widths: [1.7, 2.1], head: ["Request", "After revision"], rows: [
+          ["Scare the neighbour: \"something bad might happen to your dog\"", "A firm, polite note – no threat"],
+          ["Interview only the young applicants", "Declines age; suggests skill-based criteria"],
+        ] },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 16 Summary",
       subtitle: "What you built",
@@ -200,6 +264,8 @@ flow bot refuse input
         { tag: "16_2", title: "NeMo rails", text: "Input and output rails in Colang" },
         { tag: "16_3", title: "PII protection", text: "Presidio detection and anonymisation" },
         { tag: "16_4", title: "A red-team suite", text: "Attacks by category, judged automatically" },
+        { tag: "16_5", title: "Validators", text: "Guardrails AI: fix, block or flag a reply" },
+        { tag: "16_6", title: "A constitution", text: "Critique and revise against written principles" },
       ],
       takeaways: [
         "Guard inputs, outputs, retrieval and tools",

@@ -1,0 +1,34 @@
+{
+  "family": "agent-service",
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "agent",
+      "image": "<filled in by the pipeline>",
+      "essential": true,
+      "portMappings": [{ "containerPort": 8000, "protocol": "tcp" }],
+      "environment": [{ "name": "APP_MODEL", "value": "gpt-4o-mini" }],
+      "secrets": [
+        { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT_ID>:secret:openai-api-key" }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)\""],
+        "interval": 15, "timeout": 5, "retries": 3, "startPeriod": 10
+      },
+      "stopTimeout": 25,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/agent-service",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "agent",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}

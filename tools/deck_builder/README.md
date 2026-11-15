@@ -71,6 +71,10 @@ and either one column of blocks or two columns (`left` / `right`, widths set wit
   `Md…` = Material, `Lu…` = Lucide). An unknown name stops the build and lists it.
 - An infographic that carries its own title is a full-slide image: `{ kind: "image", src: "file.png", demo: "..." }`.
   Add `full: true` to fill the whole slide (centred, aspect kept) with no margins or DEMO bar.
+  An image slide with a `title` gets the normal content-slide title; `box: { x, y, w, h }` (inches) places the
+  picture exactly, e.g. to reproduce a slide that was made by hand in PowerPoint. With `box`, an optional
+  `side: { box, size, items: [{ label, code }] }` adds a text box of bulleted bold labels with code lines under
+  them, and `titleSize` fixes the title's point size (otherwise titles use the master's 28pt).
   Keep images as palette PNGs (sharp `png({ palette: true })`) so the decks stay small.
 - `tree` connects every box in a row to every box in the next row. That suits fan-out (1 → n) and join
   (n → 1); for anything else (n → n) use a `table` or several `chain`s instead.

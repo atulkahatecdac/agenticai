@@ -22,4 +22,10 @@ mcp dev 14_advanced/10_mcp/10_3_database_mcp_server.py
 To register a server in Claude Desktop, run `mcp install <server>.py`, or add it under `mcpServers` in
 `claude_desktop_config.json`.
 
+**VS Code (GitHub Copilot agent mode)** reads MCP servers from `.vscode/mcp.json` in the workspace. Copy
+`vscode_mcp.json` to `<repo>/.vscode/mcp.json` (on macOS/Linux change `.venv/Scripts/python.exe` to
+`.venv/bin/python`), click **Start** above the server entry, then open Copilot Chat, switch to **Agent** mode and
+ask "add a user called Asha, then list all users" – Copilot asks before each tool call. Note the format differs
+from Claude Desktop: the top-level key is `servers`, not `mcpServers`, and each entry has a `type`.
+
 Module 11 (MCP ecosystem) continues in `../11_mcp_advanced/`.

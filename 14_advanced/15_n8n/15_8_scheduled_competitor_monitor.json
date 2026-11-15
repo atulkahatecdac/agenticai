@@ -1,0 +1,248 @@
+{
+  "name": "15_8 Scheduled Competitor Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 15_8 Scheduled Competitor Monitor\n**Setup**\n1. Anthropic credential on *Anthropic Chat Model* (or swap in the OpenAI Chat Model sub-node).\n2. Slack credential on both Slack nodes; change the channel (#competitor-watch).\n3. Settings → Error workflow → 15_7 Error Handler.\n**Test**: *Execute workflow* runs it now. Publish it and it runs on its own at 08:00, Monday–Friday.\nBreak the URL to see the retries, then the error branch.",
+        "width": 520,
+        "height": 300,
+        "color": 5
+      },
+      "id": "96aeb91c-575f-4e4d-a323-f24f573503c8",
+      "name": "Note 0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -380
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "0897e68c-355b-41b3-a928-76e58e84c59d",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://books.toscrape.com/",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "ab11f1fe-547c-4529-90c1-606bf133e436",
+      "name": "Fetch Competitor Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "titles",
+              "cssSelector": "article.product_pod h3 a",
+              "returnValue": "attribute",
+              "attribute": "title",
+              "returnArray": true
+            },
+            {
+              "key": "prices",
+              "cssSelector": "article.product_pod .price_color",
+              "returnValue": "text",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "trimValues": true
+        }
+      },
+      "id": "a180ac6a-0b3e-4fe2-8a7d-014e81b0bfbf",
+      "name": "Extract Products",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Today is {{ $now.toFormat('cccc d LLL yyyy') }}. These are the books on our competitor's home page with their prices:\n\n{{ $json.titles.map((t, i) => t + ' - ' + $json.prices[i]).join('\\n') }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a pricing analyst for an online bookshop. Write a Slack update of at most 6 lines: the price range, the 3 cheapest titles with prices, and one suggestion for our own promotions. Plain text, no greeting."
+            }
+          ]
+        }
+      },
+      "id": "c802a5fa-150c-4ef7-a035-82c9e7299bd9",
+      "name": "Summarise Prices",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        660,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-5-5",
+          "mode": "id"
+        },
+        "options": {
+          "temperature": 0,
+          "maxTokensToSample": 400
+        }
+      },
+      "id": "2f8fc4a4-afd1-4bde-a04f-47d7871ce6de",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        660,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#competitor-watch",
+          "mode": "name"
+        },
+        "text": "=:books: *Competitor price watch*\n{{ $json.text }}",
+        "otherOptions": {}
+      },
+      "id": "bfe1ca8f-fe83-4686-a446-bbf0a128b997",
+      "name": "Post to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        900,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#competitor-watch",
+          "mode": "name"
+        },
+        "text": "=:warning: Competitor monitor could not fetch the page after 3 tries: {{ $json.error.message }}",
+        "otherOptions": {}
+      },
+      "id": "52942116-4310-4593-9010-9a369a05c957",
+      "name": "Alert: Fetch Failed",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        440,
+        160
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Competitor Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Competitor Page": {
+      "main": [
+        [
+          {
+            "node": "Extract Products",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert: Fetch Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Products": {
+      "main": [
+        [
+          {
+            "node": "Summarise Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarise Prices": {
+      "main": [
+        [
+          {
+            "node": "Post to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarise Prices",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

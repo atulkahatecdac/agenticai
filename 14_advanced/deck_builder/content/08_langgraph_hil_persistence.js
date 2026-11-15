@@ -21,6 +21,7 @@ module.exports = {
         "Production persistence with Redis",
         "Parallel work with the Send API",
         "Subgraphs",
+        "Multi-agent: the supervisor pattern",
       ],
     },
     {
@@ -225,6 +226,61 @@ graph.add_conditional_edges("determine_cities",
       ],
     },
     {
+      title: "The Supervisor Pattern",
+      subtitle: "One coordinating agent decides which specialist acts next – and when the job is done",
+      demo: M + "08_8_supervisor_multi_agent.py",
+      split: [1, 1.05],
+      left: [
+        { type: "tree", boxW: 1.9, size: 10.5, boxH: 0.42, rows: [
+          [{ label: "supervisor (LLM router)", fill: "navy" }],
+          [{ label: "flights_agent", fill: "teal" }, { label: "hotels_agent", fill: "teal" }],
+          [{ label: "back to the supervisor", fill: "slate" }],
+        ] },
+        { type: "text", size: 10.5, color: "slate", text: "Each specialist has its own prompt, tools and scratchpad. Only its final report goes into the shared state. FINISH sends the state to a writer node." },
+      ],
+      right: [
+        { type: "table", size: 10, widths: [1.25, 2.55], head: ["Turn", "What happened (demo run)"], rows: [
+          ["supervisor", "\"Flights first, so the hotel can use the rest of the budget\" → flights_agent"],
+          ["flights_agent", "search_flights both ways; picks a daytime pair, ₹39,700"],
+          ["supervisor", "\"Hotel still missing, ₹20,300 left\" → hotels_agent"],
+          ["hotels_agent", "search_hotels ≤ ₹6,767/night → Orchard Stay"],
+          ["supervisor", "\"Both have reported\" → FINISH → writer: ₹58,900 of ₹60,000"],
+        ] },
+      ],
+    },
+    {
+      title: "Hand-offs with Command",
+      subtitle: "A node returns its state update AND where to go next – the routing lives with the decision",
+      demo: M + "08_8_supervisor_multi_agent.py",
+      split: [1.2, 1],
+      left: [
+        { type: "code", caption: "Supervisor and specialist (condensed)", code:
+`class Route(BaseModel):
+    reason: str        # think first...
+    next: Literal["flights_agent", "hotels_agent", "FINISH"]
+
+def supervisor(state) -> Command[Literal[...]]:
+    if state["turns"] >= 4:
+        return Command(goto="writer")     # safety net
+    brief = HumanMessage(briefing(state))
+    d = router.invoke([SystemMessage(PROMPT), brief])
+    goto = "writer" if d.next == "FINISH" else d.next
+    return Command(goto=goto, update={"turns": ...})
+
+# each specialist ends with:
+return Command(goto="supervisor",
+               update={"messages": [report]})` },
+      ],
+      right: [
+        { type: "icons", d: 0.36, size: 10.5, items: [
+          { icon: "FaRoute", title: "No conditional edges", text: "graph.add_edge(START, \"supervisor\") – every other edge is a Command" },
+          { icon: "FaListCheck", title: "Brief, don't dump", text: "Agents get the request plus reports so far – not each other's tool chatter" },
+          { icon: "FaShieldHalved", title: "A turn limit", text: "An LLM router can loop; the supervisor stops after 4 turns" },
+          { icon: "FaCodeFork", title: "Not the same as Send (08_5)", text: "Send runs copies of one node in parallel; a supervisor runs different agents in an order an LLM picks" },
+        ] },
+      ],
+    },
+    {
       kind: "summary",
       title: "Module 08 Summary",
       subtitle: "What you built",
@@ -234,6 +290,7 @@ graph.add_conditional_edges("determine_cities",
         { tag: "ckpt", title: "Crash recovery", text: "SQLite locally, Redis in production" },
         { tag: "Send", title: "Parallel research", text: "Flights and four cities at once" },
         { tag: "sub", title: "Subgraphs", text: "A medical-diagnosis flow from smaller graphs" },
+        { tag: "team", title: "A supervised team", text: "Flights and hotels agents, an LLM supervisor" },
       ],
       takeaways: [
         "A loop is a conditional edge pointing backwards – add an exit",
