@@ -377,6 +377,41 @@ python frontend.py               # terminal 2` }],
       ],
     },
     {
+      title: "Step 1: A Whole API in One File",
+      subtitle: "Three ideas before any folder structure: Pydantic models, a dependency, and a file upload",
+      demo: "02_fastapi_production/simple_main.py  ·  uvicorn simple_main:app --reload",
+      split: [1.25, 1],
+      left: [
+        { type: "code", caption: "simple_main.py (condensed)", code:
+`llm = ChatOpenAI(model="gpt-4o-mini")   # created once
+app = FastAPI()
+
+class ChatRequest(BaseModel):
+    message: str
+
+def check_key(x_api_key: str = Header(default="")):
+    if x_api_key != API_KEY:
+        raise HTTPException(401, "Wrong X-API-Key")
+
+@app.post("/chat")
+def chat(req: ChatRequest):
+    return {"reply": llm.invoke(req.message).content}
+
+@app.post("/summarize", dependencies=[Depends(check_key)])
+async def summarize(file: UploadFile):
+    text = (await file.read()).decode()
+    return {"summary": llm.invoke(text).content}` },
+      ],
+      right: [
+        { type: "icons", d: 0.36, size: 10.5, items: [
+          { icon: "FaFileCode", title: "Pydantic model", text: "Describes the JSON coming in – a missing field gets a 422 automatically" },
+          { icon: "FaKey", title: "Depends(check_key)", text: "Runs before the endpoint; if it raises 401, the endpoint never runs" },
+          { icon: "FaUpload", title: "UploadFile", text: "Receives a file; check its type and size before calling the LLM" },
+          { icon: "FaFolderTree", title: "When the file grows…", text: "…split it into routers and dependency modules – the next slides" },
+        ] },
+      ],
+    },
+    {
       title: "Routers and Dependencies",
       subtitle: "How a real FastAPI service is laid out: main.py only wires routers; endpoints declare what they need",
       demo: "02_fastapi_production/  ·  uvicorn app.main:app --reload",
