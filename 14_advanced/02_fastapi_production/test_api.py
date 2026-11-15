@@ -9,14 +9,12 @@ Run from 14_advanced/02_fastapi_production:
 from fastapi.testclient import TestClient
 from langchain_core.language_models.fake_chat_models import FakeListChatModel
 
-from app.config import get_settings
 from app.dependencies import get_llm
 from app.main import app
 
 fake_llm = FakeListChatModel(responses=["- point one\n- point two\n- point three"])
 app.dependency_overrides[get_llm] = lambda: fake_llm
 client = TestClient(app)
-KEY = {"X-API-Key": get_settings().app_api_key}
 
 
 def test_health():
@@ -39,14 +37,9 @@ def test_stream_sends_sse_lines():
     assert r.text.strip().endswith("data: [DONE]")
 
 
-def test_documents_need_the_api_key():
-    files = {"file": ("note.txt", b"some text", "text/plain")}
-    assert client.post("/documents/summarize", files=files).status_code == 401
-
-
 def test_upload_a_text_file():
     files = {"file": ("note.txt", b"Refunds take 5 days. Returns within 30 days.", "text/plain")}
-    r = client.post("/documents/summarize", files=files, headers=KEY)
+    r = client.post("/documents/summarize", files=files)
     assert r.status_code == 200
     assert r.json()["filename"] == "note.txt"
     assert r.json()["characters"] > 0
@@ -54,4 +47,4 @@ def test_upload_a_text_file():
 
 def test_wrong_file_type_is_rejected():
     files = {"file": ("photo.png", b"\x89PNG", "image/png")}
-    assert client.post("/documents/summarize", files=files, headers=KEY).status_code == 415
+    assert client.post("/documents/summarize", files=files).status_code == 415

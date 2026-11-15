@@ -1,4 +1,4 @@
-"""/documents - upload a file, get a summary back. Needs the X-API-Key header (set in main.py)."""
+"""/documents - upload a .txt or .pdf file, get a summary back."""
 import io
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status

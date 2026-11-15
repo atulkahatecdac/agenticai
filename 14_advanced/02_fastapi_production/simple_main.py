@@ -6,19 +6,18 @@ Run from 14_advanced/02_fastapi_production:
 Endpoints:
     GET  /health      is the server up?
     POST /chat        {"message": "..."}  ->  {"reply": "..."}
-    POST /summarize   upload a .txt file (needs the X-API-Key header)  ->  {"summary": "..."}
+    POST /summarize   upload a .txt file  ->  {"summary": "..."}
 """
 import os
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, Header, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, "..", "..", ".env"), override=True)
 
-API_KEY = os.getenv("APP_API_KEY", "dev-key-change-me")  # protects YOUR API; not the OpenAI key
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)      # created once, shared by every request
 
 app = FastAPI(title="Simple Agent API")
@@ -33,12 +32,6 @@ class ChatResponse(BaseModel):
     reply: str
 
 
-# 2. A dependency: FastAPI runs it before the endpoint. If it raises, the endpoint never runs.
-def check_key(x_api_key: str = Header(default="")):
-    if x_api_key != API_KEY:
-        raise HTTPException(status_code=401, detail="Missing or wrong X-API-Key header")
-
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -50,8 +43,8 @@ def chat(req: ChatRequest):
     return ChatResponse(reply=result.content)
 
 
-# 3. UploadFile receives a file; Depends(check_key) protects just this endpoint.
-@app.post("/summarize", dependencies=[Depends(check_key)])
+# 2. UploadFile receives a file sent as a form upload (not JSON).
+@app.post("/summarize")
 async def summarize(file: UploadFile):
     if file.content_type != "text/plain":
         raise HTTPException(status_code=415, detail="Please upload a .txt file")

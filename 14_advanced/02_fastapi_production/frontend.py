@@ -15,8 +15,6 @@ from dotenv import load_dotenv
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, "..", "..", ".env"), override=True)
 API = os.getenv("AGENT_API_URL", "http://localhost:8000")
-API_KEY = os.getenv("APP_API_KEY", "dev-key-change-me")
-KEY = {"X-API-Key": API_KEY}
 
 
 @st.cache_resource          # ONE shared object for every re-run and every user: clients, models, DB connections
@@ -27,7 +25,7 @@ def get_client() -> httpx.Client:
 @st.cache_data(ttl=3600, show_spinner="Summarising…")   # results, keyed by the arguments: same file -> no new LLM call
 def summarise(filename: str, data: bytes, content_type: str) -> dict:
     files = {"file": (filename, data, content_type)}
-    r = get_client().post("/documents/summarize", files=files, headers=KEY)
+    r = get_client().post("/documents/summarize", files=files)
     r.raise_for_status()
     return r.json()
 

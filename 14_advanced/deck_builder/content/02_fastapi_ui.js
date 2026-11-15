@@ -23,7 +23,7 @@ module.exports = {
         "Streamlit apps and chat history",
         "Gradio apps and sharing them",
         "Streamlit / Gradio front end + FastAPI back end",
-        "A production layout: routers, dependencies, uploads, tests",
+        "From one file to a production layout: routers, dependencies, uploads",
         "Streamlit caching",
       ],
     },
@@ -376,9 +376,11 @@ python frontend.py               # terminal 2` }],
         ] },
       ],
     },
+    // Made by hand in PowerPoint: one file vs the app/ folder layout.
+    { kind: "image", title: "Routing Concept", src: "fastapi_one_file_vs_routers.png", box: { x: 0.91, y: 0.93, w: 8.19, h: 4.19 } },
     {
-      title: "Step 1: A Whole API in One File",
-      subtitle: "Three ideas before any folder structure: Pydantic models, a dependency, and a file upload",
+      title: "A Whole API in One File",
+      subtitle: "Two ideas before any folder structure: a Pydantic model for JSON, and UploadFile for files",
       demo: "02_fastapi_production/simple_main.py  ·  uvicorn simple_main:app --reload",
       split: [1.25, 1],
       left: [
@@ -389,15 +391,11 @@ app = FastAPI()
 class ChatRequest(BaseModel):
     message: str
 
-def check_key(x_api_key: str = Header(default="")):
-    if x_api_key != API_KEY:
-        raise HTTPException(401, "Wrong X-API-Key")
-
 @app.post("/chat")
 def chat(req: ChatRequest):
     return {"reply": llm.invoke(req.message).content}
 
-@app.post("/summarize", dependencies=[Depends(check_key)])
+@app.post("/summarize")
 async def summarize(file: UploadFile):
     text = (await file.read()).decode()
     return {"summary": llm.invoke(text).content}` },
@@ -405,7 +403,7 @@ async def summarize(file: UploadFile):
       right: [
         { type: "icons", d: 0.36, size: 10.5, items: [
           { icon: "FaFileCode", title: "Pydantic model", text: "Describes the JSON coming in – a missing field gets a 422 automatically" },
-          { icon: "FaKey", title: "Depends(check_key)", text: "Runs before the endpoint; if it raises 401, the endpoint never runs" },
+          { icon: "FaBolt", title: "One shared LLM", text: "Created once at start-up and used by every request" },
           { icon: "FaUpload", title: "UploadFile", text: "Receives a file; check its type and size before calling the LLM" },
           { icon: "FaFolderTree", title: "When the file grows…", text: "…split it into routers and dependency modules – the next slides" },
         ] },
@@ -413,17 +411,16 @@ async def summarize(file: UploadFile):
     },
     {
       title: "Routers and Dependencies",
-      subtitle: "How a real FastAPI service is laid out: main.py only wires routers; endpoints declare what they need",
+      subtitle: "The same API split into files: main.py only wires the routers; each router declares what it needs",
       demo: "02_fastapi_production/  ·  uvicorn app.main:app --reload",
-      split: [1.15, 1],
+      split: [1, 1],
       left: [
         { type: "code", caption: "app/main.py", code:
 `app = FastAPI(title="Agent API")
-app.include_router(chat.router)            # open
-app.include_router(documents.router,       # every route
-    dependencies=[Depends(require_api_key)])  # needs a key` },
+app.include_router(chat.router)        # /chat
+app.include_router(documents.router)   # /documents` },
         { type: "code", caption: "app/routers/chat.py", code:
-`router = APIRouter(prefix="/chat", tags=["chat"])
+`router = APIRouter(prefix="/chat")
 
 @router.post("")
 async def chat(req: ChatRequest,
@@ -432,50 +429,19 @@ async def chat(req: ChatRequest,
     return ChatResponse(reply=reply.content)` },
       ],
       right: [
-        { type: "icons", d: 0.36, size: 10.5, items: [
-          { icon: "FaFolderTree", title: "One router per area", text: "chat.py, documents.py – each with its own prefix and tag in /docs" },
-          { icon: "FaPlug", title: "Depends(get_llm)", text: "FastAPI builds the LLM client and passes it in; the endpoint never creates one" },
-          { icon: "FaKey", title: "Depends(require_api_key)", text: "Checks the X-API-Key header – attached once, to a whole router" },
-          { icon: "FaVialCircleCheck", title: "Swap anything in tests", text: "A dependency can be replaced without touching the endpoint – next slide" },
-        ] },
-      ],
-    },
-    {
-      title: "File Uploads, and Tests Without an LLM",
-      subtitle: "UploadFile receives a document; dependency_overrides gives every test a fake LLM",
-      demo: "02_fastapi_production/  ·  pytest -q test_api.py   (7 passed, no API key)",
-      split: [1, 1],
-      left: [
         { type: "code", caption: "app/routers/documents.py (condensed)", code:
-`@router.post("/summarize")
+`router = APIRouter(prefix="/documents")
+
+@router.post("/summarize")
 async def summarize(file: UploadFile,
-                    llm = Depends(get_llm)):
-    if file.content_type not in ALLOWED:
-        raise HTTPException(415, "Upload .txt or .pdf")
-    data = await file.read()
-    if len(data) > 2 * 1024 * 1024:
-        raise HTTPException(413, "File is over 2 MB")
-    text = extract_text(data, file.content_type)
-    prompt = f"Summarise:\\n{text[:12000]}"
-    result = await llm.ainvoke(prompt)
+                    llm=Depends(get_llm)):
+    text = extract_text(await file.read(), ...)
+    result = await llm.ainvoke(f"Summarise: {text}")
     return SummaryResponse(summary=result.content)` },
-      ],
-      right: [
-        { type: "code", caption: "test_api.py", code:
-`fake = FakeListChatModel(responses=["- a\\n- b\\n- c"])
-app.dependency_overrides[get_llm] = lambda: fake
-client = TestClient(app)
-
-def test_upload_a_text_file():
-    files = {"file": ("note.txt", b"Refunds...",
-                      "text/plain")}
-    r = client.post("/documents/summarize",
-                    files=files, headers=KEY)
-    assert r.status_code == 200
-
-def test_wrong_file_type_is_rejected():
-    ...  # image/png -> 415` },
-        { type: "text", size: 10.5, color: "slate", text: "**Check before you spend:** type and size are checked first – a 50 MB upload never reaches the LLM." },
+        { type: "icons", d: 0.32, size: 10, gap: 0.08, items: [
+          { icon: "FaPlug", title: "Depends(get_llm)", text: "Both routers get the same shared LLM client passed in" },
+          { icon: "FaFolderTree", title: "One router per area", text: "Each file has its own prefix and its own section in /docs" },
+        ] },
       ],
     },
     {
@@ -493,7 +459,7 @@ def get_client() -> httpx.Client:
 def summarise(name: str, data: bytes, ctype: str) -> dict:
     files = {"file": (name, data, ctype)}
     r = get_client().post("/documents/summarize",
-                          files=files, headers=KEY)
+                          files=files)
     return r.json()
 
 upload = st.file_uploader("Upload", type=["txt", "pdf"])
@@ -518,7 +484,7 @@ if upload:
         { tag: "async", title: "Concurrent endpoint", text: "Summary, keywords and sentiment in one gather()" },
         { tag: "SSE", title: "Streaming", text: "Tokens yielded to the client as they arrive" },
         { tag: "UI", title: "Two front ends", text: "Streamlit and Gradio calling the same back end" },
-        { tag: "prod", title: "A team-ready service", text: "Routers, Depends(), file uploads, 7 offline tests" },
+        { tag: "prod", title: "A team-ready service", text: "One file first, then routers, Depends() and file uploads" },
       ],
       takeaways: [
         "REST is how agents reach almost every external system",
