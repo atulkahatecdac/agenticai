@@ -1,125 +1,76 @@
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
-warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
+# Hybrid search: run a keyword retriever (BM25) and a semantic retriever
+# (vectors) on the same query, then fuse their rankings.
+#   BM25    - nails exact words and acronyms, but knows nothing about meaning
+#   vectors - match meaning across different wording, but blur exact terms
+# Reciprocal Rank Fusion: score(doc) = sum of 1 / (k + rank in each list),
+# so a document ranked highly by EITHER retriever rises to the top.
+# Question 1 leans on an acronym (BM25 wins), question 2 on paraphrase (vectors win).
 
-import json
 import os
 import re
-import shutil
 import sys
+import json
+import chromadb
 from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
 
 load_dotenv(override=True)
 sys.stdout.reconfigure(encoding="utf-8")
 
-# =====================================================================
-# Hybrid Search / Hybrid RAG: dense embedding search is great at
-# matching MEANING even when the wording differs, but it can dilute
-# exact terms (an acronym, a specific number, a policy name) into the
-# surrounding semantic neighborhood. Sparse keyword search (BM25) is the
-# opposite: it nails exact token overlap but has no notion of meaning -
-# a paraphrase that avoids the KB's exact words scores poorly no matter
-# how relevant it is. Hybrid search runs both retrievers over the same
-# query and fuses their rankings - here with Reciprocal Rank Fusion
-# (RRF): score(doc) = sum over retrievers of 1 / (k + rank_in_that_list)
-# - so a document ranked highly by EITHER retriever rises to the top,
-# without needing the two retrievers' raw scores to be on comparable
-# scales.
-#
-# Knowledge base: the same 50-statement insurance policy KB used
-# elsewhere in this folder. The two questions below are picked to each
-# favor a different retriever - one leans on an exact acronym, the
-# other is phrased in plain language that avoids the KB's own wording.
-# =====================================================================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PERSIST_DIR = os.path.join(BASE_DIR, "hybrid_chroma_db")
-shutil.rmtree(PERSIST_DIR, ignore_errors=True)
-
 with open(os.path.join(BASE_DIR, "policy_documents.json"), encoding="utf-8") as f:
-    POLICY_DOCUMENTS = json.load(f)
+    documents = json.load(f)
 
-vectorstore = Chroma(
-    collection_name="policy_docs",
-    embedding_function=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2"),
-    persist_directory=PERSIST_DIR,
-)
-vectorstore.add_texts(POLICY_DOCUMENTS)
+kb = chromadb.Client().create_collection("policy_docs")
+kb.add(ids=[str(i) for i in range(len(documents))], documents=documents)
 
 
 def tokenize(text: str) -> list[str]:
     return re.findall(r"[a-z0-9]+", text.lower())
 
 
-bm25 = BM25Okapi([tokenize(doc) for doc in POLICY_DOCUMENTS])
-
-answer_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-
-RRF_K = 60
+bm25 = BM25Okapi([tokenize(d) for d in documents])
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 TOP_N = 3
 
 
-def dense_ranking(query: str) -> list[str]:
-    return [doc.page_content for doc in vectorstore.similarity_search(query, k=10)]
+def semantic_search(query: str) -> list[str]:
+    return kb.query(query_texts=[query], n_results=10)["documents"][0]
 
 
-def sparse_ranking(query: str) -> list[str]:
+def keyword_search(query: str) -> list[str]:
     scores = bm25.get_scores(tokenize(query))
-    ranked_indices = sorted(range(len(POLICY_DOCUMENTS)), key=lambda i: scores[i], reverse=True)
-    return [POLICY_DOCUMENTS[i] for i in ranked_indices[:10]]
+    return [doc for _, doc in sorted(zip(scores, documents), reverse=True)[:10]]
 
 
-def reciprocal_rank_fusion(rankings: list[list[str]]) -> list[tuple[str, float]]:
-    scores: dict[str, float] = {}
+def reciprocal_rank_fusion(rankings: list[list[str]], k: int = 60) -> list[str]:
+    scores = {}
     for ranking in rankings:
         for rank, doc in enumerate(ranking, start=1):
-            scores[doc] = scores.get(doc, 0.0) + 1.0 / (RRF_K + rank)
-    return sorted(scores.items(), key=lambda item: item[1], reverse=True)
+            scores[doc] = scores.get(doc, 0) + 1 / (k + rank)
+    return sorted(scores, key=scores.get, reverse=True)
 
 
-def answer_from(label: str, question: str, docs: list[str]) -> None:
+def answer(question: str, docs: list[str]) -> str:
     context = "\n".join(f"- {d}" for d in docs)
-    response = answer_llm.invoke(
-        f"Answer the question using ONLY the context below. Be concise.\n\n"
-        f"Context:\n{context}\n\nQuestion: {question}"
-    )
-    print(f"\n{label}\n  {response.content}")
+    return llm.invoke(f"Answer using ONLY the context. Be concise.\n\nContext:\n{context}\n\nQuestion: {question}").content
 
 
 QUESTIONS = [
     "What is the IRDAI mandated claim settlement timeline for health insurance?",
-
     "If my mom already had a health condition before we got this cover, will the insurance "
     "pay for treating it straight away?",
 ]
 
 for question in QUESTIONS:
-    print("\n" + "=" * 70)
-    print(f"QUESTION: {question}")
-    print("=" * 70)
+    print("\n" + "=" * 70 + f"\nQUESTION: {question}\n" + "=" * 70)
+    semantic = semantic_search(question)
+    keyword = keyword_search(question)
+    hybrid = reciprocal_rank_fusion([semantic, keyword])
 
-    dense = dense_ranking(question)
-    sparse = sparse_ranking(question)
-
-    print(f"\nDENSE (embedding) top {TOP_N}:")
-    for doc in dense[:TOP_N]:
-        print(f"  - {doc}")
-
-    print(f"\nSPARSE (BM25 keyword) top {TOP_N}:")
-    for doc in sparse[:TOP_N]:
-        print(f"  - {doc}")
-
-    fused = reciprocal_rank_fusion([dense, sparse])
-    print(f"\nHYBRID (RRF-fused) top {TOP_N}:")
-    for doc, score in fused[:TOP_N]:
-        print(f"  score={score:.4f}  {doc}")
-
-    answer_from("DENSE-ONLY ANSWER:", question, dense[:TOP_N])
-    answer_from("SPARSE-ONLY ANSWER:", question, sparse[:TOP_N])
-    answer_from("HYBRID ANSWER:", question, [doc for doc, _ in fused[:TOP_N]])
+    for label, ranking in [("SEMANTIC", semantic), ("KEYWORD (BM25)", keyword), ("HYBRID (RRF)", hybrid)]:
+        print(f"\n{label} top {TOP_N}:")
+        for doc in ranking[:TOP_N]:
+            print(f"  - {doc}")
+        print(f"  ANSWER: {answer(question, ranking[:TOP_N])}")

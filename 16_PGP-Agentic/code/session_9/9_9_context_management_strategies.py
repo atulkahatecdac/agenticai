@@ -14,18 +14,11 @@ client = OpenAI()
 MODEL = "gpt-4o-mini"
 encoding = tiktoken.encoding_for_model(MODEL)
 
-# =====================================================================
-# Five ways to keep a growing conversation from blowing past the
-# context window, applied to the SAME 16-message conversation and the
-# SAME follow-up question, so the tradeoffs are visible in the actual
-# output rather than just described.
-#
-# The follow-up question asks for a fact (an order number) stated in
-# message #0, then buried behind 15 later, unrelated support questions.
-# Sliding Window is EXPECTED to genuinely lose it - that's the point,
-# not a bug - the other four strategies are specifically designed not
-# to, each in a different way.
-# =====================================================================
+# Five ways to keep a growing conversation inside the context window, all
+# applied to the SAME 16-message chat and the SAME follow-up question.
+# The question asks for an order number stated in message 0 and buried by
+# 15 later messages: sliding window is EXPECTED to lose it; the other four
+# keep it, each in a different way.
 
 CONVERSATION = [
     {"role": "user", "content": "Hi, I'm following up on order #ORD-88213. It still hasn't arrived and it's been 9 days."},
@@ -71,13 +64,9 @@ def summarization(conversation: list[dict], keep_last: int) -> list[dict]:
 # ---- 3. Semantic Retrieval: pull only the messages relevant to THIS query ----
 def semantic_retrieval(conversation: list[dict], query: str, top_k: int) -> list[dict]:
     collection = chromadb.Client().create_collection("context_memory")
-    collection.add(
-        ids=[str(i) for i in range(len(conversation))],
-        documents=[m["content"] for m in conversation],
-    )
-    results = collection.query(query_texts=[query], n_results=top_k)
-    kept_indices = sorted(int(i) for i in results["ids"][0])  # restore chronological order
-    return [conversation[i] for i in kept_indices]
+    collection.add(ids=[str(i) for i in range(len(conversation))], documents=[m["content"] for m in conversation])
+    ids = collection.query(query_texts=[query], n_results=top_k)["ids"][0]
+    return [conversation[i] for i in sorted(map(int, ids))]  # back in chronological order
 
 
 # ---- 4. Token-Based Trimming: keep the newest messages that fit a real token budget ----
@@ -94,8 +83,7 @@ def token_based_trimming(conversation: list[dict], max_tokens: int) -> list[dict
 
 # ---- 5. Priority-Based Context: always keep flagged-critical messages + recent ones ----
 def is_critical(content: str) -> bool:
-    # A real system would flag this during extraction (like the semantic-memory
-    # examples elsewhere in 15_real); a keyword heuristic is enough to demonstrate it.
+    # a real system would flag critical facts when saving them; a regex is enough here
     return bool(re.search(r"#ORD-|order number|shipping address", content, re.I))
 
 
@@ -105,15 +93,15 @@ def priority_based_context(conversation: list[dict], recent_n: int) -> list[dict
     return [conversation[i] for i in sorted(critical_idx | recent_idx)]
 
 
-def run_strategy(label: str, trimmed: list[dict]):
-    full_tokens = sum(len(encoding.encode(m["content"])) for m in CONVERSATION)
-    kept_tokens = sum(len(encoding.encode(m["content"])) for m in trimmed)
-    has_order_number = any("ORD-88213" in m["content"] for m in trimmed)
+def tokens(messages: list[dict]) -> int:
+    return sum(len(encoding.encode(m["content"])) for m in messages)
 
+
+def run_strategy(label: str, trimmed: list[dict]):
     print("=" * 70)
     print(f"[{label}]")
-    print(f"Messages kept: {len(trimmed)}/{len(CONVERSATION)}  |  Tokens kept: {kept_tokens}/{full_tokens}  |  "
-          f"Order number literally in context: {has_order_number}")
+    print(f"Messages kept: {len(trimmed)}/{len(CONVERSATION)} | tokens: {tokens(trimmed)}/{tokens(CONVERSATION)} | "
+          f"order number in context: {any('ORD-88213' in m['content'] for m in trimmed)}")
 
     response = client.responses.create(model=MODEL, input=trimmed + [{"role": "user", "content": FOLLOW_UP_QUESTION}])
     print(f"Answer: {response.output_text}\n")

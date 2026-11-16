@@ -1,14 +1,15 @@
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
+# Long-term PROCEDURAL memory: rules about HOW the agent should behave,
+# learned from explicit user feedback, saved to a JSON file and added to
+# every future system prompt. Unlike semantic memory (9_5) it is not a fact
+# about the user - it changes the agent's own behaviour.
+# Session 2 is a new thread, yet the agent still follows the session-1 rule.
 
 import os
 import sys
 import json
 from typing import Annotated, TypedDict
-from pydantic import BaseModel
 from dotenv import load_dotenv
+from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
@@ -20,135 +21,68 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-# =====================================================================
-# LONG-TERM PROCEDURAL memory - durable rules about HOW the agent
-# should behave, taught by explicit user feedback, stored per user_id
-# and folded into every future session's system prompt until changed.
-# Unlike semantic memory (see 9_5_agent_memory_semantic_langgraph.py),
-# this isn't a fact about the user - it's an instruction that reshapes
-# the assistant's own behavior going forward.
-#
-# The proof this isn't a dummy example: the demo below runs a SECOND,
-# brand-new thread_id (a new session) and shows the agent already
-# following a behavior rule it was only given in the FIRST thread -
-# that only works if the JSON store is real and actually being read.
-#
-# Scenario: an insurance claims assistant that a policyholder with a
-# hearing impairment has asked to always follow up in writing instead
-# of asking them to call.
-# =====================================================================
-
-MEMORY_DIR = os.path.join(os.path.dirname(__file__), "agent_memory")
+MEMORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agent_memory")
 os.makedirs(MEMORY_DIR, exist_ok=True)
-PROCEDURAL_PATH = os.path.join(MEMORY_DIR, "procedural_memory.json")
+RULES_PATH = os.path.join(MEMORY_DIR, "procedural_memory.json")
 
 
-def load_procedural_rules(user_id: str) -> list[str]:
-    store = json.load(open(PROCEDURAL_PATH, encoding="utf-8")) if os.path.exists(PROCEDURAL_PATH) else {}
-    return store.get(user_id, [])
+def load_rules() -> dict:
+    if not os.path.exists(RULES_PATH):
+        return {}
+    with open(RULES_PATH, encoding="utf-8") as f:
+        return json.load(f)
 
 
-def save_procedural_rule(user_id: str, rule: str):
-    store = json.load(open(PROCEDURAL_PATH, encoding="utf-8")) if os.path.exists(PROCEDURAL_PATH) else {}
-    existing = store.get(user_id, [])
-    if rule not in existing:
-        store[user_id] = existing + [rule]
-    with open(PROCEDURAL_PATH, "w", encoding="utf-8") as f:
-        json.dump(store, f, indent=2)
+class NewRule(BaseModel):
+    rule: str  # a behaviour rule the user explicitly asked for, or ""
 
 
-# ---------------------------------------------------------------------
-# Rule extraction: after each exchange, decide whether the user gave
-# explicit feedback about how the assistant should behave going
-# forward. Most turns won't - only clear behavioral feedback counts.
-# ---------------------------------------------------------------------
-class RuleExtraction(BaseModel):
-    new_procedural_rule: str | None
-
-
-extractor_llm = llm.with_structured_output(RuleExtraction)
-
-
-class AgentState(TypedDict):
+class State(TypedDict):
     user_id: str
     messages: Annotated[list, add_messages]
-    procedural_rules: list[str]
 
 
-def load_long_term_memory(state: AgentState) -> AgentState:
-    procedural_rules = load_procedural_rules(state["user_id"])
-    print(f"  [loaded procedural rules] {procedural_rules or 'none'}")
-    return {"procedural_rules": procedural_rules}
+def respond(state: State) -> State:
+    rules = load_rules().get(state["user_id"], [])
+    print(f"  [loaded rules] {rules or 'none'}")
+    system = "You are an insurance claims assistant. Explain what a claim needs."
+    if rules:
+        system += "\nBehaviour rules you MUST follow:\n" + "\n".join(f"- {r}" for r in rules)
+    return {"messages": [llm.invoke([SystemMessage(system)] + state["messages"])]}
 
 
-def generate_response(state: AgentState) -> AgentState:
-    parts = ["You are a helpful insurance claims assistant. Help policyholders understand what "
-             "documents, proof, or verification steps their claim needs."]
-    if state["procedural_rules"]:
-        parts.append("Behavior rules you MUST follow:\n" + "\n".join(f"- {r}" for r in state["procedural_rules"]))
-
-    response = llm.invoke([SystemMessage(content="\n\n".join(parts))] + state["messages"])
-    return {"messages": [response]}
-
-
-def extract_and_save_rule(state: AgentState) -> AgentState:
-    user_id = state["user_id"]
-    user_turn, ai_turn = state["messages"][-2].content, state["messages"][-1].content
-
-    extraction = extractor_llm.invoke([
-        SystemMessage(content=(
-            "From this exchange, extract new_procedural_rule - a new behavior rule ONLY if "
-            "the user explicitly gave feedback about how the assistant should behave going "
-            "forward (null otherwise)."
-        )),
-        HumanMessage(content=f"User: {user_turn}\nAssistant: {ai_turn}"),
-    ])
-
-    if extraction.new_procedural_rule:
-        save_procedural_rule(user_id, extraction.new_procedural_rule)
-        print(f"  [procedural memory saved] {extraction.new_procedural_rule!r}")
-
+def save_rule(state: State) -> State:
+    rule = llm.with_structured_output(NewRule).invoke(
+        "If the user explicitly told the assistant how to behave from now on, state that rule; "
+        f"otherwise return an empty string.\n\nUser: {state['messages'][-2].content}"
+    ).rule
+    rules = load_rules()
+    if rule and rule not in rules.get(state["user_id"], []):
+        rules.setdefault(state["user_id"], []).append(rule)
+        with open(RULES_PATH, "w", encoding="utf-8") as f:
+            json.dump(rules, f, indent=2)
+        print(f"  [saved rule] {rule!r}")
     return {}
 
 
-# Graph: START -> load_long_term_memory -> generate_response -> extract_and_save_rule -> END
-graph = StateGraph(AgentState)
-graph.add_node("load_long_term_memory", load_long_term_memory)
-graph.add_node("generate_response", generate_response)
-graph.add_node("extract_and_save_rule", extract_and_save_rule)
-graph.add_edge(START, "load_long_term_memory")
-graph.add_edge("load_long_term_memory", "generate_response")
-graph.add_edge("generate_response", "extract_and_save_rule")
-graph.add_edge("extract_and_save_rule", END)
-
+graph = StateGraph(State)
+graph.add_node("respond", respond)
+graph.add_node("save_rule", save_rule)
+graph.add_edge(START, "respond")
+graph.add_edge("respond", "save_rule")
+graph.add_edge("save_rule", END)
 app = graph.compile(checkpointer=MemorySaver())
 
 
-def chat(user_id: str, thread_id: str, message: str) -> str:
-    config = {"configurable": {"thread_id": thread_id}}
-    result = app.invoke({"user_id": user_id, "messages": [HumanMessage(content=message)]}, config)
-    return result["messages"][-1].content
+def chat(thread_id: str, message: str):
+    print(f"\n[{thread_id}] User: {message}")
+    result = app.invoke({"user_id": "priya", "messages": [HumanMessage(message)]},
+                        {"configurable": {"thread_id": thread_id}})
+    print(f"[{thread_id}] Assistant: {result['messages'][-1].content}")
 
 
-if __name__ == "__main__":
-    print("=" * 70)
-    print("SESSION 1 (thread='session-1') - policyholder gives a standing behavior instruction")
-    print("=" * 70)
-
-    print("\nUser: Hi, my car got hit in a parking lot yesterday - minor bumper damage, no "
-          "injuries. What do I need to submit to file a claim?")
-    print(f"Assistant: {chat('priya', 'session-1', 'Hi, my car got hit in a parking lot yesterday - minor bumper damage, no injuries. What do I need to submit to file a claim?')}")
-
-    print("\nUser: One more thing - I have a hearing impairment, so please always send me "
-          "written checklists instead of asking me to call a phone number.")
-    print(f"Assistant: {chat('priya', 'session-1', 'One more thing - I have a hearing impairment, so please always send me written checklists instead of asking me to call a phone number.')}")
-
-    print("\n" + "=" * 70)
-    print("SESSION 2 (thread='session-2', NEW thread - policyholder returns weeks later)")
-    print("=" * 70)
-
-    print("\nUser: Hi, I need to file another claim - my car window was smashed in a different "
-          "parking lot. What should I do next?")
-    print(f"Assistant: {chat('priya', 'session-2', 'Hi, I need to file another claim - my car window was smashed in a different parking lot. What should I do next?')}")
-    print("(^ this is a NEW thread - a written checklist here (not 'please call...') proves "
-          "PROCEDURAL memory carried over rather than the rule being restated)")
+chat("session-1", "My car got hit in a parking lot yesterday - minor bumper damage. What do I need to file a claim?")
+chat("session-1", "I have a hearing impairment, so please always send me written checklists "
+                  "instead of asking me to call a phone number.")
+chat("session-2", "I need to file another claim - my car window was smashed. What should I do next?")
+print("(^ new thread - a written checklist instead of 'please call' shows the rule was remembered)")

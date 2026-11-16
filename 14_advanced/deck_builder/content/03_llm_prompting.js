@@ -385,6 +385,10 @@ rec = response.output_parsed   # a validated object` },
         { type: "text", size: 10.5, color: "slate", text: "**Why not JSON mode?** It only promises valid JSON – not your fields or types. A schema guarantees both, so this course skips JSON mode." },
       ],
     },
+    // The next three slides were added by hand in PowerPoint; `box` reproduces their layout.
+    { kind: "image", title: "Tools, SQLDatabaseToolkit (LangChain), MCP Server", src: "db_tools_problem_and_solution.png", box: { x: 0.62, y: 0.82, w: 8.07, h: 4.54 } },
+    { kind: "image", title: "Tools, SQLDatabaseToolkit (LangChain), MCP Server", src: "db_tool_call_walkthrough.png", box: { x: 0.74, y: 0.85, w: 8.21, h: 4.62 } },
+    { kind: "image", title: "Tools, SQLDatabaseToolkit (LangChain), MCP Server", src: "db_access_three_ways.png", box: { x: 0.76, y: 0.85, w: 8.34, h: 4.7 } },
     {
       title: "Tool Calling with the Agents SDK",
       subtitle: "The LLM decides when to call a function and with what arguments; the SDK runs it",

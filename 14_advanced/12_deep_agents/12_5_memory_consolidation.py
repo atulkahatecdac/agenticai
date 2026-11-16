@@ -1,105 +1,62 @@
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
-warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
+# Memory consolidation: an episodic store (12_4) gains one raw episode per
+# interaction, so near-duplicates about the same issue pile up. A periodic
+# pass has an LLM group episodes that share a pattern, writes ONE summary per
+# group, and swaps the summaries in for the raw episodes.
+# 8 real rows from customer_support_qa_500.csv -> 3 patterns -> 3 summaries.
 
 import os
-import shutil
 import sys
 import pandas as pd
+import chromadb
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
-from langchain_chroma import Chroma
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from pydantic import BaseModel
+from langchain_openai import ChatOpenAI
 
 load_dotenv(override=True)
 sys.stdout.reconfigure(encoding="utf-8")
 
-# =====================================================================
-# Memory consolidation: an episodic store (see 12_4_episodic_memory_store.py)
-# grows one raw episode per interaction - left alone, near-duplicate
-# episodes about the same recurring issue pile up, bloating storage and
-# diluting recall() with redundant near-identical matches. Consolidation
-# is a periodic batch pass: read every raw episode, have an LLM group
-# the ones that are really the same underlying pattern, replace each
-# group with ONE denser summary episode, and delete the raw originals.
-# =====================================================================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PERSIST_DIR = os.path.join(BASE_DIR, "memory_consolidation_db")
-shutil.rmtree(PERSIST_DIR, ignore_errors=True)
+answers = pd.read_csv(os.path.join(BASE_DIR, "..", "..", "15_real", "customer_support_qa_500.csv")).set_index("question")["answer"]
 
-vectorstore = Chroma(
-    collection_name="episodic_memory",
-    embedding_function=OpenAIEmbeddings(model="text-embedding-3-small"),
-    persist_directory=PERSIST_DIR,
-)
-
-# 8 raw episodes, each a REAL row pulled from 15_real/customer_support_qa_500.csv
-# (the same dataset 12_4_episodic_memory_store.py seeds from) rather than hand-written
-# text. They were picked because they cluster into 3 recurring issue patterns
-# that genuinely exist in that dataset - the messy, redundant state a live
-# episodic store actually ends up in after enough traffic.
-CSV_PATH = os.path.join(BASE_DIR, "..", "..", "15_real", "customer_support_qa_500.csv")
-answer_by_question = pd.read_csv(CSV_PATH).set_index("question")["answer"]
-RAW_QUESTIONS = [
-    # Pattern: two-factor authentication trouble (spans the Account and Technical categories)
+QUESTIONS = [
+    # two-factor authentication trouble
     "My two-factor authenticator app isn't generating valid codes, what should I do?",
     "I lost my two-factor authentication device, how do I recover access?",
     "How do I fix two-factor codes not being accepted in the app?",
-    # Pattern: payment/card declined
+    # payment / card declined
     "Why was my payment declined?",
     "Why is my card being declined even though it has funds?",
-    # Pattern: subscription cancellation
+    # subscription cancellation
     "How do I cancel my subscription?",
     "Can I pause my subscription instead of canceling it?",
     "How do I cancel a subscription I signed up for through the app store instead of the website?",
 ]
-RAW_EPISODES = [f"Customer asked: {q} | Resolution: {answer_by_question[q]}" for q in RAW_QUESTIONS]
-vectorstore.add_texts(RAW_EPISODES)
+raw = [f"Customer asked: {q} | Resolution: {answers[q]}" for q in QUESTIONS]
+
+store = chromadb.Client().create_collection("episodic_memory")
+store.add(ids=[f"raw-{i}" for i in range(len(raw))], documents=raw)
+print(f"BEFORE: {store.count()} raw episodes\n")
+
+
+class Group(BaseModel):
+    theme: str
+    summary: str            # one 'Customer asked: ... | Resolution: ...' episode for the whole group
+    source_indices: list[int]
+
+
+class Consolidation(BaseModel):
+    groups: list[Group]
+
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+plan = llm.with_structured_output(Consolidation).invoke(
+    "Group these support episodes by the recurring issue they describe (each index in exactly one "
+    "group) and write one generalized summary episode per group:\n\n"
+    + "\n".join(f"{i}. {e}" for i, e in enumerate(raw))
+)
+for g in plan.groups:
+    print(f"[{g.theme}] episodes {g.source_indices}\n  -> {g.summary}\n")
 
-
-class ConsolidatedGroup(BaseModel):
-    theme: str = Field(description="Short label for the recurring pattern this group of episodes shares.")
-    summary: str = Field(
-        description="One consolidated episode replacing the whole group, written in the same "
-        "'Customer asked: ... | Resolution: ...' style, generalized rather than tied to one customer."
-    )
-    source_indices: list[int] = Field(description="0-based indices of the raw episodes this group consolidates.")
-
-
-class ConsolidationPlan(BaseModel):
-    groups: list[ConsolidatedGroup] = Field(
-        description="Every raw episode index must appear in exactly one group. Group episodes describing "
-        "the same underlying issue/resolution pattern together, even if worded differently; an episode with "
-        "no close match forms a group of its own."
-    )
-
-
-def consolidate() -> ConsolidationPlan:
-    numbered = "\n".join(f"{i}. {doc}" for i, doc in enumerate(RAW_EPISODES))
-    prompt = f"""Here are {len(RAW_EPISODES)} raw episodic memories from a customer support agent:
-
-{numbered}
-
-Group the episodes that describe the same recurring issue/resolution pattern, and write one
-consolidated summary episode per group."""
-    return llm.with_structured_output(ConsolidationPlan).invoke(prompt)
-
-
-if __name__ == "__main__":
-    print(f"BEFORE: {vectorstore.get()['ids'].__len__()} raw episode(s) in the store\n")
-
-    plan = consolidate()
-    for group in plan.groups:
-        print(f"[{group.theme}] consolidates raw episode(s) {group.source_indices}")
-        print(f"  -> {group.summary}\n")
-
-    vectorstore.delete(ids=vectorstore.get()["ids"])
-    vectorstore.add_texts([group.summary for group in plan.groups])
-
-    print(f"AFTER: {vectorstore.get()['ids'].__len__()} consolidated episode(s) in the store "
-          f"(from {len(RAW_EPISODES)} raw ones)")
+store.delete(ids=store.get()["ids"])
+store.add(ids=[f"summary-{i}" for i in range(len(plan.groups))], documents=[g.summary for g in plan.groups])
+print(f"AFTER: {store.count()} consolidated episodes (from {len(raw)} raw)")
