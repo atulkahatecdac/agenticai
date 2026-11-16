@@ -264,9 +264,10 @@ for r in rows[0]:
           { icon: "FaRulerHorizontal", title: "L2 (Euclidean) distance", lines: ["Straight-line distance between two points", "**Smaller is better** (0 = identical)"], code: "√ Σ (Aᵢ − Bᵢ)²" },
           { icon: "FaArrowsLeftRight", title: "Dot product", lines: ["Alignment and magnitude together", "**Larger is better**; equals cosine for normalised vectors"], code: "Σ Aᵢ · Bᵢ" },
         ] },
-        { type: "callout", eyebrow: "On the FAQ", text: "MiniLM vectors have length 1, so dot = cosine and squared L2 = 2 − 2·cosine – all three rank the same. That is ChromaDB's 1.07: 2 − 2 × 0.47. Make one vector 3× longer and only the dot product changes its answer." },
       ],
     },
+    // Added by hand in PowerPoint: a worked example of the three metrics.
+    { kind: "image", full: true, src: "similarity_metrics_worked_example.png", alt: "Cosine, L2 and dot product worked out for two 3-D vectors" },
 
     // ---------------------------------------------------------------- retrieval quality
     {
@@ -314,23 +315,35 @@ for r in rows[0]:
         { type: "callout", eyebrow: "Test it on your data", text: "For \"I bought shoes in the wrong size\" the same reranker demotes the right answer – check before you switch one on." },
       ],
     },
+    // Added by hand in PowerPoint.
+    { kind: "image", title: "Reranker", titleSize: 28, src: "reranker_bi_vs_cross_encoder.png", box: { x: 0, y: 0.68, w: 10, h: 4.27 } },
+    // The deck's version of this slide was reworked by hand (a native-shape process diagram and a
+    // "Fusion Options" box with equations). This reproduces its text; the layout is approximate.
     {
       title: "Hybrid Search",
       subtitle: "Keyword search and semantic search fail in different places – use both",
       demo: M + "04_8_hybrid_search.py",
       blocks: [
-        { type: "compare", size: 11, cols: [
-          { title: "Keyword search", color: "navy", items: ["Finds exact words", "Codes and acronyms (\"NEFT\", \"GSTIN\")"] },
-          { title: "Semantic search", color: "teal", items: ["Finds meaning", "Paraphrases with no shared words"] },
+        { type: "compare", size: 10, cols: [
+          { title: "Keyword search", color: "navy", items: ["Finds exact words", "Good for terms, codes and acronyms (\"NEFT\", \"GSTIN\")"] },
+          { title: "Semantic search", color: "teal", items: ["Finds meaning", "Example: “refund” <-> “return money”"] },
           { title: "Hybrid = both", color: "coral", items: ["Best of both worlds", "Support, legal, medical, e-commerce"] },
         ] },
         { type: "callout", eyebrow: "Example", text: "\"Refund by NEFT for my COD order?\" – keyword search catches the exact terms NEFT and COD; semantic search understands \"refund\"." },
-        { type: "cols", cols: [
-          [{ type: "text", size: 11, text: "**Weighted average:** normalise both scores to 0–1, then `α·semantic + (1−α)·keyword` – simple and tunable." }],
-          [{ type: "text", size: 11, text: "**Reciprocal Rank Fusion:** ignore raw scores; sum `1/(k + rank)` over each method's top results – rewards entries ranked high by both." }],
+        { type: "cols", ratio: [1.2, 1], cols: [
+          [
+            { type: "text", size: 10.5, text: "**Hybrid Search process**" },
+            { type: "chain", size: 9, items: ["Query", "Score-k + Score-s", "Fusion", "Ranked results"] },
+          ],
+          [
+            { type: "text", size: 9, text: "**Fusion Options – Weighted Average:** `α·Score-s + (1 – α)·Score-k` – combines normalized relevance scores" },
+            { type: "text", size: 9, text: "**Reciprocal Rank Fusion (RRF):** `1/(k + Rank-k) + 1/(k + Rank-s)` – combines rankings rather than raw scores" },
+          ],
         ] },
       ],
     },
+    // Added by hand in PowerPoint: the 04_8 demo worked through by hand.
+    { kind: "image", full: true, src: "hybrid_search_worked_example.png", alt: "Hybrid search worked example: TF-IDF and embedding scores fused by weighted average and RRF" },
     {
       title: "Inside 04_8_hybrid_search.py",
       subtitle: "The 48 help-desk FAQs searched four ways – top answer for three customer questions",

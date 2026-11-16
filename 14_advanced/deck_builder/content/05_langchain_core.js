@@ -1,5 +1,5 @@
 const M = "05_langchain/";
-const LCEL = "../3_langgraph/3_0_langchain_lcel.py";
+const LCEL = M + "05_0_langchain_lcel.py";
 
 module.exports = {
   section: "Module 05 – LangChain Core",
@@ -48,54 +48,80 @@ module.exports = {
         ] },
       ],
     },
+    // Made by hand in PowerPoint: chain objects (LLMChain) vs Runnables composed with LCEL.
+    { kind: "image", title: "LCEL: Everything Is a Runnable", titleSize: 28, src: "lcel_chain_objects_vs_runnables.png", box: { x: 0.34, y: 0.85, w: 9.32, h: 4.26 }, demo: LCEL },
     {
-      title: "LCEL: Everything Is a Runnable",
-      subtitle: "LangChain Expression Language – a declarative way to compose AI applications",
-      demo: LCEL + ", 3_0_langchain_lcel_ollama.py",
-      left: [
-        { type: "text", text: "Instead of creating many chain objects, we connect **Runnables** with the pipe operator `|`. The output of one becomes the input of the next." },
-        { type: "chain", items: ["Prompt", "LLM", "Parser", "Retriever", "Lambda", "…"] },
-        { type: "callout", eyebrow: "Every Runnable has", text: "`.invoke()` for one input, `.batch()` for many, `.stream()` for token-by-token output." },
-      ],
-      right: [
-        { type: "code", caption: "Prompt | LLM with a local model (Ollama)", code:
-`from langchain_core.prompts import ChatPromptTemplate
-from langchain_ollama import ChatOllama
-
-prompt = ChatPromptTemplate.from_template(
-    "Explain {topic} in simple terms.")
-llm = ChatOllama(model="llama3.2")
-
-chain = prompt | llm
-response = chain.invoke({"topic": "embeddings"})
-print(response.content)` },
-      ],
-    },
-    { kind: "image", src: "lcel_operators.png", alt: "LCEL operators and example", demo: LCEL },
-    {
-      title: "Three Runnables You Will Use Often",
-      subtitle: "Small building blocks that make chains flexible",
-      demo: LCEL,
+      title: "Three Kinds of Prompt Template",
+      subtitle: "Fill in variables, slot in the chat history, or freeze some values ahead of time",
+      demo: M + "05_1_prompt_templates.py  (PROVIDER = \"google\" or \"openai\")",
       blocks: [
-        { type: "cards", size: 10.5, codeSize: 8.5, items: [
-          { icon: "FaCode", title: "RunnableLambda", lines: ["Wraps any Python function so it can sit in a chain – cleaning, formatting, extracting values"],
-            code: `add = RunnableLambda(
-    lambda t: t + "!")
-add.invoke("Hello")  # Hello!` },
-          { icon: "FaCodeBranch", title: "RunnableParallel", lines: ["Runs several Runnables on the same input at once and returns a dict of their results"],
-            code: `RunnableParallel(
-  upper=up, lower=low
-).invoke("Hi")
-# {'upper': 'HI', ...}` },
-          { icon: "FaArrowRight", title: "RunnablePassthrough", lines: ["Passes the input through unchanged – keep the original while other branches transform it"],
-            code: `{"q": RunnablePassthrough(),
- "ctx": retriever}
-| prompt | llm` },
+        { type: "cards", size: 10.5, codeSize: 7.5, items: [
+          { icon: "FaComments", title: "ChatPromptTemplate", tag: "Variables", lines: ["Role/content messages; each `{variable}` is filled in at invoke time"],
+            code: `prompt = (ChatPromptTemplate
+  .from_messages([
+    ("system", "… {tone} …"),
+    ("human", "… {topic} …"),
+  ]))
+chain.invoke({"tone": "cheerful",
+  "topic": "photosynthesis"})` },
+          { icon: "FaClockRotateLeft", title: "MessagesPlaceholder", tag: "Chat history", lines: ["Reserves a slot for a LIST of messages – usually the earlier turns"],
+            code: `prompt = (ChatPromptTemplate
+  .from_messages([
+    ("system", "…"),
+    MessagesPlaceholder(
+      variable_name="history"),
+    ("human", "{question}"),
+  ]))
+chain.invoke({
+  "history": chat_history,
+  "question": "What is my name?"})` },
+          { icon: "FaLock", title: "Partial template", tag: "Pre-filled", lines: ["`.partial()` freezes some variables now; a callable runs again on every call"],
+            code: `frozen = prompt.partial(
+  tone="formal",
+  today=lambda:
+    date.today().isoformat())
+# callers pass only {question}
+chain = frozen | llm | parser
+chain.invoke({"question": "…"})` },
         ] },
       ],
     },
-    { kind: "image", src: "prompt_template_types.png", alt: "Three types of prompt templates in LangChain", demo: M + "05_1_prompt_templates.py  (PROVIDER = \"google\" or \"openai\")" },
-    { kind: "image", src: "output_parsers.png", alt: "LangChain output parsers", demo: M + "05_2_output_parsers.py  (PROVIDER = \"google\" or \"openai\")" },
+    {
+      title: "Three Output Parsers",
+      subtitle: "Turn the LLM's text into what your code needs: a string, a dict or a validated object",
+      demo: M + "05_2_output_parsers.py  (PROVIDER = \"google\" or \"openai\")",
+      blocks: [
+        { type: "cards", size: 10.5, codeSize: 7.5, items: [
+          { icon: "FaFont", title: "StrOutputParser", tag: "Plain text", lines: ["Pulls the text out of the LLM's message – chatbots, summaries"],
+            code: `chain = (prompt | llm
+         | StrOutputParser())
+result = chain.invoke({"question":
+  "What is the capital of Japan?"})
+type(result)   # str` },
+          { icon: "FaCode", title: "JsonOutputParser", tag: "A dict", lines: ["Asks for JSON and parses it into a dict – the LLM decides the shape"],
+            code: `parser = JsonOutputParser()
+prompt = prompt.partial(
+  format_instructions=parser
+    .get_format_instructions())
+chain = prompt | llm | parser
+result = chain.invoke(
+  {"city": "Tokyo"})
+result["population"]  # a dict` },
+          { icon: "FaShieldHalved", title: "PydanticOutputParser", tag: "Validated object", lines: ["Checks the JSON against your schema – raises instead of returning bad data"],
+            code: `class CityInfo(BaseModel):
+  name: str
+  country: str
+  population: int
+  famous_for: list[str]
+
+parser = PydanticOutputParser(
+  pydantic_object=CityInfo)
+result = chain.invoke(
+  {"city": "Paris"})
+result.population  # typed` },
+        ] },
+      ],
+    },
 
     // ---------------------------------------------------------------- memory
     {
@@ -280,7 +306,7 @@ ensemble_retriever = EnsembleRetriever(
       title: "Module 05 Summary",
       subtitle: "What you built",
       built: [
-        { tag: "LCEL", title: "Chains", text: "prompt | llm | parser, with OpenAI and Ollama" },
+        { tag: "LCEL", title: "Chains", text: "prompt | llm | parser, composed with LCEL" },
         { tag: "memory", title: "Memory", text: "Buffer, summary, vector-store; a persistent chatbot" },
         { tag: "RAG", title: "A RAG pipeline", text: "Load → split → embed → store → retrieve → generate" },
         { tag: "multi", title: "Many sources, one retriever", text: "PDF + wiki + SQL fused with RRF" },
