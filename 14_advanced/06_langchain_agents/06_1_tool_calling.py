@@ -16,34 +16,45 @@ load_dotenv(override=True)
 # codepage (cp1252) - reconfigure stdout to UTF-8 so printing doesn't crash.
 sys.stdout.reconfigure(encoding="utf-8")
 
-# Trailing slash matters: "/books" (no slash) 301-redirects to "/books/",
-# and that redirect hop has been observed to stall/time out - hitting the
-# canonical "/books/" URL directly avoids the redirect altogether.
-GUTENDEX_URL = "https://gutendex.com/books/"
+# Wikipedia's public MediaWiki API - no key required. Wikimedia asks every
+# client to send a descriptive User-Agent; requests without one may be blocked.
+WIKIPEDIA_API_URL = "https://en.wikipedia.org/w/api.php"
+HEADERS = {"User-Agent": "agenticai-course-demo/1.0 (educational script)"}
 
 @tool
-def search_gutenberg_books(query: str) -> str:
-    """Search Project Gutenberg's free ebook catalog via the Gutendex API
-    (no key required). Input: a search term - title, author name, or
-    subject, e.g. 'Jane Austen' or 'dragons'. Returns up to 5 matches as
-    'Title by Author(s) [id=..., downloads=...]', one per line, ordered by
-    popularity."""
-    resp = requests.get(GUTENDEX_URL, params={"search": query}, timeout=10)
+def search_wikipedia(topic: str) -> str:
+    """Look up a topic on Wikipedia (no key required). Input: the name
+    of a person, place, thing or concept - the article name, not a
+    question - e.g. 'Eiffel Tower' or 'Ada Lovelace'. Returns the
+    best-matching article's title, short description and the first few
+    sentences of its introduction."""
+    params = {
+        "action": "query",
+        "format": "json",
+        "formatversion": 2,
+        # Search first, then fetch the top hit's intro - all in one request.
+        "generator": "search",
+        "gsrsearch": topic,
+        "gsrlimit": 1,
+        "prop": "extracts|description",
+        "exintro": 1,        # only the lead section
+        "explaintext": 1,    # plain text, not HTML
+        "exsentences": 4,
+    }
+    resp = requests.get(WIKIPEDIA_API_URL, params=params, headers=HEADERS, timeout=10)
     resp.raise_for_status()
-    results = resp.json().get("results", [])
-    if not results:
-        return f"No Project Gutenberg books found for '{query}'."
+    pages = resp.json().get("query", {}).get("pages", [])
+    if not pages:
+        return f"No Wikipedia article found for '{topic}'."
 
-    lines = []
-    for book in results[:5]:
-        authors = ", ".join(a["name"] for a in book.get("authors", [])) or "Unknown author"
-        lines.append(
-            f"{book['title']} by {authors} "
-            f"[id={book['id']}, downloads={book.get('download_count', 0)}]"
-        )
-    return "\n".join(lines)
+    page = pages[0]
+    return (
+        f"Title: {page['title']}\n"
+        f"Description: {page.get('description') or 'n/a'}\n"
+        f"Summary: {page.get('extract', '')}"
+    )
 
-tools = [search_gutenberg_books]
+tools = [search_wikipedia]
 tools_by_name = {t.name: t for t in tools}
 
 # -----------------------------
@@ -59,10 +70,7 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 llm_with_tools = llm.bind_tools(tools)
 
 if __name__ == "__main__":
-    question = (
-        "Find Project Gutenberg's most downloaded free ebook by Jane Austen "
-        "and tell me its title and download count."
-    )
+    question = "Tell me who designed and built the Eiffel Tower, and when."
 
     messages: list[BaseMessage] = [HumanMessage(question)]
     ai_message = llm_with_tools.invoke(messages)

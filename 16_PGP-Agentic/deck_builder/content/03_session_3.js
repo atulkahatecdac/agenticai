@@ -143,9 +143,9 @@ Headphones, 42 days… → ?` },
       demo: S + "3_2_tool_calling.py",
       blocks: [
         { type: "flow", items: [
-          { icon: "FaUser", label: "User", caption: "\"Most downloaded Jane Austen book on Project Gutenberg?\"" },
-          { icon: "FaBrain", label: "LLM decides", caption: "\"I need the book catalogue\"" },
-          { icon: "FaFileCode", label: "Tool call", caption: "search_gutenberg_books(\"Jane Austen\")" },
+          { icon: "FaUser", label: "User", caption: "\"Who designed the Eiffel Tower, and when?\"" },
+          { icon: "FaBrain", label: "LLM decides", caption: "\"I need to look it up\"" },
+          { icon: "FaFileCode", label: "Tool call", caption: "search_wikipedia(\"Eiffel Tower\")" },
           { icon: "FaGears", label: "App executes", caption: "Our code runs the function" },
           { icon: "FaReply", label: "Answer", caption: "LLM reads the result and replies" },
         ] },
@@ -161,28 +161,30 @@ Headphones, 42 days… → ?` },
 `from langchain_core.tools import tool
 
 @tool
-def search_gutenberg_books(query: str) -> str:
-    """Search Project Gutenberg books."""
+def search_wikipedia(topic: str) -> str:
+    """Look up a topic on Wikipedia."""
     ...
 
 llm_with_tools = llm.bind_tools(
-    [search_gutenberg_books])` },
+    [search_wikipedia])` },
       ],
       right: [
         { type: "code", caption: "Pydantic in, Pydantic out (3_3)", code:
-`class SearchGutenbergInput(BaseModel):
-    query: str = Field(description="Title, author or subject")
+`class SearchWikipediaInput(BaseModel):
+    topic: str = Field(description="Article name")
+    sentences: int = Field(default=4, ge=1, le=10)
 
-@tool("search_gutenberg_books",
-      args_schema=SearchGutenbergInput)
-def search_gutenberg_books(query: str) -> str: ...
+@tool("search_wikipedia",
+      args_schema=SearchWikipediaInput)
+def search_wikipedia(topic, sentences=4) -> str: ...
 
-class BookAnswer(BaseModel):
-    title: str
-    author: str
-    download_count: int
+class LandmarkAnswer(BaseModel):
+    name: str
+    designer: str
+    year_completed: int
 
-structured_llm = llm.with_structured_output(BookAnswer)` },
+structured_llm = llm.with_structured_output(
+    LandmarkAnswer)` },
         { type: "text", size: 11, color: "slate", text: "Pydantic makes sure what goes to and from the LLM matches a schema – wrong types fail fast." },
       ],
     },

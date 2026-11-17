@@ -50,21 +50,6 @@ module.exports = {
     // ---------------------------------------------------------------- tools
     { kind: "image", src: "ai_tool_system.png", alt: "AI tool system at a glance", demo: M + "06_1_tool_calling.py" },
     {
-      title: "Tool Calling: The LLM Asks, the App Acts",
-      subtitle: "On its own, an LLM cannot query an API, send an email, read a database or run a function",
-      demo: M + "06_1_tool_calling.py",
-      blocks: [
-        { type: "flow", items: [
-          { icon: "FaUser", label: "User", caption: "\"Most downloaded Jane Austen book on Project Gutenberg?\"" },
-          { icon: "FaBrain", label: "LLM decides", caption: "\"I need the book catalogue\"" },
-          { icon: "FaFileCode", label: "Tool call", caption: "search_gutenberg_books(\"Jane Austen\")" },
-          { icon: "FaGears", label: "App executes", caption: "Our code runs the function" },
-          { icon: "FaReply", label: "Answer", caption: "LLM reads the result and replies" },
-        ] },
-        { type: "callout", eyebrow: "Key point", text: "The LLM never executes anything. It only generates a structured request; the application decides whether and how to run it." },
-      ],
-    },
-    {
       title: "Tools in LangChain",
       subtitle: "Define with @tool, attach with bind_tools, and constrain inputs with Pydantic",
       demo: M + "06_1_tool_calling.py, " + M + "06_2_tool_calling_pydantic.py",
@@ -73,28 +58,30 @@ module.exports = {
 `from langchain_core.tools import tool
 
 @tool
-def search_gutenberg_books(query: str) -> str:
-    """Search Project Gutenberg books."""
+def search_wikipedia(topic: str) -> str:
+    """Look up a topic on Wikipedia."""
     ...
 
 llm_with_tools = llm.bind_tools(
-    [search_gutenberg_books])` },
+    [search_wikipedia])` },
       ],
       right: [
         { type: "code", caption: "Pydantic in, Pydantic out", code:
-`class SearchGutenbergInput(BaseModel):
-    query: str = Field(description="Title, author or subject")
+`class SearchWikipediaInput(BaseModel):
+    topic: str = Field(description="Article name")
+    sentences: int = Field(default=4, ge=1, le=10)
 
-@tool("search_gutenberg_books",
-      args_schema=SearchGutenbergInput)
-def search_gutenberg_books(query: str) -> str: ...
+@tool("search_wikipedia",
+      args_schema=SearchWikipediaInput)
+def search_wikipedia(topic, sentences=4) -> str: ...
 
-class BookAnswer(BaseModel):
-    title: str
-    author: str
-    download_count: int
+class LandmarkAnswer(BaseModel):
+    name: str
+    designer: str
+    year_completed: int
 
-structured_llm = llm.with_structured_output(BookAnswer)` },
+structured_llm = llm.with_structured_output(
+    LandmarkAnswer)` },
         { type: "text", size: 11, color: "slate", text: "Pydantic makes sure what goes to and from the LLM matches a schema – wrong types fail fast." },
       ],
     },
@@ -116,27 +103,22 @@ structured_llm = llm.with_structured_output(BookAnswer)` },
     {
       title: "The Agent Loop, in Our Own Code",
       subtitle: "The bind_tools idea from 06_1, repeated until the LLM stops asking for tools",
-      demo: M + "06_3_sql_database_toolkit_agent.py, 06_4_chaining_tool_outputs.py",
+      demo: M + "06_3_sql_database_toolkit_agent.py, 06_3_2_sql_agent_prebuilt.py",
       split: [1.35, 1],
       left: [
-        { type: "code", caption: "run_agent() from 06_3 (prints and try/except left out)", code:
-`def run_agent(question, max_steps=8):
-    messages = [SystemMessage(SYSTEM_PROMPT),
-                HumanMessage(question)]
+        { type: "code", caption: "The loop inside run_agent() in 06_3 (simplified)", code:
+`for _ in range(max_steps):
+    ai_message = llm_with_tools.invoke(messages)
+    messages.append(ai_message)
 
-    for _ in range(max_steps):
-        ai_message = llm_with_tools.invoke(messages)
-        messages.append(ai_message)
+    if not ai_message.tool_calls:
+        return ai_message.content          # done
 
-        if not ai_message.tool_calls:
-            return ai_message.content
-
-        for tool_call in ai_message.tool_calls:
-            tool = tools_by_name[tool_call["name"]]
-            result = tool.invoke(tool_call["args"])
-            messages.append(ToolMessage(
-                content=str(result),
-                tool_call_id=tool_call["id"]))` },
+    for call in ai_message.tool_calls:
+        tool = tools_by_name[call["name"]]
+        result = tool.invoke(call["args"])
+        messages.append(ToolMessage(str(result),
+                                    tool_call_id=call["id"]))` },
       ],
       right: [
         { type: "steps", size: 10.5, titleSize: 11.5, items: [
