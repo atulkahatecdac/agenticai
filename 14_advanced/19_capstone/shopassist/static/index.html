@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>ShopAssist chat</title>
+<style>
+  :root { --bg:#1e1e1e; --panel:#252526; --ink:#e6e9ee; --muted:#8b949e; --accent:#d97757; --line:#3a3f47; --user:#2d3139; }
+  html,body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.4 -apple-system, "Segoe UI", sans-serif; height:100%; }
+  .wrap { display:flex; flex-direction:column; height:100%; box-sizing:border-box; padding:10px 12px; gap:8px; }
+  h1 { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin:0; font-weight:600; }
+  .chat { flex:1; min-height:120px; overflow:auto; display:flex; flex-direction:column; gap:6px; }
+  .msg { max-width:88%; padding:7px 10px; border-radius:10px; background:var(--panel); border:1px solid var(--line); }
+  .msg.user { align-self:flex-end; background:var(--user); }
+  .msg small { display:block; color:var(--muted); font-size:11px; margin-top:3px; }
+  form { display:flex; gap:6px; }
+  input { flex:1; background:var(--panel); border:1px solid var(--line); color:var(--ink); border-radius:8px; padding:8px 10px; font:inherit; outline:none; }
+  input:focus { border-color:var(--accent); }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:8px 14px; font:inherit; font-weight:600; }
+  .trace { display:flex; align-items:center; gap:0; padding-top:6px; border-top:1px solid var(--line); }
+  .node { flex:1; background:var(--panel); border:2px solid var(--line); border-radius:8px; padding:4px 4px; text-align:center; transition:border-color .25s; white-space:nowrap; overflow:hidden; }
+  .node.on { border-color:var(--accent); }
+  .node b { display:block; font-size:11.5px; } .node small { color:var(--muted); font-size:10px; }
+  .link { position:relative; width:34px; flex:none; height:2px; background:var(--line); }
+  .dot { position:absolute; top:-5px; left:-6px; width:12px; height:12px; border-radius:50%; background:var(--accent); opacity:0; }
+  .dot.back { background:#e6e9ee; }
+  .dot.go { animation:go .9s ease-in-out forwards; } .dot.ret { animation:ret .9s ease-in-out forwards; }
+  @keyframes go { from{left:-6px;opacity:1} to{left:28px;opacity:1} } @keyframes ret { from{left:28px;opacity:1} to{left:-6px;opacity:1} }
+  .lab { position:absolute; top:-22px; left:50%; transform:translateX(-50%); font:10.5px/1 ui-monospace, Menlo, monospace; color:var(--ink); background:#2d3139; padding:3px 6px; border-radius:5px; opacity:0; white-space:nowrap; transition:opacity .2s; }
+  .lab.show { opacity:1; }
+</style>
+<div class="wrap">
+  <h1>ShopAssist · customer chat</h1>
+  <div class="chat" id="chat"></div>
+  <form id="f"><input id="box" placeholder="Type a message…" autocomplete="off"><button>Send</button></form>
+  <div class="trace">
+    <div class="node" id="n-browser"><b>Browser</b><small>this page</small></div>
+    <div class="link"><div class="dot" id="d1"></div><div class="lab" id="t1"></div></div>
+    <div class="node" id="n-server"><b>Our server</b><small>app.py</small></div>
+    <div class="link"><div class="dot" id="d2"></div><div class="lab" id="t2"></div></div>
+    <div class="node" id="n-claude"><b>Claude API</b><small>the model</small></div>
+  </div>
+</div>
+<script>
+  const q = (s) => document.querySelector(s);
+  const on = (id) => { document.querySelectorAll('.node').forEach((n) => n.classList.remove('on')); if (id) q(id).classList.add('on'); };
+  const travel = (n, label, back) => { const d = q('#d' + n), t = q('#t' + n); d.className = 'dot' + (back ? ' back' : ''); void d.offsetWidth; d.classList.add(back ? 'ret' : 'go'); t.textContent = label; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); };
+  const add = (role, text, note) => { const m = document.createElement('div'); m.className = 'msg ' + role; m.textContent = text; if (note) { const s = document.createElement('small'); s.textContent = note; m.appendChild(s); } q('#chat').appendChild(m); q('#chat').scrollTop = 1e9; return m; };
+  q('#f').addEventListener('submit', async (e) => {
+    e.preventDefault(); const text = q('#box').value.trim(); if (!text) return; q('#box').value = '';
+    add('user', text); on('#n-browser'); travel(1, 'POST /chat', false);
+    setTimeout(() => { on('#n-server'); travel(2, 'POST /v1/messages', false); setTimeout(() => on('#n-claude'), 900); }, 900);
+    const r = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    const data = await r.json();
+    travel(2, 'reply', true); setTimeout(() => { on('#n-server'); travel(1, 'JSON', true); setTimeout(() => { on('#n-browser'); add('assistant', data.reply, 'input tokens: ' + data.input_tokens); }, 900); }, 900);
+  });
+</script>

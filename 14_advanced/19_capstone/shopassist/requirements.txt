@@ -1,0 +1,6 @@
+# Only what ShopAssist needs (the same versions as the repo's .venv).
+anthropic==1.6.0
+mcp==1.28.1
+fastapi==0.139.0
+uvicorn==0.50.0
+python-dotenv==1.2.2

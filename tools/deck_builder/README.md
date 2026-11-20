@@ -1,11 +1,12 @@
 # Deck builder (shared engine)
 
-Builds the course decks from slide content written as JavaScript data. Two decks use it:
+Builds the course decks from slide content written as JavaScript data. These decks use it:
 
 | Deck folder | Writes | Content |
 |---|---|---|
 | `16_PGP-Agentic/deck_builder/` | `16_PGP-Agentic/PGP_Agentic_AI.pptx` | one file per session |
 | `14_advanced/deck_builder/` | `14_advanced/Agentic AI - Advanced Engineering.pptx` | one file per module |
+| `14_advanced/19_capstone/docassist/deck_builder/` | `14_advanced/19_capstone/docassist/docassist.pptx` | one file per part of the capstone |
 
 Both decks share one design: navy text, coral accent, teal secondary, Calibri, pale cards, icons in coloured
 circles, and a DEMO bar on every content slide naming the script to run. They have no speaker notes and no

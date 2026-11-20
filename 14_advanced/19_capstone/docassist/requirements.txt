@@ -1,0 +1,5 @@
+# For the step scripts 01a-05a (the repo's root requirements.txt already has these).
+openai==2.44.0
+psycopg[binary]==3.3.9
+pypdf==6.14.2
+python-dotenv==1.2.2

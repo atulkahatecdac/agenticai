@@ -1,0 +1,49 @@
+# Three containers: Postgres (vectors + memory), the FastAPI backend, the Streamlit UI.
+#   docker compose up -d --build
+# ${...} values are read from the .env file next to this file.
+
+services:
+  db:
+    image: pgvector/pgvector:pg17          # Postgres 17 with the pgvector extension
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: docassist
+    volumes:
+      - pgdata:/var/lib/postgresql/data    # data survives "docker compose down"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d docassist"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+    # no "ports:" - only the backend can reach the database
+
+  backend:
+    build: ./backend
+    env_file: .env                          # OPENAI_API_KEY (and the rest of .env) go in at run time
+    environment:
+      # Overrides the localhost address in .env. "db" is the service name above;
+      # Docker's DNS turns it into the database container's address.
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/docassist
+    depends_on:
+      db:
+        condition: service_healthy          # wait until Postgres accepts connections
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      retries: 10
+    restart: unless-stopped
+    # no "ports:" - only the frontend can reach the API
+
+  frontend:
+    build: ./frontend
+    environment:
+      BACKEND_URL: http://backend:8000      # the frontend never gets the OpenAI key
+    ports:
+      - "8522:8501"                         # the ONLY port open to the outside
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:

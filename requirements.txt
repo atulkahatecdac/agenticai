@@ -76,6 +76,7 @@ rank-bm25==0.2.2  # sparse/keyword retriever used by 14_advanced/14_agentic_rag_
 llama-index==0.14.23
 llama-index-vector-stores-chroma==0.5.5
 umap-learn==0.5.12
+psycopg[binary]==3.3.9  # Postgres + pgvector driver for 14_advanced/19_capstone/docassist
 
 # RAG evaluation
 ragas==0.4.3  # used by 15_real/ragas_evaluation.py and 14_advanced/14_agentic_rag_graph_rag/14_1_ragas_evaluation.py

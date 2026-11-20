@@ -422,6 +422,41 @@ Runner.run_sync(agent, "Which products generated "
       ],
     },
     {
+      title: "Writing Good Tool Descriptions",
+      subtitle: "The model sees only the tool's name, description and arguments – that text decides when and how it is called",
+      demo: M + "03_9_sales_db_agent.py",
+      split: [1.25, 1],
+      left: [
+        { type: "code", size: 8.5, caption: "03_9_sales_db_agent.py – run_sql, rewritten", code:
+`@function_tool
+def run_sql(query: str) -> str:
+    """Run one read-only SQLite SELECT on the \`sales\` table
+    (product, quantity, revenue, sale_date) and return the
+    rows as text, one row per line.                       ①
+
+    Input: a single SELECT statement, e.g.
+      SELECT product, SUM(revenue) FROM sales GROUP BY product
+      SELECT * FROM sales WHERE sale_date LIKE '2026-03%' ②
+
+    Returns "No rows" when nothing matches and "Error: ..."
+    for invalid SQL. Fix the query and retry. Output stops at
+    50 rows, so use LIMIT or aggregate.                   ③
+
+    For one product's total revenue, use
+    get_product_revenue(product) instead.                 ④
+    """` },
+      ],
+      right: [
+        { type: "icons", d: 0.3, size: 10, titleSize: 11, gap: 0.08, items: [
+          { icon: "FaCircleInfo", title: "① What it does and returns", text: "The job, and the shape of the output" },
+          { icon: "FaKeyboard", title: "② Input format, with examples", text: "One or two sample arguments" },
+          { icon: "FaTriangleExclamation", title: "③ Edge cases", text: "No rows, bad input, too much output" },
+          { icon: "FaArrowRightArrowLeft", title: "④ Neighbour tool", text: "Which other tool to use instead, and when", color: "coral" },
+        ] },
+        { type: "callout", eyebrow: "Also", size: 10, text: "Name tools `verb_noun`. Return errors as text so the model can retry. Keep output small. Don't give two tools the same job." },
+      ],
+    },
+    {
       title: "Measuring Tokens with tiktoken",
       subtitle: "Count tokens before you send a request – to estimate cost, stay within limits and cut latency",
       demo: M + "03_10_tiktoken_tokenization_example.py, 03_11_tiktoken_tokenization_hindi_example.py",

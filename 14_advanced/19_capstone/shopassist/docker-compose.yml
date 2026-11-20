@@ -1,0 +1,9 @@
+# 14d: run ShopAssist in Docker.
+#   docker compose up --build      then open http://localhost:8023
+services:
+  shopassist:
+    build: .
+    ports:
+      - "8023:8000"              # laptop port 8023 -> container port 8000
+    env_file:
+      - ../../../.env            # the repo's .env with ANTHROPIC_API_KEY

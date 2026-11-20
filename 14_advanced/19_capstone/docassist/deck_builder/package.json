@@ -1,0 +1,8 @@
+{
+  "name": "docassist-deck",
+  "private": true,
+  "description": "Builds ../docassist.pptx with the shared engine in tools/deck_builder",
+  "scripts": {
+    "build": "node ../../../../tools/deck_builder/build.js ."
+  }
+}

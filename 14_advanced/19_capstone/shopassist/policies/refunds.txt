@@ -1,0 +1,6 @@
+Refunds policy
+
+Refunds are paid to the original payment method.
+The refund is started when the returned item reaches our warehouse and passes inspection.
+Card and UPI refunds take 5 to 7 working days to appear; cash-on-delivery orders are refunded to a bank account within 10 working days.
+Damaged or wrong items are refunded in full, including the original delivery charge.

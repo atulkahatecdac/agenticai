@@ -1,0 +1,8 @@
+Returns policy
+
+Most items can be returned within 30 days of delivery.
+The item must be unused and in its original packaging.
+Gift cards, socks and underwear cannot be returned for hygiene and security reasons.
+Sale items marked "final sale" cannot be returned.
+To start a return, the customer needs the order ID (format ORD- followed by 8 digits).
+Return shipping is free for orders above 2,000 rupees; otherwise a 99 rupee fee is taken from the refund.

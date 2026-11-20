@@ -10,6 +10,10 @@ $Deck = (Resolve-Path $Deck).Path
 New-Item -ItemType Directory -Force $OutDir | Out-Null
 $OutDir = (Resolve-Path $OutDir).Path
 Get-ChildItem $OutDir -Filter "*.png" | Remove-Item
+# PowerPoint is single-instance: New-Object attaches to a PowerPoint that is already open,
+# and Quit() would then close the user's open presentations WITHOUT saving (this has lost work).
+# So only quit PowerPoint if this script started it.
+$wasRunning = [bool](Get-Process POWERPNT -ErrorAction SilentlyContinue)
 $ppt = New-Object -ComObject PowerPoint.Application
 $p = $ppt.Presentations.Open($Deck, $true, $false, $false)
 try {
@@ -18,5 +22,6 @@ try {
   }
   "Rendered $($p.Slides.Count) slides to $OutDir"
 } finally {
-  $p.Close(); $ppt.Quit()
+  $p.Close()
+  if (-not $wasRunning) { $ppt.Quit() }
 }
